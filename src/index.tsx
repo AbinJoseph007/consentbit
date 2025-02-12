@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import ReactDOM from "react-dom/client";
 import "./style/styless.css";
+import Customization from './components/Customization';
+import Script from './components/Script';
 
 const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState("General Settings");
@@ -80,8 +82,8 @@ const App: React.FC = () => {
 
             </>
           )}
-          {activeTab === "Customization" && <p></p>}
-          {activeTab === "Script" && <p></p>}
+          {activeTab === "Customization" && <p><Customization/></p>}
+          {activeTab === "Script" && <p><Script/></p>}
         </div>
 
         {/* Preview Panel */}
