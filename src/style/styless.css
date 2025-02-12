@@ -5,31 +5,32 @@ body {
     font-family: 'Inter', sans-serif;
     margin: 0;
     padding: 0;
+    width: 800px;
 }
 
 /* App Container */
 .app {
-    padding: 20px;
+    padding: 5px;
 }
 
 /* Header */
 h2 {
     font-size: 20px;
-    margin-bottom: 15px;
+    margin-bottom: 5px;
 }
 
 /* Top Navigation */
 .navbar {
     display: flex;
     justify-content: space-between;
-    padding: 10px 20px;
+    padding: 10px 10px;
     align-items: center;
     background: #0A081B;
-    width: 740px;
+    border-bottom: 1px solid #242137; /* Default transparent border */
 }
 
 .navbar button {
-    background: #7066B5;
+    background: rgba(112, 102, 181, 0.29);
     color: white;
     padding: 8px 16px;
     border: none;
@@ -43,11 +44,12 @@ h2 {
     justify-content:space-between;
     background: #0A081B;
     padding: 10px 20px;
-    width: 100%;
+    border-bottom: 1px solid #242137; /* Default transparent border */
 }
 
 .mode-switch {
     display: flex;
+    align-items: center;
     gap: 10px;
 }
 
@@ -83,38 +85,30 @@ h2 {
 }
 
 .tabs button {
-    background: #1A1730;
+    background: #0A081B;
     color: #FFF;
     border: none;
     padding: 8px 16px;
     cursor: pointer;
-    border-radius: 6px;
+    border-bottom: 1px solid transparent; /* Default transparent border */
 }
 
 .tabs button.active {
-    background: #3A36A0;
+    border-bottom: 1px solid #8C79FF; /* Active tab bottom border */
 }
-
-/* Content Layout
-.content {
-    display: flex;
-    gap: 20px;
-    align-items: flex-start;
-} */
-
 .container{
     display: flex;
-    gap: 20px;
+    /* gap: 1px; */
 }
 
 /* Settings Panel */
 .settings-panel {
-    background: #1A1730;
+    /* background: #1A1730; */
     padding: 20px;
-    border-radius: 10px;
-    width: 350px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+    width: 250px;
+    /* box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); */
     flex-shrink: 0; /* Prevent shrinking */
+    border-right: 1px solid #242137; /* Default transparent border */
 }
 
 .settings-panel label {
@@ -164,10 +158,9 @@ h2 {
 
 /* Preview Panel */
 .preview-panel {
-    background: #1A1730;
+    /* background: #1A1730; */
     flex-grow: 1;
     padding: 20px;
-    border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
