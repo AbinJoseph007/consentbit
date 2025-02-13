@@ -11,7 +11,12 @@ const App: React.FC = () => {
     <div className="app">
       {/* Top Navigation */}
       <div className="navbar">
-        <h2>CookieAPP</h2>
+        <div>
+          <h2>CookieAPP</h2>
+        </div>
+        <div>
+          <h5>Need help ?</h5>
+        </div>
       </div>
       <div className="configuration">
        
@@ -21,6 +26,7 @@ const App: React.FC = () => {
           <button className="mode-btn">Advanced</button>
         </div>
         <div>
+          
         <button>Create Component</button>
         </div>
       </div>
@@ -88,13 +94,15 @@ const App: React.FC = () => {
 
         {/* Preview Panel */}
         <div className="preview-panel">
-          <div className="cookie-banner">
-            <span>Cookie consent content here...</span>
-            <div>
-              <button className="btn-preferences">Preferences</button>
-              <button className="btn-reject">Reject</button>
-              <button className="btn-accept">Ok, Got it</button>
-            </div>
+          <div>
+            <div className="cookie-banner">
+              <span>Cookie consent content here...</span>
+              <div>
+                <button className="btn-preferences">Preferences</button>
+                <button className="btn-reject">Reject</button>
+                <button className="btn-accept">Ok, Got it</button>
+              </div>
+          </div>
           </div>
         </div>
       </div>
