@@ -1,11 +1,25 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ReactDOM from "react-dom/client";
 import "./style/styless.css";
 import Customization from "./components/Customization";
 import Script from "./components/Script";
+const questionmark = new URL("./assets/questionmark.png", import.meta.url).href;
+
 
 const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState("General Settings");
+  const [expires, setExpires] = useState("");
+  const [animation, setAnimation] = useState("Fade");
+  const [easing, setEasing] = useState("Ease");
+  const [language, setLanguage] = useState("English");
+  const [isActive, setIsActive] = useState(false);
+
+
+  useEffect(() => {
+    setIsActive(false); 
+    setTimeout(() => setIsActive(true), 50);
+  }, [animation]);
+
 
   return (
     <div className="app">
@@ -14,7 +28,8 @@ const App: React.FC = () => {
         <div>
           <h2>CookieAPP</h2>
         </div>
-        <div>
+        <div className="need-help">
+          <img src={questionmark} alt="" />
           <h5>Need help?</h5>
         </div>
       </div>
@@ -27,8 +42,8 @@ const App: React.FC = () => {
           <button className="mode-btn">Advanced</button>
         </div>
         <div className="component-width">
-        <a className="link" href="#">You need a subscription to publish the production <i>&#x2197;</i></a>
-        <button>Create Component</button>
+          <div><a className="link" href="#">You need a subscription to publish the production <i>&#x2197;</i></a></div>
+          <div><button>Create Component</button></div>
         </div>
       </div>
 
@@ -52,61 +67,93 @@ const App: React.FC = () => {
           {activeTab === "General Settings" && (
             <>
               <div className="general">
-      <div>
-        <div className="settings-group">
-          <label htmlFor="expires">Expires</label>
-          <input type="text" id="expires" placeholder="120s" />
-        </div>
-  
-        <div className="settings-group">
-          <label htmlFor="animation">Animation</label>
-          <select id="animation">
-            <option>Fade</option>
-            <option>Slide Up</option>
-            <option>Slide Down</option>
-            <option>Slide Left</option>
-            <option>Slide Right</option>
-          </select>
-        </div>
-  
-        <div className="settings-group">
-          <label htmlFor="easing">Easing</label>
-          <select id="easing">
-            <option>Ease</option>
-            <option>Linear</option>
-            <option>Ease-in</option>
-            <option>Ease-out</option>
-            <option>Ease-in-out</option>
-          </select>
-        </div>
-  
-        <div className="settings-group">
-          <label htmlFor="language">Language</label>
-          <select id="language">
-            <option>English</option>
-            <option>Spanish</option>
-            <option>French</option>
-          </select>
-        </div>
-      </div>
+                <div>
+                  <div className="settings-group">
+                    <label htmlFor="expires">Expires</label>
+                    <img src={questionmark} alt="" />
+                    <input
+                      type="text"
+                      id="expires"
+                      placeholder="120s"
+                      value={expires || ""}
+                      onChange={(e) => setExpires(e.target.value)}
+                    />
 
-      <div>
-        {/* Move the Preview Panel inside settings-group */}
-        <div className="settings-group-preview">
-          <h3>Preview</h3>
-         <div className="preview-area">
-            <div className="cookie-banner">
-              <div><span>Cookie consent content here...</span></div>
-              <div>
-                <button className="btn-preferences">Preferences</button>
-                <button className="btn-reject">Reject</button>
-                <button className="btn-accept">Ok, Got it</button>
+                  </div>
+
+                  <div className="settings-group">
+                    <label htmlFor="animation">Animation</label>
+                    <img src={questionmark} alt="" />
+                    <select
+                      id="animation"
+                      value={animation}
+                      onChange={(e) => setAnimation(e.target.value)}
+                    >
+                      <option value="fade">Fade</option>
+                      <option value="slide-up">Slide Up</option>
+                      <option value="slide-down">Slide Down</option>
+                      <option value="slide-left">Slide Left</option>
+                      <option value="slide-right">Slide Right</option>
+                    </select>
+
+                  </div>
+
+                  <div className="settings-group">
+                    <label htmlFor="easing">Easing</label>
+                    <img src={questionmark} alt="" />
+                    <select
+                      id="easing"
+                      value={easing}
+                      onChange={(e) => setEasing(e.target.value.toLowerCase())}
+                    >
+                      <option value="ease">Ease</option>
+                      <option value="linear">Linear</option>
+                      <option value="ease-in">Ease-in</option>
+                      <option value="ease-out">Ease-out</option>
+                      <option value="ease-in-out">Ease-in-out</option>
+                    </select>
+                  </div>
+
+                  <div className="settings-group">
+                    <label htmlFor="language">Language</label>
+                    <img src={questionmark} alt="" />
+                    <select
+                      id="language"
+                      value={language}
+                      onChange={(e) => setLanguage(e.target.value)}
+                    >
+                      <option>English</option>
+                      <option>Spanish</option>
+                      <option>French</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div>
+                  <div className="settings-group-preview">
+                    <h3>Preview</h3>
+                    <div className="preview-area">
+                      <div className={`cookie-banner ${animation} ${isActive ? "active" : ""}`} style={{ transitionTimingFunction: easing }}>
+                        <div>
+                          <span>
+                            {language === "English"
+                              ? "Cookie consent content here..."
+                              : language === "Spanish"
+                                ? "Contenido de consentimiento de cookies aquí..."
+                                : "Contenu de consentement aux cookies ici..."}
+                          </span>
+                        </div>
+                        <div>
+                          <button className="btn-preferences">Preferences</button>
+                          <button className="btn-reject">Reject</button>
+                          <button className="btn-accept">Ok, Got it</button>
+                        </div>
+                      </div>
+                    </div>
+                    {/* <p>Expires in: {expires}</p> */}
+                  </div>
+                </div>
               </div>
-            </div>
-         </div>
-        </div>
-      </div>
-    </div>
             </>
           )}
           {activeTab === "Customization" && <Customization />}
@@ -114,7 +161,7 @@ const App: React.FC = () => {
         </div>
 
         {/* Preview Panel (Inside Container) */}
-      
+
       </div>
     </div>
   );
@@ -122,15 +169,3 @@ const App: React.FC = () => {
 
 const root = ReactDOM.createRoot(document.getElementById("root") as HTMLElement);
 root.render(<App />);
-
-
-{/* <div className="preview-panel">
-<div className="cookie-banner">
-  <span>Cookie consent content here...</span>
-  <div>
-    <button className="btn-preferences">Preferences</button>
-    <button className="btn-reject">Reject</button>
-    <button className="btn-accept">Ok, Got it</button>
-  </div>
-</div>
-</div> */}

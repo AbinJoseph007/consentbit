@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import "../style/styless.css";
+const questionmark = new URL("../assets/questionmark.png", import.meta.url).href;
+
 
 const Script: React.FC = () => {
     const categories = ["Essential", "Personalization", "Analytics", "Marketing"];
@@ -10,8 +12,8 @@ const Script: React.FC = () => {
     const handleToggle = (category: string) => {
         setSelectedCategories((prevSelected) =>
             prevSelected.includes(category)
-                ? prevSelected.filter((item) => item !== category) // Uncheck
-                : [...prevSelected, category] // Check
+                ? prevSelected.filter((item) => item !== category) 
+                : [...prevSelected, category] 
         );
     };
 
@@ -34,6 +36,7 @@ const Script: React.FC = () => {
                     <div>
                         <span>Update the Facebook Pixel script.</span>
                     </div>
+                    <img src={questionmark} alt="" />
                     <button className="dismiss-btn">Dismiss</button>
                 </div>
                 <p>Select a category for this script, remove the current script, and add the updated script to the Site or Page Settings:</p>

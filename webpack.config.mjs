@@ -24,6 +24,10 @@ export default {
         test: /\.css$/,
         use: ["style-loader", "css-loader"],
       },
+       {
+        test: /\.(png|jpe?g|gif|svg)$/i,  // Add this rule
+        type: "asset/resource",
+      },
     ],
   },
   devServer: {

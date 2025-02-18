@@ -80,8 +80,10 @@ h2 {
     font-size: 12px;
 }
 
-.component-width{
-    gap: 10px;
+.component-width , .need-help{
+    display: flex;
+    align-items: center;
+    gap: 15px;
 }
 
 
@@ -123,7 +125,6 @@ h2 {
 
 .settings-panel label {
     display: block;
-    margin-top: 15px;
     font-size: 7px;
     color: #B0AEE3;
 }
@@ -144,7 +145,7 @@ h2 {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 10px;
+    gap: 15px;
     margin-top: 10px;
 }
 
@@ -152,7 +153,7 @@ h2 {
     font-size: 14px;
     color: #B0AEE3;
     flex-shrink: 0; /* Prevents label from shrinking */
-    width: 100px; /* Ensures consistent label width */
+    width: 60px; /* Ensures consistent label width */
 }
 
 .settings-group input,
@@ -183,7 +184,7 @@ h2 {
 }
 
 /* Cookie Banner */
-.cookie-banner {
+/* .cookie-banner {
     background: #fff;
     font-size: 12px;
     color: #000;
@@ -193,9 +194,8 @@ h2 {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    /* width: 100%; */
     flex-direction: column;
-}
+} */
 .general{
     display: flex;
     gap: 10px;
@@ -216,6 +216,9 @@ h2 {
     align-items: flex-end;
     align-content:flex-end;
     padding: 20px;
+    position: relative;
+    overflow: hidden; 
+
 }
 
 /* Buttons */
@@ -228,13 +231,13 @@ h2 {
 }
 
 .btn-preferences {
-    background: #6c757d;
-    color: white;
+    background: #ffffff;
+    color: #2D2D88;
 }
 
 .btn-reject {
-    background: #dc3545;
-    color: white;
+     background: linear-gradient(86.03deg, rgba(38, 46, 132, 0.2) -25.38%, rgba(60, 42, 144, 0.2) 111.73%);
+     color: #2D2D88;
 }
 
 .btn-accept {
@@ -326,7 +329,7 @@ h2 {
 }
 
 .toggle-switch input:checked + .slider {
-    background: #00d1d1; /* Teal color */
+    background: #00d1d1; 
 }
 
 .toggle-switch input:checked + .slider::before {
@@ -340,7 +343,7 @@ h2 {
 }
 
 .info-icon {
-    color: #6666cc; /* Purple */
+    color: #6666cc; 
     font-size: 12px;
     cursor: pointer;
 }
@@ -350,3 +353,72 @@ h2 {
     border: 1px solid #413A717A;
     cursor: pointer;
 }
+
+/* ease otp */
+.cookie-banner {
+    width: 300px;
+    padding: 15px;
+    background: #ffffff;
+    color: #333;
+    border-radius: 5px;
+    position: relative;
+    transition: all 0.5s;
+    top: 0;
+    left: 0;
+  }
+  
+  /* Fade Animation */
+  .cookie-banner.fade {
+    opacity: 0;
+    animation: fadeIn 0.5s forwards;
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  
+  /* Slide Up */
+  .cookie-banner.slide-up {
+    transform: translateY(100%);
+    animation: slideUp 0.5s forwards;
+  }
+  
+  @keyframes slideUp {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+  }
+  
+  /* Slide Down */
+  .cookie-banner.slide-down {
+    transform: translateY(-100%);
+    animation: slideDown 0.5s forwards;
+  }
+  
+  @keyframes slideDown {
+    from { transform: translateY(-100%); }
+    to { transform: translateY(0); }
+  }
+  
+  /* Slide Left */
+  .cookie-banner.slide-left {
+    transform: translateX(100%);
+    animation: slideLeft 0.5s forwards;
+  }
+  
+  @keyframes slideLeft {
+    from { transform: translateX(100%); }
+    to { transform: translateX(0); }
+  }
+  
+  /* Slide Right */
+  .cookie-banner.slide-right {
+    transform: translateX(-100%);
+    animation: slideRight 0.5s forwards;
+  }
+  
+  @keyframes slideRight {
+    from { transform: translateX(-100%); }
+    to { transform: translateX(0); }
+  }
+  

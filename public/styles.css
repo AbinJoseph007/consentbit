@@ -1,7 +1,7 @@
 body {
     margin: 0;
     background: #0A081B;
-    color: white;
+    color: #B0AEE3;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -20,4 +20,3 @@ body {
     outline: none;
     border-color: #1280ee;
   }
-  
