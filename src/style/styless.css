@@ -55,26 +55,31 @@ h2 {
     align-items: center;
     gap: 10px;
 }
-
+.publish-button{
+    background:#262e84;
+    width: 150px;
+}
 .mode-btn {
-    background: #1A1730;
     color: #FFF;
     border: none;
     padding: 8px 16px;
     cursor: pointer;
     border-radius: 6px;
-    font-size: 14px;
+    font-size: 12px;
 }
 
 .mode-btn.active {
-    background: #3A36A0;
+    background: rgba(112, 102, 181, 0.29);
 }
 
+/* .mode-btn:focus{
+    background: rgba(112, 102, 181, 0.29);
+} */
+
 .configuration button {
-    background: #4A3AFF;
     color: white;
     padding: 8px 16px;
-    border: none;
+    border: 1px solid rgba(140, 121, 255, 0.29);
     border-radius: 5px;
     cursor: pointer;
     font-size: 12px;

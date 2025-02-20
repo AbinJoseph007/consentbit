@@ -36,7 +36,6 @@ const Script: React.FC = () => {
                     <div>
                         <span>Update the Facebook Pixel script.</span>
                     </div>
-                    <img src={questionmark} alt="" />
                     <button className="dismiss-btn">Dismiss</button>
                 </div>
                 <p>Select a category for this script, remove the current script, and add the updated script to the Site or Page Settings:</p>
@@ -83,19 +82,3 @@ const Script: React.FC = () => {
 };
 
 export default Script;
-
-
-{/* <div className="category">
-{["Essential", "Personalization", "Analytics", "Marketing"].map((category) => (
-    <label key={category}>
-        <input 
-            type="checkbox" 
-            name="category" 
-            value={category} 
-            checked={selectedCategory === category} 
-            onChange={() => setSelectedCategory(category)} 
-        />
-        <span>{category}</span>
-    </label>
-))}
-</div> */}

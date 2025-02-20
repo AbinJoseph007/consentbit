@@ -13,10 +13,12 @@ const App: React.FC = () => {
   const [easing, setEasing] = useState("Ease");
   const [language, setLanguage] = useState("English");
   const [isActive, setIsActive] = useState(false);
+  const [activeMode, setActiveMode] = useState("Simple"); // "Simple" is active initially
+
 
 
   useEffect(() => {
-    setIsActive(false); 
+    setIsActive(false);
     setTimeout(() => setIsActive(true), 50);
   }, [animation]);
 
@@ -38,18 +40,40 @@ const App: React.FC = () => {
       <div className="configuration">
         <div className="mode-switch">
           <span>Configuration</span>
-          <button className="mode-btn active">Simple</button>
-          <button className="mode-btn">Advanced</button>
+          <button
+            className={`mode-btn ${activeMode === "Simple" ? "active" : ""}`} onClick={() => setActiveMode("Simple")}>
+            Simple
+          </button>
+          <button
+            className={`mode-btn ${activeMode === "Advanced" ? "active" : ""}`} onClick={() => setActiveMode("Advanced")}>
+            Advanced
+          </button>
         </div>
         <div className="component-width">
-          <div><a className="link" href="#">You need a subscription to publish the production <i>&#x2197;</i></a></div>
-          <div><button>Create Component</button></div>
+          <div>
+            <a className="link" href="#">
+              You need a subscription to publish the production <i>&#x2197;</i>
+            </a>
+          </div>
+
+          {activeTab !== "Script" && (
+            <div>
+              <button className="publish-button">Create Component</button>
+            </div>
+          )}
+
+          {activeTab === "Script" && (
+            <div>
+              <button className="publish-button">Scan Project</button>
+            </div>
+          )}
         </div>
+
       </div>
 
       {/* Tab Navigation */}
       <div className="tabs">
-        {["General Settings", "Customization", "Script"].map((tab) => (
+        {["General Settings", "Script"].map((tab) => (
           <button
             key={tab}
             className={activeTab === tab ? "active" : ""}
@@ -104,7 +128,10 @@ const App: React.FC = () => {
                     <select
                       id="easing"
                       value={easing}
-                      onChange={(e) => setEasing(e.target.value.toLowerCase())}
+                      onChange={(e) => {
+                        console.log("Selected Easing:", e.target.value); // Debugging
+                        setEasing(e.target.value.toLowerCase());
+                      }}
                     >
                       <option value="ease">Ease</option>
                       <option value="linear">Linear</option>
@@ -133,7 +160,7 @@ const App: React.FC = () => {
                   <div className="settings-group-preview">
                     <h3>Preview</h3>
                     <div className="preview-area">
-                      <div className={`cookie-banner ${animation} ${isActive ? "active" : ""}`} style={{ transitionTimingFunction: easing }}>
+                      <div className={`cookie-banner ${animation} ${isActive ? "active" : ""}`} style={{ transition: `transform 0.5s ${easing}, opacity 0.5s ${easing}`, }}>
                         <div>
                           <span>
                             {language === "English"
@@ -156,7 +183,7 @@ const App: React.FC = () => {
               </div>
             </>
           )}
-          {activeTab === "Customization" && <Customization />}
+          {/* {activeTab === "Customization" && <Customization />} */}
           {activeTab === "Script" && <Script />}
         </div>
 
