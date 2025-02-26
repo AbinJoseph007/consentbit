@@ -2,18 +2,59 @@
 body {
     background-color: #0A081B;
     color: #ffffff;
-    font-family: 'Inter', sans-serif;
     margin: 0;
     padding: 0;
+    font-family: 'DM Sans', sans-serif;
     width: 800px;
 }
 
 /* Header */
 h2 {
-    font-size: 14px;
+    font-size: 21px    ;
     margin-bottom: 5px;
+    font-family: 'DM Sans', sans-serif;
+    color: rgba(255, 255, 255, 0.6);
+    font-weight: 500;
+}
+h5 , h3{
+font-weight: 400;
+color: rgba(255, 255, 255, 0.6);
 }
 
+.flex{
+    display: flex;
+    gap:10px;
+    align-items: center
+}
+.flexy{
+    display: flex;
+    gap:15px;
+    align-items: center 
+}
+.bottom{
+    padding-bottom: 5px;
+}
+.font-blue{
+    color: rgba(140, 121, 255, 1);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 15.62px;
+    letter-spacing: -3%;
+
+}
+.flex-down{
+ display: flex;
+ flex-direction: column
+}
+
+img{
+    cursor: pointer;
+}
+
+.img-width {
+    height: 32px    ;
+}
 .link{
     color: white;
     text-decoration: none;
@@ -23,21 +64,11 @@ h2 {
     display: flex;
     justify-content: space-between;
     padding: 20px 20px;
-    padding-bottom: 2px;
-    padding-top: 2px;
+    padding-bottom:0px;
+    padding-top: 0px;
     align-items: center;
     background: #0A081B;
-    border-bottom: 1px solid #242137; /* Default transparent border */
-}
-
-.navbar button {
-    background: rgba(112, 102, 181, 0.29);
-    color: white;
-    padding: 8px 16px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 12px;
+    border-bottom: 1px solid #242137;
 }
 
 .configuration {
@@ -45,9 +76,11 @@ h2 {
     align-items: left;
     justify-content:space-between;
     background: #0A081B;
-    padding: 10px 20px;
-    border-bottom: 1px solid #242137; /* Default transparent border */
-    font-size: 12px;
+    padding: 12px 20px;
+    border-bottom: 1px solid #242137; 
+    font-size: 11.5px;
+    font-family: 'DM Sans', sans-serif;
+    color: rgba(255, 255, 255, 0.6);
 }
 
 .mode-switch {
@@ -62,10 +95,14 @@ h2 {
 .mode-btn {
     color: #FFF;
     border: none;
-    padding: 8px 16px;
+    padding: 12px 16px;
     cursor: pointer;
     border-radius: 6px;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 400;
     font-size: 12px;
+    line-height: 15.62px;
+    letter-spacing: -3%;    
 }
 
 .mode-btn.active {
@@ -82,13 +119,14 @@ h2 {
     border: 1px solid rgba(140, 121, 255, 0.29);
     border-radius: 5px;
     cursor: pointer;
-    font-size: 12px;
+    font-size: 11.5px;
 }
 
 .component-width , .need-help{
     display: flex;
     align-items: center;
     gap: 15px;
+    padding: 0%;
 }
 
 
@@ -96,15 +134,25 @@ h2 {
 .tabs {
     gap: 10px;
     /* margin-bottom: 20px; */
-    border-bottom: 1px solid #242137; /* Default transparent border */
-
+    border-bottom: 1px solid #242137; 
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 15.62px;
+    letter-spacing: -3%;
+    padding-left: 10px; 
+    padding-right: 10px
 }
+.tabs button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }  
 
 .tabs button {
     background: #0A081B;
     color: #FFF;
     border: none;
-    padding: 8px 16px;
+    padding: 8px;
     cursor: pointer;
     border-bottom: 1px solid transparent; /* Default transparent border */
 }
@@ -112,39 +160,50 @@ h2 {
 .tabs button.active {
     border-bottom: 1px solid #8C79FF; /* Active tab bottom border */
 }
+
 .container{
     display: flex;
     max-width: 800px;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 400;
+    
 }
 
 /* Settings Panel */
 .settings-panel {
     /* background: #1A1730; */
-    padding: 20px;
-    width: 764px;
+    padding: 20px 10px; /* Top & Bottom: 20px, Left & Right: 10px */
+    width: 780px;
     font-size: 12px;
+    font-weight: 400;
     /* box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); */
     flex-shrink: 0; /* Prevent shrinking */
     /* border-right: 1px solid #242137;  */
 }
 
+
 .settings-panel label {
-    display: block;
-    font-size: 7px;
-    color: #B0AEE3;
+    display: flex;
+    color: rgba(255, 255, 255, 0.6);
+    justify-content: space-between;
 }
 
 .settings-panel input,
 .settings-panel select {
-    width: 100%;
+    width: 138px;
     padding: 8px;
     margin-top: 5px;
-    border: 1px solid #3A36A0;
-    border-radius: 5px;
+    border: 1px solid rgba(46, 43, 69, 1);
+    border-radius: 3px;
     background: #0A081B;
-    color: #fff;
+    color: rgba(255, 255, 255, 0.6);
+
 }
 
+.settings-panel .width select{
+    width: 87px;
+    background-color: rgba(31, 27, 52, 1);
+}
 /* Ensure labels and inputs/selects are aligned properly */
 .settings-group {
     display: flex;
@@ -152,25 +211,35 @@ h2 {
     justify-content: space-between;
     gap: 15px;
     margin-top: 10px;
+    font-size: 12px;
+    margin-bottom: 20px;
 }
 
+
 .settings-group label {
-    font-size: 14px;
+    font-size: 12px;
     color: #B0AEE3;
-    flex-shrink: 0; /* Prevents label from shrinking */
-    width: 60px; /* Ensures consistent label width */
+    /* flex-shrink: 0;  */
+    width: 60px; 
 }
 
 .settings-group input,
 .settings-group select {
-    flex-grow: 1; /* Makes input/select take the remaining space */
+    flex-grow: 1; 
     padding: 8px;
-    border: 1px solid #3A36A0;
+    border: 1px solid rgba(46, 43, 69, 1);
     border-radius: 5px;
     background: #0A081B;
-    color: #fff;
+    color: rgba(255, 255, 255, 0.6);
+    max-width: 154px;
 }
 
+.width-cust{
+    max-width: 257px; 
+    min-width: 257px;   
+    border-right: 1px solid #242137;
+    padding-right: 15px;
+}
 
 /* Preview Panel */
 .preview-panel {
@@ -186,6 +255,53 @@ h2 {
 
 .preview-window{
     background-color: #221E3A;
+}
+
+.togglediv ,.cookie-settings{
+    padding-top: 13px;
+    padding-bottom:13px ;
+    border-top: 1px solid rgba(36, 33, 55, 1); 
+
+}
+
+.settings-group {
+    align-items: center; 
+    width: 100%;
+}
+
+select {
+  
+    color: rgba(255, 255, 255, 0.6);
+    border: none;
+    border-radius: 8px;
+    padding: 10px 15px;
+    font-size: 12px;
+    font-family: 'DM Sans', sans-serif;
+    appearance: none;
+    cursor: pointer;
+    outline: none;
+    text-align: left; 
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(30.7px);
+    -webkit-backdrop-filter: blur(30.7px); /* Safari support */
+}
+
+select:focus {
+    border: 1px solid rgba(59, 51, 109, 1);
+    border-radius: 6px;
+}
+
+option {
+    background: rgba(50, 44, 90, 0.6); 
+    color: white;
+    padding: 10px;
+    text-align: left; 
+    backdrop-filter: blur(30.7px);
+    -webkit-backdrop-filter: blur(30.7px); /* Safari support */
+}
+
+select option:checked {
+    background: rgba(59, 51, 109, 1);
 }
 
 /* Cookie Banner */
@@ -204,6 +320,7 @@ h2 {
 .general{
     display: flex;
     gap: 10px;
+    font-size: 12px;
 }
 .category-code-block{
     display: flex;
@@ -212,7 +329,7 @@ h2 {
 
 .preview-area{
     height: 300px;
-    width: 500px;
+    width: 465px;
     background-color: #221E3A;
     border-radius: 6px;
     display: flex;
@@ -220,7 +337,6 @@ h2 {
     justify-content:flex-end;
     align-items: flex-end;
     align-content:flex-end;
-    padding: 20px;
     position: relative;
     overflow: hidden; 
 
@@ -258,7 +374,7 @@ h2 {
     border: 1px solid #3B3B4F;
     padding: 20px;
     border-radius: 8px;
-    margin-bottom: 20px;
+    margin-bottom: 8px;
     background-color: #1D1A3199;
 }
 .section p {
@@ -292,13 +408,48 @@ h2 {
 }
 .code-block {
     background-color: #413A717A;
-    padding: 20px;
+    /* padding: 20px; */
     border-radius: 8px;
     margin-top: 20px;
     color: #A0A0B0;
     overflow-x: auto;
+    width: 500px;
+}
+.script-input{
+ background-color:#413A717A;
+ min-width: 478px;
+ padding: 10px;
+ color: white;
+ border:#413A717A ;
+}
+.script-input:focus {
+    outline: none;
+    border: none;
+    box-shadow: none; 
+}
+.cust{
+    padding-top: 10px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid rgba(36, 33, 55, 1); 
+    color: rgba(255, 255, 255, 0.6);
+}
+.category-2{
+    display: flex;
+    padding-top: 10px;
+    gap: 10px;
+}
+.category-3 {
+    display: flex;
+    gap: 10px;
 }
 
+.border-bottom {
+    border-bottom: 1px solid rgba(36, 33, 55, 1); 
+}
+
+.width-cust{
+    max-width: 257px;
+}
 /* togle */
 .toggle-switch {
     display: flex;
@@ -344,12 +495,12 @@ h2 {
 
 .category-label {
     color: #ddd;
-    font-size: 12px;
+    font-size:11.5px;
 }
 
 .info-icon {
     color: #6666cc; 
-    font-size: 12px;
+    font-size: 11.5px;
     cursor: pointer;
 }
 .dismiss-btn{
@@ -360,7 +511,7 @@ h2 {
 }
 
 /* ease otp */
-.cookie-banner {
+/* .cookie-banner {
     width: 300px;
     padding: 15px;
     background: #ffffff;
@@ -370,6 +521,22 @@ h2 {
     transition: all 0.5s;
     top: 0;
     left: 0;
+    margin-bottom: 18px;
+    margin-right: 18px;
+    
+  } */
+
+  .cookie-banner {
+    display: flex;
+    width: 60%;
+    padding: 10px;
+    position: absolute;
+    bottom: 20px;
+    background: #ffffff;
+    color: #0A081B;
+    border-radius: 5px;
+    transition: all 0.5s;
+    flex-direction: column;
   }
   
   /* Fade Animation */
@@ -427,3 +594,270 @@ h2 {
     to { transform: translateX(0); }
   }
   
+
+  /* popup */
+
+  .popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
+  
+  .popup-box {
+    background: rgba(10, 8, 27, 1);
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    font-size: 11.5px;
+  }
+  
+  .confirm-button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+  }
+  
+  .confirm-button:hover {
+    background-color: #0056b3;
+  }
+  
+
+/* toottipipe */
+
+.tooltip-container {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+  }
+  
+  .tooltip-icon {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+  }
+  
+  .tooltip-text {
+    visibility: hidden;
+    background-color: rgba(34, 30, 59, 1);
+    color: #fff;
+    text-align: center;
+    padding: 6px 10px;
+    border-radius: 4px;
+    position: absolute;
+    bottom: 100%; 
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    font-size: 11.5px;
+    opacity: 0;
+    transition: opacity 0.2s ease-in-out;
+    z-index: 10;
+  }
+  
+  /* Show tooltip on hover */
+  .tooltip-container:hover .tooltip-text {
+    visibility: visible;
+    opacity: 1;
+  }
+  
+
+/* Toggle Container */
+.toggle-container {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+  }
+  
+  /* Label Text */
+  .toggle-label {
+    color: #8A67D3;
+    font-size: 12px;
+    margin-right: 10px;
+  }
+  
+  /* Toggle Switch */
+  .toggle {
+    position: relative;
+    width: 40px;
+    height: 20px;
+    background: #302B50; 
+    border-radius: 50px;
+    transition: background 0.3s ease-in-out;
+  }
+  
+  /* Toggle Circle */
+  .toggle::before {
+    content: "";
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 14px;
+    height: 14px;
+    background: #666; 
+    border-radius: 50%;
+    transition: all 0.3s ease-in-out;
+  }
+  
+  /* Checked State */
+  input:checked + .toggle {
+    background: #8A67D3; 
+  }
+  
+  input:checked + .toggle::before {
+    transform: translateX(20px);
+    background: #fff; 
+  }
+  
+  /* Hidden Checkbox */
+  .toggle-checkbox {
+    display: none;
+  }
+  
+
+  /* //preferencess */
+
+
+  .cookie-title {
+    font-size: 12px;
+    color: #A393F2;
+  }
+  
+  .cookie-category {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 10px 0;
+    font-size: 12px;
+    color: #C4C2F0;
+    cursor: pointer;
+  }
+  
+  .cookie-category input {
+    display: none;
+  }
+  
+  .custom-checkbox {
+    width: 16.67px;
+    height: 16.67px;
+    display: inline-block;
+    border: 1.5px solid rgba(51, 48, 74, 1);
+    border-radius: 6px;
+    position: relative;
+    cursor: pointer;
+    margin-right: 10px;
+  }
+  
+  .cookie-category input:checked + .custom-checkbox {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-color: rgba(140, 121, 255, 1);
+  }
+  
+  .cookie-category input:checked + .custom-checkbox::before {
+    content: "✔";
+    color: rgba(140, 121, 255, 1);
+    font-size: 12px;
+    
+  }
+  
+  .category-icon {
+    width: 20px;
+    height: 20px;
+  }
+  
+  .category-icon.active {
+    opacity: 1;
+  }
+  
+  .category-status {
+    color: rgba(255, 255, 255, 0.3);
+  }
+
+  .cookie-category {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Adds space between checkbox and text */
+  }
+  
+  .custom-checkbox {
+    margin-right: 5px; /* Ensures the checkbox and text are close */
+  }
+  
+  .category-name {
+    flex-grow: 1; /* Keeps text next to checkbox */
+  }
+
+.category-label {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Adds spacing between checkbox and text */
+  }
+  /* dorpdwon color picker */
+
+  .color-picker-dropdown {
+    position: relative;
+    width: 118px;
+    margin-top: 16px;
+  }
+  
+  .color-picker-button {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 3px;
+    border: 1px solid rgba(57, 53, 83, 1);
+    border-radius: 5px;
+    background: rgba(31, 27, 52, 1);
+    cursor: pointer;
+    font-size: 14px;
+  }
+  
+  .color-preview {
+    width:9px;
+    height: 9px;
+    border-radius:10.5px;
+    border: 1px solid #aaa;
+  }
+  
+  .color-text {
+    margin-left: 10px;
+    flex-grow: 1;
+  }
+  
+  .dropdown-arrow {
+    font-size: 12px;
+  }
+  
+  .color-picker-container {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 10;
+    background: rgba(46, 43, 69, 1);
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    margin-top: 5px;
+    display: none; /* Default hidden */
+
+  }
+  
+
+.color-picker-container.visible {
+  display: block; /* Show when dropdown is open */
+}
+
