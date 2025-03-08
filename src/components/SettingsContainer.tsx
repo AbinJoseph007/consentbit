@@ -1,5 +1,6 @@
-// import React, { useState } from "react";
+// import { useState } from "react";
 // import Customization from "./Customization";
+// import Index from "../index"; // Import index.tsx
 
 // const SettingsContainer = () => {
 //   const [animation, setAnimation] = useState("fade");
@@ -10,7 +11,21 @@
 
 //   return (
 //     <div>
+//       {/* Pass state and update functions to both components */}
 //       <Customization
+//         animation={animation}
+//         setAnimation={setAnimation}
+//         easing={easing}
+//         setEasing={setEasing}
+//         language={language}
+//         setLanguage={setLanguage}
+//         selected={selected}
+//         setSelected={setSelected}
+//         isActive={isActive}
+//         setIsActive={setIsActive}
+//       />
+
+//       <Index
 //         animation={animation}
 //         easing={easing}
 //         language={language}

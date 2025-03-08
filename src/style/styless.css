@@ -20,11 +20,33 @@ h5 , h3{
 font-weight: 400;
 color: rgba(255, 255, 255, 0.6);
 }
-
+h4{
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 500;
+  font-size: 18px;
+  line-height: 22px;
+  letter-spacing: 0%; 
+  color: rgba(72, 57, 153, 1); 
+}
+.padding{
+  padding-bottom: 10px;
+}
 .flex{
     display: flex;
     gap:10px;
     align-items: center
+}
+.down{
+  flex-direction: column;
+}
+.gap{
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+.space{
+  margin-top: -19px;
+  margin-bottom: -20px;
 }
 .flexy{
     display: flex;
@@ -33,6 +55,16 @@ color: rgba(255, 255, 255, 0.6);
 }
 .bottom{
     padding-bottom: 5px;
+}
+
+.font-14{
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 18.23px;
+  letter-spacing: -3%;
+}
+.light{
+  color: rgba(255, 255, 255, 0.6);
 }
 .font-blue{
     color: rgba(140, 121, 255, 1);
@@ -88,10 +120,37 @@ img{
     align-items: center;
     gap: 10px;
 }
-.publish-button{
-    background:#262e84;
-    width: 150px;
+.publish-button {
+  background: #262e84;
+  width: 150px;
+  position: relative;
+  color: white;
+  padding: 10px;
+  border: none;
+  cursor: pointer;
 }
+
+.publish-button::after {
+  content: "Please select a div in designer";
+  position: absolute;
+  background:rgba(34, 30, 59, 1);
+  color: white;
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 12px;
+  white-space: nowrap;
+  top: -30px; /* Adjust based on button position */
+  left: 50%;
+  transform: translateX(-50%);
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+  pointer-events: none;
+}
+
+.publish-button:hover::after {
+  opacity: 1;
+}
+
 .mode-btn {
     color: #FFF;
     border: none;
@@ -144,21 +203,22 @@ img{
     padding-right: 10px
 }
 .tabs button:disabled {
-    opacity: 0.5;
+    /* opacity: 0.5; */
     cursor: not-allowed;
   }  
 
 .tabs button {
     background: #0A081B;
-    color: #FFF;
     border: none;
     padding: 8px;
     cursor: pointer;
+    color: rgba(255, 255, 255, 0.3);
     border-bottom: 1px solid transparent; /* Default transparent border */
 }
 
 .tabs button.active {
     border-bottom: 1px solid #8C79FF; /* Active tab bottom border */
+    color: #FFF;
 }
 
 .container{
@@ -213,8 +273,18 @@ img{
     margin-top: 10px;
     font-size: 12px;
     margin-bottom: 20px;
-}
+  }
 
+  .settings-group.border{
+    width: 255;
+    height: 48;
+    top: 427px;
+    left: 20px;
+    border-radius: 3px;
+    border-width: 1px;
+    border: 1px solid rgba(140, 121, 255, 0.29);
+    padding: 4px;
+  }
 
 .settings-group label {
     font-size: 12px;
@@ -270,7 +340,6 @@ img{
 }
 
 select {
-  
     color: rgba(255, 255, 255, 0.6);
     border: none;
     border-radius: 8px;
@@ -302,6 +371,7 @@ option {
 
 select option:checked {
     background: rgba(59, 51, 109, 1);
+  
 }
 
 /* Cookie Banner */
@@ -328,7 +398,7 @@ select option:checked {
 }
 
 .preview-area{
-    height: 300px;
+    min-height: 300px;
     width: 465px;
     background-color: #221E3A;
     border-radius: 6px;
@@ -347,23 +417,26 @@ select option:checked {
     margin-left: 10px;
     padding: 8px 12px;
     border: none;
-    border-radius: 5px;
     cursor: pointer;
 }
 
 .btn-preferences {
-    background: #ffffff;
+    background: rgba(241, 241, 241, 1);
     color: #2D2D88;
+    border-radius: 48px;
 }
 
 .btn-reject {
      background: linear-gradient(86.03deg, rgba(38, 46, 132, 0.2) -25.38%, rgba(60, 42, 144, 0.2) 111.73%);
      color: #2D2D88;
+     border-radius: 48px;
+
 }
 
 .btn-accept {
     background: #3A36A0;
     color: white;
+    border-radius: 48px;
 }
 
 /* script tab */
@@ -375,13 +448,16 @@ select option:checked {
     padding: 20px;
     border-radius: 8px;
     margin-bottom: 8px;
-    background-color: #1D1A3199;
-}
+    background: rgba(29, 26, 49, 0.6);
+  }
+  .back-color{
+    background:rgba(34, 30, 59, 1)
+  }
 .section p {
     color: #A0A0B0;
 }
 .section a {
-    color: #6A6AFF;
+    color: rgba(140, 121, 255, 1);
     text-decoration: none;
 }
 .section a i {
@@ -402,6 +478,7 @@ select option:checked {
     display: flex;
     align-items: center;
     margin-top: 10px;
+    justify-content: flex-start;
 }
 .category input {
     margin-right: 10px;
@@ -466,7 +543,7 @@ select option:checked {
 .slider {
     width: 34px;
     height: 18px;
-    background: #444;
+    background: rgba(37, 36, 51, 1);
     border-radius: 50px;
     position: relative;
     transition: 0.3s;
@@ -477,7 +554,7 @@ select option:checked {
     position: absolute;
     width: 14px;
     height: 14px;
-    background: #ccc;
+    background:rgba(99, 98, 117, 1);
     border-radius: 50%;
     top: 2px;
     left: 2px;
@@ -528,15 +605,19 @@ select option:checked {
 
   .cookie-banner {
     display: flex;
-    width: 60%;
+    width: 65%;
     padding: 10px;
     position: absolute;
-    bottom: 20px;
     background: #ffffff;
     color: #0A081B;
-    border-radius: 5px;
+    border-radius: 12px;
     transition: all 0.5s;
     flex-direction: column;
+  }
+
+  .button-wrapp{
+   display: flex;
+   justify-content: right;
   }
   
   /* Fade Animation */
@@ -609,6 +690,16 @@ select option:checked {
     justify-content: center;
     z-index: 1000;
   }
+  .spanbox {
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    border: 1px solid #0A081B;
+    background-color:#201a2a; /* Adjust based on the actual background */
+    color: white; /* Text color for contrast */
+    padding: 16px;
+    border-radius: 8px; /* Optional for rounded corners */
+    width: 85%;
+}
+
   
   .popup-box {
     background: rgba(10, 8, 27, 1);
@@ -617,13 +708,24 @@ select option:checked {
     text-align: center;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
     font-size: 11.5px;
+    width: 250px;
   }
   
   .confirm-button {
-    background-color: #007bff;
+    background-color: #262e84;
     color: white;
     border: none;
-    padding: 10px 20px;
+    padding:  10px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+  }
+
+  .cancel-btn{
+    background-color: red;
+    color: white;
+    border: none;
+    padding: 10px 10px;    ;
     border-radius: 5px;
     cursor: pointer;
     margin-top: 10px;
@@ -640,6 +742,7 @@ select option:checked {
     position: relative;
     display: inline-block;
     width: 100%;
+    box-shadow: #0A081B;
   }
   
   .tooltip-icon {
@@ -659,17 +762,20 @@ select option:checked {
     bottom: 100%; 
     left: 50%;
     transform: translateX(-50%);
-    white-space: nowrap;
+    white-space: wrap;
     font-size: 11.5px;
     opacity: 0;
     transition: opacity 0.2s ease-in-out;
     z-index: 10;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
   }
   
   /* Show tooltip on hover */
   .tooltip-container:hover .tooltip-text {
     visibility: visible;
     opacity: 1;
+    box-shadow: #0A081B;
+
   }
   
 
@@ -712,7 +818,7 @@ select option:checked {
   
   /* Checked State */
   input:checked + .toggle {
-    background: #8A67D3; 
+    background:rgba(35, 192, 195, 1); 
   }
   
   input:checked + .toggle::before {
@@ -861,3 +967,102 @@ select option:checked {
   display: block; /* Show when dropdown is open */
 }
 
+/* //dismiss button */
+
+.dismissed-message {
+  text-align: center;
+  font-size: 12px;
+  display: flex;
+  justify-content: space-between;
+  color: #555;
+}
+
+.dismiss-btn, .activate-btn {
+  color: white;
+  background-color: rgba(65, 58, 113, 0.48);
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background 0.3s ease-in-out;
+}
+
+.dismiss-btn:hover, .activate-btn:hover {
+  background-color: #4b4fc3;
+}
+
+
+
+/* Compliance Label */
+.compliance-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 10px;
+  justify-content: flex-start;
+}
+
+.compliance{
+  color: rgba(140, 121, 255, 1);
+  display: flex;
+  gap: 10px;
+}
+
+/* Custom Checkbox */
+.custom-checkboxs {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+  color: #c5baff;
+  cursor: pointer;
+  position: relative;
+  margin-top: 14px;
+  justify-content: flex-start;
+}
+
+.custom-checkboxs input {
+  display: none;
+}
+.compliance-container{
+  border-top: 1px solid #242137;
+  padding-top: 14px;
+}
+/* Checkbox Box */
+.checkbox-box {
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(197, 186, 255, 0.7);
+  border-radius: 50%;
+  display: flex;
+  align-items: left;
+  justify-content: left;
+  position: relative;
+}
+
+/* Checkmark */
+.checkbox-box::after {
+  content: "";
+  width: 10px;
+  height: 10px;
+  background: transparent;
+  border-radius: 50%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+
+/* Checked State */
+.custom-checkboxs input:checked + .checkbox-box {
+  border-color: #9b6bff;
+}
+
+.custom-checkboxs input:checked + .checkbox-box::after {
+  background: #9b6bff;
+}
+
+/* Hover Effect */
+.custom-checkboxs:hover .checkbox-box {
+  border-color: #b48eff;
+}
