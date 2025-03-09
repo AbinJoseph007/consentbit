@@ -123,6 +123,7 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
   const [siteInfo, setSiteInfo] = useState<{ siteId: string; siteName: string; shortName: string } | null>(null);
   const [accessToken, setAccessToken] = useState<string>('');
   const [pages, setPages] = useState([]);
+  const [fetchScripts, setFetchScripts] = useState(false);
 
 
 
@@ -214,41 +215,13 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
   }, [webflow]);
 
 
-  // useEffect(() => {
-  //   initializeAuth();
-  // }, []);
-
-
-  // const initializeAuth = async () => {
-  //   try {
-  //     console.log("Initializing authentication...");
-
-
-
-  //     const auth = AuthService.getInstance();
-
-  //     if (!auth.isAuthenticated()) {
-
-  //       console.log("Not authenticated, starting authorization...");
-  //       const authResponse = await auth.authorize();
-  //       console.log("Authorization successful:", {
-  //         user: authResponse.user.email,
-  //         expiresAt: new Date(authResponse.exp).toISOString(),
-  //       });
-  //     } else {
-  //       console.log("Already authenticated");
-  //       const user = auth.getCurrentUser();
-  //       console.log("Current user:", user?.email);
-  //     }
-  //   } catch (error) {
-  //     console.error("Authentication error:", error);
-  //   }
-  // };
 
   const base_url = "http://localhost:3000";
 
   // Initialize the auth hook which provides methods for authentication
-  const { user } = useAuth();
+  // const { user } = useAuth();
+  const { user, exchangeAndVerifyIdToken } = useAuth(); // Add token exchange function
+
 
   // Function to open the authorization popup authorization window
   const openAuthScreen = () => {
@@ -259,6 +232,10 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
       "width=600,height=600"
     );
 
+    const onAuth = async () => {
+      console.log("User authenticated!");
+      await exchangeAndVerifyIdToken(); // ✅ Force token exchange after auth
+    };
     // Check if the authorization window is closed
     const checkWindow = setInterval(() => {
       if (authWindow?.closed) {
@@ -277,10 +254,15 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
       {/* Top Navigation */}
       <div className="navbar">
         <div>
-          {user.firstName
-            ? `Welcome back ${user.firstName}`
-            : "Consentbit"}
+          {user.firstName ? (
+            <p>Hello, {user.firstName}!</p>
+          ) : (
+            <button className="publish-button" onClick={openAuthScreen}>
+              Authenticate
+            </button>
+          )}
         </div>
+
         <div className="need-help">
           <img src={questionmark} alt="" />
           <h5>Need help?</h5>
@@ -326,13 +308,13 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
             </div>
           )}
 
-          <button className="publish-button" onClick={openAuthScreen}>
-            authenticate
-          </button>
 
           {activeTab === "Script" && (
             <div>
-              <button className="publish-button">Scan Project</button>
+              <button className="publish-button" onClick={() => setFetchScripts(true)}>
+                Scan Project
+              </button>
+
             </div>
           )}
         </div>
@@ -872,7 +854,7 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
             />
           )}
 
-          {activeTab === "Script" && <Script />}
+          {activeTab === "Script" && <Script fetchScripts={fetchScripts} setFetchScripts={setFetchScripts} />}
         </div>
       </div>
     </div>
