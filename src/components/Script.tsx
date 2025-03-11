@@ -3,6 +3,9 @@ import "../style/styless.css";
 const copyimg = new URL("../assets/fi-rr-copy.png", import.meta.url).href;
 const questionmark = new URL("../assets/Group 20 (1).png", import.meta.url).href;
 const settings = new URL("../assets/setting-2.png", import.meta.url).href;
+import { customCodeApi } from "../services/api"; 
+import { userInfo } from "os";
+import { json } from "stream/consumers";
 const ignored = new URL("../assets/fi-rr-shield-exclamation.png", import.meta.url).href;
 
 const Script: React.FC<{ fetchScripts: boolean; setFetchScripts: React.Dispatch<React.SetStateAction<boolean>> }> = ({
@@ -13,46 +16,95 @@ const Script: React.FC<{ fetchScripts: boolean; setFetchScripts: React.Dispatch<
     const categories = ["Essential", "Personalization", "Analytics", "Marketing"];
     const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
     const [scriptCode, setScriptCode] = useState<string>("");
-    const token = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyIjp7ImlkIjoiNjc4OTc2ZTIzYmY2NDMzNjhiN2M5OWQ2IiwiZW1haWwiOiJ3ZWJAY29uc2VudGJpdC5jb20iLCJmaXJzdE5hbWUiOiJDb25zZW50Yml0IiwibGFzdE5hbWUiOiJDb29raWUifSwiZXhwIjoxNzQxNjM3NTEzfQ.HsO8qyvZ5kMc1ALLUrEqh83b3-FI-lF85aXFbD3lwYM"
+    const token = "92835c52c511e3fc3249deac320bfdc6421839ed1a79fdec67f8d2245a7d41cd"
+    const userinfo = localStorage.getItem("wf_hybrid_user")
+    // console.log(userinfo)
+  
+
+    // useEffect(() => {
+    //     const fetchCustomCode = async () => {
+    //         console.log(token);
+            
+    //         try {
+    //             const response = await fetch("https://cors-anywhere.herokuapp.com/https://api.webflow.com/v2/sites/67c6b33db14886f99df46d69/custom_code", {
+    //                 method: "GET",
+    //                 headers: {
+    //                     Authorization: `Bearer ${token}`,
+    //                     "Accept-Version": "2.0", 
+    //                     "Content-Type": "application/json",
+    //                     "x-requested-with": "XMLHttpRequest"
+    //                 },
+    //             });
+    //             console.log(response);
+                
+    //             if (!response.ok) {
+    //                 throw new Error(`Error: ${response.status}`);
+    //             }
+
+    //             const data = await response.json();
+    //             setScriptCode(data.scripts.map((script: any) => script.code).join("\n\n"));
+    //         } catch (error) {
+    //             console.error("Failed to fetch scripts:", error);
+    //             setScriptCode("Error fetching scripts.");
+    //         }
+    //     };
+
+    //     if (fetchScripts) {
+    //         fetchCustomCode();
+    //         setFetchScripts(false);
+    //     }
+    // }, [fetchScripts, setFetchScripts]);
 
     useEffect(() => {
-        const fetchCustomCode = async () => {
-            try {
-                const response = await fetch("https://cors-anywhere.herokuapp.com/https://api.webflow.com/v2/sites/67c6b33db14886f99df46d69/custom_code", {
-                    method: "GET",
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                         "Accept-Version": "2.0", // Required for Webflow v2 API
-        "Content-Type": "application/json",
-        "x-requested-with": "XMLHttpRequest"
-                    },
-                });
-
-                if (!response.ok) {
-                    throw new Error(`Error: ${response.status}`);
-                }
-
-                const data = await response.json();
-                setScriptCode(data.scripts.map((script: any) => script.code).join("\n\n"));
-            } catch (error) {
-                console.error("Failed to fetch scripts:", error);
-                setScriptCode("Error fetching scripts.");
-            }
-        };
-
         if (fetchScripts) {
-            fetchCustomCode();
-            setFetchScripts(false);
+          console.log("Fetching scripts...");
+          fetchScriptData();
+          setFetchScripts(false); // Reset state after fetching
         }
-    }, [fetchScripts, setFetchScripts]);
+      }, [fetchScripts]);
 
-    const handleToggle = (category: string) => {
+
+      const fetchScriptData = async () => {
+        try {
+
+            
+          const siteId = "67c6b33db14886f99df46d69"; //67c6b33db14886f99df46d6f //67c6b33db14886f99df46d69
+        //   const token = "your-auth-token"; 
+          const tokenss = JSON.parse(userinfo)
+          const tokewern = tokenss.sessionToken;
+
+
+          const data = await customCodeApi.getcustomcode(siteId,tokewern);
+          console.log(data);
+          
+    
+          if (data && data.siteCustomCode) {
+            console.log("Fetched scripts:", data.siteCustomCode.scripts);
+            setScriptCode(JSON.stringify(data.siteCustomCode.scripts, null, 2)); 
+          } else {
+            console.log("No scripts found");
+          }
+        } catch (error) {
+          console.error("Error fetching scripts:", error);
+        }
+      };
+    
+      const handleToggle = (category: string) => {
         setSelectedCategories((prevSelected) =>
-            prevSelected.includes(category)
-                ? prevSelected.filter((item) => item !== category)
-                : [...prevSelected, category]
+          prevSelected.includes(category)
+            ? prevSelected.filter((item) => item !== category)
+            : [...prevSelected, category]
         );
-    };
+      };
+    
+
+    // const handleToggle = (category: string) => {
+    //     setSelectedCategories((prevSelected) =>
+    //         prevSelected.includes(category)
+    //             ? prevSelected.filter((item) => item !== category)
+    //             : [...prevSelected, category]
+    //     );
+    // };
 
     return (
         <div className="container-script">

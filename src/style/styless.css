@@ -131,7 +131,7 @@ img{
 }
 
 .publish-button::after {
-  content: "Please select a div in designer";
+  /* content: "Please select a div in designer"; */
   position: absolute;
   background:rgba(34, 30, 59, 1);
   color: white;

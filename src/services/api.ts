@@ -1,5 +1,7 @@
 const base_url = "http://localhost:3000";
 
+// const base_url = "https://consent-bit-server.web-8fb.workers.dev"
+
 import { ScriptRegistrationRequest, CodeApplication } from "../types/types";
 
 
@@ -57,6 +59,19 @@ export const customCodeApi = {
       );
       return response.json();
     },
+
+      ///get custom code
+      getcustomcode: async (siteId: string, token: string) => {
+        const response = await fetch(
+          `${base_url}/api/custom-code/getcustomcode?siteId=${siteId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        return response.json();
+      },
   
     // Get status for pages
     getPagesStatus: async (pageIds: string[], token: string) => {

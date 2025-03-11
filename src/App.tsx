@@ -218,6 +218,8 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
 
   const base_url = "http://localhost:3000";
 
+  // const base_url = "https://consent-bit-server.web-8fb.workers.dev"
+
   // Initialize the auth hook which provides methods for authentication
   // const { user } = useAuth();
   const { user, exchangeAndVerifyIdToken } = useAuth(); // Add token exchange function
