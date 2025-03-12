@@ -66,21 +66,20 @@ const Script: React.FC<{ fetchScripts: boolean; setFetchScripts: React.Dispatch<
 
       const fetchScriptData = async () => {
         try {
-
-            
-          const siteId = "67c6b33db14886f99df46d69"; //67c6b33db14886f99df46d6f //67c6b33db14886f99df46d69
-        //   const token = "your-auth-token"; 
-          const tokenss = JSON.parse(userinfo)
+          const siteId = "67c6b33db14886f99df46d69";
+          const tokenss = JSON.parse(userinfo);
           const tokewern = tokenss.sessionToken;
-
-
-          const data = await customCodeApi.getcustomcode(siteId,tokewern);
+      
+          const data = await customCodeApi.getcustomcode(siteId, tokewern);
           console.log(data);
-          
-    
-          if (data && data.siteCustomCode) {
-            console.log("Fetched scripts:", data.siteCustomCode.scripts);
-            setScriptCode(JSON.stringify(data.siteCustomCode.scripts, null, 2)); 
+      
+          if (data && data.registeredScripts) {
+            console.log("Fetched scripts:", data.registeredScripts);
+            
+            // Extract display names
+            const scriptDisplayNames = data.registeredScripts.map(script => script.displayName);
+      
+            setScriptCode(JSON.stringify(scriptDisplayNames, null, 2));
           } else {
             console.log("No scripts found");
           }
@@ -88,6 +87,7 @@ const Script: React.FC<{ fetchScripts: boolean; setFetchScripts: React.Dispatch<
           console.error("Error fetching scripts:", error);
         }
       };
+      
     
       const handleToggle = (category: string) => {
         setSelectedCategories((prevSelected) =>
