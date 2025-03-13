@@ -1,105 +1,15 @@
-
-
 import React, { useState, useEffect } from "react";
 import ReactDOM from "react-dom/client";
 import "./style/styless.css";
 import Customization from "./components/Customization";
-// import SettingsContainer from "./components/SettingsContainer";
 import Script from "./components/Script";
 const questionmark = new URL("./assets/questionmark.png", import.meta.url).href;
 const openeye = new URL("./assets/closedeye.png", import.meta.url).href;
 const eye = new URL("./assets/eye.png", import.meta.url).href;
 import { customCodeApi } from "./services/api";
-// import { AuthService } from "./services/auth";
 import { useAuth } from "../src/hooks/userAuth";
-
-
-// import { script } from "./services/webflowmvs";
-
-// import bannerTemplate from './style/BannerTemplate'
-
-declare const webflow: {
-  // ✅ Get Site Info
-  getSiteInfo: () => Promise<{
-    siteId: string;
-    siteName: string;
-    shortName: string;
-  }>;
-
-  // ✅ Get the currently selected element
-  getSelectedElement: () => Promise<{
-    before: (preset: any) => Promise<{
-      setInnerHTML: (html: string) => Promise<void>;
-      setStyles?: (styles: WebflowStyle[]) => Promise<void>;
-      getStyles?: () => Promise<Record<string, string>>;
-      applyStyle?: (style: WebflowStyle) => Promise<void>;
-      setAttributes?: (attrs: Record<string, string>) => Promise<void>;
-    }>;
-    append?: (child: any) => Promise<void>; // ✅ Added append method
-    setStyles?: (styles: WebflowStyle[]) => Promise<void>;
-    getStyles?: () => Promise<Record<string, string>>;
-    setAttributes?: (attrs: Record<string, string>) => Promise<void>;
-  }>;
-
-  // ✅ Webflow Element Presets
-  elementPresets: {
-    DivBlock: any;
-    Paragraph?: any;
-    Heading?: any;
-    Button?: any;
-    DOM?: any; // ✅ Ensure DOM preset exists
-  };
-
-  // ✅ Get the root element of the page
-  getRootElement: () => Promise<{
-    setInnerHTML: (html: string) => Promise<void>;
-  }>;
-
-  // ✅ Element Builder (with append support)
-  elementBuilder: (options: {
-    tag: string;
-    attributes?: Record<string, string>;
-  }) => Promise<{
-    setAttributes?: (attrs: Record<string, string>) => Promise<void>;
-    setStyles?: (styles: WebflowStyle[]) => Promise<void>;
-    append?: (child: any) => Promise<void>; // ✅ Added append method
-  }>;
-
-  // ✅ Page Management
-  getCurrentPage: () => Promise<{ id: string; name: string }>;
-  createPage: (options: { name: string; content: string }) => Promise<{ id: string }>;
-  switchPage?: (pageId: string) => Promise<void>;
-  getAllPagesAndFolders?: () => Promise<Array<{ id: string; type: string; getName: () => Promise<string> }>>;
-
-  // ✅ Style Management
-  createStyle: (name: string) => Promise<WebflowStyle>;
-  getStyleByName: (name: string) => Promise<WebflowStyle | null>;
-  getAllStyles?: () => Promise<WebflowStyle[]>;
-  removeStyle?: (styleId: string) => Promise<void>;
-
-  // ✅ Variables and Collections
-  getDefaultVariableCollection?: () => Promise<{
-    createColorVariable: (name: string, value: string) => Promise<ColorVariable>;
-  }>;
-
-  // ✅ Notifications
-  notify: (options: { type: "info" | "error"; message: string }) => Promise<void>;
-
-  // ✅ Additional Webflow Methods
-  getMediaQuery?: () => Promise<string>;
-  getCurrentAppConnection?: () => Promise<{ id: string; name: string }>;
-  getAllAssets?: () => Promise<Array<{ id: string; name: string; url: string }>>;
-};
-
-
-
-// ✅ Define a WebflowStyle interface for styling properties
-interface WebflowStyle {
-  setProperty: (prop: string, value: string) => Promise<void>;
-  setProperties: (properties: Record<string, string>) => Promise<void>;
-  save: () => Promise<void>;
-
-}
+import webflow, { WebflowAPI } from './types/webflowtypes'; 
+import { CodeApplication } from "./types/types";
 
 
 
@@ -214,6 +124,66 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
     fetchPages();
   }, [webflow]);
 
+  const fetchAnalyticsBlockingsScripts = async () => {
+    try {
+      console.log('=== Component Debug ===');
+      console.log('Starting script registration process');
+
+      const userinfo = localStorage.getItem("wf_hybrid_user");
+      console.log('User info from localStorage:', userinfo ? 'Found' : 'Not found');
+
+      if (!userinfo) {
+        console.error("No user info found");
+        return;
+      }
+
+      const tokenss = JSON.parse(userinfo);
+      console.log('Parsed user info:', {
+        hasSessionToken: !!tokenss.sessionToken,
+        tokenPreview: tokenss.sessionToken ? tokenss.sessionToken : 'No token'
+      });
+
+      const tokewern = tokenss.sessionToken;
+      const siteIdinfo = await webflow.getSiteInfo();
+      setSiteInfo(siteIdinfo);
+      console.log('Site ID:', siteIdinfo.siteId);
+
+      if (!tokewern) {
+        console.error("No session token found");
+        return;
+      }
+
+      console.log('Calling API with:', { siteIdinfo, tokenPreview: tokewern });
+      const hostingScript = await customCodeApi.registerAnalyticsBlockingScript(tokewern, siteIdinfo.siteId);
+      console.log('Hosting script response:', hostingScript);
+
+      if(hostingScript){
+        try{
+
+          const scriptId = hostingScript.result.id;
+          const version = hostingScript.result.version; // Get version from registration response
+          const params: CodeApplication = {
+            targetType: 'site',
+            targetId: siteIdinfo.siteId,
+            scriptId: scriptId,
+            location: 'header',
+            version: version
+          };
+          const applyScriptResponse = await customCodeApi.applyScript(params ,tokewern)
+          console.log("apply script response" , applyScriptResponse);   
+        }catch(error){
+           console.log("apply script error" , error); 
+        }
+      }
+    } catch (error) {
+      console.error('=== Component Error ===');
+      console.error('Error type:', error.constructor.name);
+      console.error('Error message:', error.message);
+      console.error('Error stack:', error.stack);
+      console.error('Full error object:', error);
+    }
+  };
+
 
 
   const base_url = "http://localhost:3000";
@@ -304,7 +274,10 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
 
           {activeTab !== "Script" && (
             <div>
-              <button className="publish-button" onClick={() => setShowPopup(true)}>
+              <button className="publish-button" onClick={() => {
+                setShowPopup(true);
+               
+              }}>
                 Create Components
               </button>
             </div>
@@ -332,37 +305,37 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
               <span className="spanbox">We are installing the script in your code...</span>
               <span className="spanbox">we are adding a banner on your project</span>
             </div>
+            {/* 
+            <button
+              className="confirm-button"
+              onClick={async () => {
+                try {
+                  // Get site information
+                  const info = await webflow.getSiteInfo();
+                  setSiteInfo(info);
+                  console.log('Site ID:', info.siteId);
+                  console.log('Site Name:', info.siteName);
 
-            {/* <button
-            className="confirm-button"
-            onClick={async () => {
-              try {
-                // Get site information
-                const info = await webflow.getSiteInfo();
-                setSiteInfo(info);
-                console.log('Site ID:', info.siteId);
-                console.log('Site Name:', info.siteName);
-                
-                // Proceed with your installation logic
-                await handleAddCookieBanner();
-                
-                setShowPopup(false);
-              } catch (error) {
-                console.error('Error getting site info:', error);
-                alert('Failed to get site information');
-              }
-            }}
-          >
-            Confirm
-          </button> */}
+                  // Proceed with your installation logic
+                  // await handleAddCookieBanner();
+
+                  setShowPopup(false);
+                } catch (error) {
+                  console.error('Error getting site info:', error);
+                  alert('Failed to get site information');
+                }
+              }}
+            >
+              Confirm
+            </button> */}
 
             <div className="gap">
-              {/* <button
+              <button
                 className="confirm-button"
                 onClick={async () => {
                   try {
                     console.log("🟢 Button clicked!");
-  
+
                     // ✅ Get the selected element
                     const selectedElement = await webflow.getSelectedElement();
                     if (!selectedElement) {
@@ -371,7 +344,7 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                       return;
                     }
                     console.log("✅ Selected element:", selectedElement);
-  
+
                     // ✅ Insert a new DivBlock before the selected element
                     const newDiv = await selectedElement.before(webflow.elementPresets.DivBlock);
                     if (!newDiv) {
@@ -380,17 +353,17 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                       return;
                     }
                     console.log("✅ New div created:", newDiv);
-  
+
                     // ✅ Create a new style
-                    const newStyle = await webflow.createStyle("consebit-bann");
-  
+                    const newStyle = await webflow.createStyle("consebit-banni");
+
                     // ✅ Create a variable for color
                     const collection = await webflow.getDefaultVariableCollection();
                     const webflowBlue = await collection?.createColorVariable("Webflow Blue", "rgba(255, 255, 255, 1)");
-  
+
                     // ✅ Ensure the color variable is converted to a string
                     const webflowBlueValue = (webflowBlue as any)?.value || "rgba(255, 255, 255, 1)";
-  
+
                     // ✅ Define style properties
                     const propertyMap: Record<string, string> = {
                       "background-color": webflowBlueValue, // Ensure it's a string
@@ -405,11 +378,11 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                       "border-radius": "12px"
                       // Set z-index
                     };
-  
+
                     // ✅ Set style properties
                     await newStyle.setProperties(propertyMap);
                     console.log("✅ Style properties set:", propertyMap);
-  
+
                     // ✅ Apply the style to the new div
                     if (newDiv.setStyles) {
                       await newDiv.setStyles([newStyle]);
@@ -418,12 +391,13 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                       console.error("❌ `setStyles` method not available on newDiv.");
                       webflow.notify({ type: "error", message: "Could not apply styles to the new div." });
                     }
-  
+
                     // ✅ Notify user
                     webflow.notify({ type: "info", message: "Styled Div added successfully!" });
                     setShowPopup(false)
+                    fetchAnalyticsBlockingsScripts(); 
                     // handleRegisterScript()
-  
+
                   } catch (error) {
                     console.error("❌ Error adding Div:", error);
                     webflow.notify({ type: "error", message: "Failed to add styled div." });
@@ -431,9 +405,9 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                 }}
               >
                 Confirm
-              </button> */}
+              </button>
 
-              <button
+              {/* <button
                 className="confirm-button"
                 onClick={async () => {
                   try {
@@ -491,7 +465,7 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                 }}
               >
                 Confirm
-              </button>
+              </button> */}
 
               <button className="cancel-btn" onClick={() => setShowPopup(false)}>Cancel</button>
             </div>

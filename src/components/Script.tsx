@@ -21,40 +21,6 @@ const Script: React.FC<{ fetchScripts: boolean; setFetchScripts: React.Dispatch<
     // console.log(userinfo)
   
 
-    // useEffect(() => {
-    //     const fetchCustomCode = async () => {
-    //         console.log(token);
-            
-    //         try {
-    //             const response = await fetch("https://cors-anywhere.herokuapp.com/https://api.webflow.com/v2/sites/67c6b33db14886f99df46d69/custom_code", {
-    //                 method: "GET",
-    //                 headers: {
-    //                     Authorization: `Bearer ${token}`,
-    //                     "Accept-Version": "2.0", 
-    //                     "Content-Type": "application/json",
-    //                     "x-requested-with": "XMLHttpRequest"
-    //                 },
-    //             });
-    //             console.log(response);
-                
-    //             if (!response.ok) {
-    //                 throw new Error(`Error: ${response.status}`);
-    //             }
-
-    //             const data = await response.json();
-    //             setScriptCode(data.scripts.map((script: any) => script.code).join("\n\n"));
-    //         } catch (error) {
-    //             console.error("Failed to fetch scripts:", error);
-    //             setScriptCode("Error fetching scripts.");
-    //         }
-    //     };
-
-    //     if (fetchScripts) {
-    //         fetchCustomCode();
-    //         setFetchScripts(false);
-    //     }
-    // }, [fetchScripts, setFetchScripts]);
-
     useEffect(() => {
         if (fetchScripts) {
           console.log("Fetching scripts...");
@@ -70,7 +36,7 @@ const Script: React.FC<{ fetchScripts: boolean; setFetchScripts: React.Dispatch<
           const tokenss = JSON.parse(userinfo);
           const tokewern = tokenss.sessionToken;
       
-          const data = await customCodeApi.getcustomcode(siteId, tokewern);
+          const data = await customCodeApi.analyticsScript(siteId);
           console.log(data);
       
           if (data && data.registeredScripts) {
@@ -97,7 +63,7 @@ const Script: React.FC<{ fetchScripts: boolean; setFetchScripts: React.Dispatch<
         );
       };
     
-
+   
     // const handleToggle = (category: string) => {
     //     setSelectedCategories((prevSelected) =>
     //         prevSelected.includes(category)
