@@ -4,8 +4,6 @@ const copyimg = new URL("../assets/fi-rr-copy.png", import.meta.url).href;
 const questionmark = new URL("../assets/Group 20 (1).png", import.meta.url).href;
 const settings = new URL("../assets/setting-2.png", import.meta.url).href;
 import { customCodeApi } from "../services/api"; 
-import { userInfo } from "os";
-import { json } from "stream/consumers";
 const ignored = new URL("../assets/fi-rr-shield-exclamation.png", import.meta.url).href;
 
 const Script: React.FC<{ fetchScripts: boolean; setFetchScripts: React.Dispatch<React.SetStateAction<boolean>> }> = ({
@@ -16,7 +14,6 @@ const Script: React.FC<{ fetchScripts: boolean; setFetchScripts: React.Dispatch<
     const categories = ["Essential", "Personalization", "Analytics", "Marketing"];
     const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
     const [scriptCode, setScriptCode] = useState<string>("");
-    const token = "92835c52c511e3fc3249deac320bfdc6421839ed1a79fdec67f8d2245a7d41cd"
     const userinfo = localStorage.getItem("wf_hybrid_user")
     // console.log(userinfo)
   

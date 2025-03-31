@@ -51,6 +51,64 @@ export const customCodeApi = {
       throw error;
     }
   },
+/////////////////////for the custom toggle
+  registerCustomToggle: async (token: string, siteId: string) => {
+    try {
+      console.log('Starting API call for custom toggle with:', { siteId });
+
+      const response = await fetch(
+        `${base_url}/api/custom-code/customtoggle?siteId=${encodeURIComponent(siteId)}`,
+        {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        }
+      );
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Error response:', errorText);
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log('Response data:', data);
+      return data;
+    } catch (error) {
+      console.error('Error in registerAnalyticsBlockingScript:', error);
+      throw error;
+    }
+  },
+///////////////for the page scroll
+  registerScrollScript: async (token: string, siteId: string) => {
+    try {
+      console.log('Starting API call for custom toggle with:', { siteId });
+
+      const response = await fetch(
+        `${base_url}/api/custom-code/pagescroll?siteId=${encodeURIComponent(siteId)}`,
+        {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        }
+      );
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Error response:', errorText);
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log('Response data:', data);
+      return data;
+    } catch (error) {
+      console.error('Error in registerAnalyticsBlockingScript:', error);
+      throw error;
+    }
+  },
 
   //custom code fetching from site head
   analyticsScript: async (token: string) => {
