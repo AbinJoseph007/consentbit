@@ -162,3 +162,30 @@ export interface TokenResponse {
     // Add other env variables as needed
   }
   
+
+ // src/types/types.ts
+export interface Script {
+  url?: string | null;
+  script?: string | null;
+  isDismissed: boolean;
+  selectedCategories: string[];
+  src?: string | null;
+  content?: string | null;
+  type?: string | null;
+  async?: boolean;
+  defer?: boolean;
+  crossorigin?: string | null;
+  category?: string;
+  fullTag?: string | null;
+}
+
+export interface ScriptCategory {
+  src: string | null;
+  content: string | null;
+  selectedCategories: string[];
+}
+
+export interface SaveCategoriesResponse {
+  success: boolean;
+  error?: string;
+}

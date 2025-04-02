@@ -1066,3 +1066,42 @@ select option:checked {
 .custom-checkboxs:hover .checkbox-box {
   border-color: #b48eff;
 }
+/* src/style/styless.css */
+.save-all-btn {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s;
+}
+
+.save-all-btn:hover {
+  background-color: #0056b3;
+}
+
+.save-all-btn:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.save-status {
+  margin: 10px 0;
+  padding: 10px;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.save-status.success {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.save-status.error {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}

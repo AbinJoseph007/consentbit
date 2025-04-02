@@ -18,6 +18,7 @@
 
 {
   "compilerOptions": {
+    "types": ["node", "crypto-js"],
     "outDir": "public",
     "target": "es6",
     "module": "ESNext",

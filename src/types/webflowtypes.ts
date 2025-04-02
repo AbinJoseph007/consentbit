@@ -1,3 +1,5 @@
+import { ColorVariable } from './global';
+
 // ✅ Define a WebflowStyle interface for styling properties
 export interface WebflowStyle {
     setProperty: (prop: string, value: string) => Promise<void>;
@@ -12,6 +14,8 @@ export interface WebflowStyle {
       siteName: string;
       shortName: string;
     }>;
+  
+    getIdToken: () => Promise<string>;
   
     getSelectedElement: () => Promise<{
       before: (preset: any) => Promise<{

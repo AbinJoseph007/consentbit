@@ -35,7 +35,7 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
   const [pages, setPages] = useState([]);
   const [fetchScripts, setFetchScripts] = useState(false);
 
-
+  const base_url = "https://cb-server.web-8fb.workers.dev";
 
   const [toggleStates, setToggleStates] = useState({
     customToggle: false,
@@ -124,6 +124,9 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
     fetchPages();
   }, [webflow]);
 
+
+  
+  
   const fetchAnalyticsBlockingsScripts = async () => {
     try {
       console.log('=== Component Debug ===');
@@ -154,14 +157,19 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
       }
 
       console.log('Calling API with:', { siteIdinfo, tokenPreview: tokewern });
-      const hostingScript = await customCodeApi.registerAnalyticsBlockingScript(tokewern, siteIdinfo.siteId);
+      const hostingScript = await customCodeApi.registerAnalyticsBlockingScript(tokewern);
       console.log('Hosting script response:', hostingScript);
 
-      if(hostingScript){
-        try{
-
+      if (hostingScript) {
+        try {
+          // Log the initial data we're working with
+          console.log("Hosting script data:", hostingScript);
+          console.log("Site ID:", siteIdinfo.siteId);
+          console.log("Token:", tokewern);
+      
           const scriptId = hostingScript.result.id;
-          const version = hostingScript.result.version; // Get version from registration response
+          const version = hostingScript.result.version;
+          
           const params: CodeApplication = {
             targetType: 'site',
             targetId: siteIdinfo.siteId,
@@ -169,24 +177,49 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
             location: 'header',
             version: version
           };
-          const applyScriptResponse = await customCodeApi.applyScript(params ,tokewern)
-          console.log("apply script response" , applyScriptResponse);   
-        }catch(error){
-           console.log("apply script error" , error); 
+      
+          // Log the params being sent
+          console.log("Applying script with params:", params);
+      
+          const applyScriptResponse = await customCodeApi.applyScript(params, tokewern);
+          console.log("Script applied successfully:", applyScriptResponse);
+          
+        } 
+        catch (error) {
+          // More detailed error logging
+          console.error("Failed to apply script:", {
+            error: error instanceof Error ? error.message : 'Unknown error',
+            stack: error instanceof Error ? error.stack : undefined,
+            params: {
+              scriptId: hostingScript?.result?.id,
+              siteId: siteIdinfo?.siteId,
+              version: hostingScript?.result?.version
+            }
+          });
+          
+          // You might want to handle the error appropriately here
+          // For example, showing a user-friendly error message
+          throw error; // or handle it differently based on your needs
         }
+      } else {
+        console.warn("No hosting script data available");
       }
-    } catch (error) {
+    }
+      
+
+     catch (error) {
       console.error('=== Component Error ===');
       console.error('Error type:', error.constructor.name);
       console.error('Error message:', error.message);
       console.error('Error stack:', error.stack);
       console.error('Full error object:', error);
     }
-  };
+  }
 
 
 
-  const base_url = "http://localhost:3000";
+
+
 
   // const base_url = "https://consent-bit-server.web-8fb.workers.dev"
 
@@ -337,63 +370,63 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                     console.log("🟢 Button clicked!");
 
                     // ✅ Get the selected element
-                    const selectedElement = await webflow.getSelectedElement();
-                    if (!selectedElement) {
-                      console.error("❌ No element selected.");
-                      webflow.notify({ type: "error", message: "No element selected in the Designer." });
-                      return;
-                    }
-                    console.log("✅ Selected element:", selectedElement);
+                    // const selectedElement = await webflow.getSelectedElement();
+                    // if (!selectedElement) {
+                    //   console.error("❌ No element selected.");
+                    //   webflow.notify({ type: "error", message: "No element selected in the Designer." });
+                    //   return;
+                    // }
+                    // console.log("✅ Selected element:", selectedElement);
 
-                    // ✅ Insert a new DivBlock before the selected element
-                    const newDiv = await selectedElement.before(webflow.elementPresets.DivBlock);
-                    if (!newDiv) {
-                      console.error("❌ Failed to create div.");
-                      webflow.notify({ type: "error", message: "Failed to create div." });
-                      return;
-                    }
-                    console.log("✅ New div created:", newDiv);
+                    // // ✅ Insert a new DivBlock before the selected element
+                    // const newDiv = await selectedElement.before(webflow.elementPresets.DivBlock);
+                    // if (!newDiv) {
+                    //   console.error("❌ Failed to create div.");
+                    //   webflow.notify({ type: "error", message: "Failed to create div." });
+                    //   return;
+                    // }
+                    // console.log("✅ New div created:", newDiv);
 
-                    // ✅ Create a new style
-                    const newStyle = await webflow.createStyle("consebit-banni");
+                    // // ✅ Create a new style
+                    // const newStyle = await webflow.createStyle("consebit-banni");
 
-                    // ✅ Create a variable for color
-                    const collection = await webflow.getDefaultVariableCollection();
-                    const webflowBlue = await collection?.createColorVariable("Webflow Blue", "rgba(255, 255, 255, 1)");
+                    // // ✅ Create a variable for color
+                    // const collection = await webflow.getDefaultVariableCollection();
+                    // const webflowBlue = await collection?.createColorVariable("Webflow Blue", "rgba(255, 255, 255, 1)");
 
-                    // ✅ Ensure the color variable is converted to a string
-                    const webflowBlueValue = (webflowBlue as any)?.value || "rgba(255, 255, 255, 1)";
+                    // // ✅ Ensure the color variable is converted to a string
+                    // const webflowBlueValue = (webflowBlue as any)?.value || "rgba(255, 255, 255, 1)";
 
-                    // ✅ Define style properties
-                    const propertyMap: Record<string, string> = {
-                      "background-color": webflowBlueValue, // Ensure it's a string
-                      "font-size": "16px",
-                      "font-weight": "bold",
-                      "height": "180px",
-                      "width": "438px",
-                      "position": "fixed",
-                      "z-index": "999",
-                      "top": "70%",
-                      "left": "50%",
-                      "border-radius": "12px"
-                      // Set z-index
-                    };
+                    // // ✅ Define style properties
+                    // const propertyMap: Record<string, string> = {
+                    //   "background-color": webflowBlueValue, // Ensure it's a string
+                    //   "font-size": "16px",
+                    //   "font-weight": "bold",
+                    //   "height": "180px",
+                    //   "width": "438px",
+                    //   "position": "fixed",
+                    //   "z-index": "999",
+                    //   "top": "70%",
+                    //   "left": "50%",
+                    //   "border-radius": "12px"
+                    //   // Set z-index
+                    // };
 
-                    // ✅ Set style properties
-                    await newStyle.setProperties(propertyMap);
-                    console.log("✅ Style properties set:", propertyMap);
+                    // // ✅ Set style properties
+                    // await newStyle.setProperties(propertyMap);
+                    // console.log("✅ Style properties set:", propertyMap);
 
-                    // ✅ Apply the style to the new div
-                    if (newDiv.setStyles) {
-                      await newDiv.setStyles([newStyle]);
-                      console.log("✅ Styles applied successfully!");
-                    } else {
-                      console.error("❌ `setStyles` method not available on newDiv.");
-                      webflow.notify({ type: "error", message: "Could not apply styles to the new div." });
-                    }
+                    // // ✅ Apply the style to the new div
+                    // if (newDiv.setStyles) {
+                    //   await newDiv.setStyles([newStyle]);
+                    //   console.log("✅ Styles applied successfully!");
+                    // } else {
+                    //   console.error("❌ `setStyles` method not available on newDiv.");
+                    //   webflow.notify({ type: "error", message: "Could not apply styles to the new div." });
+                    // }
 
                     // ✅ Notify user
-                    webflow.notify({ type: "info", message: "Styled Div added successfully!" });
+                    // webflow.notify({ type: "info", message: "Styled Div added successfully!" });
                     setShowPopup(false)
                     fetchAnalyticsBlockingsScripts(); 
                     // handleRegisterScript()
@@ -770,7 +803,7 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                           ? "We use cookies to provide you with the best possible experience. They also allow us to analyze user behavior in order to constantly improve the website for you."
                           : language === "Spanish"
                             ? "Utilizamos cookies para brindarle la mejor experiencia posible. También nos permiten analizar el comportamiento del usuario para mejorar constantemente el sitio web para usted."
-                            : "Nous utilisons des cookies pour vous offrir la meilleure expérience possible. Ils nous permettent également d’analyser le comportement des utilisateurs afin d’améliorer constamment le site Web pour vous."}
+                            : "Nous utilisons des cookies pour vous offrir la meilleure expérience possible. Ils nous permettent également d'analyser le comportement des utilisateurs afin d'améliorer constamment le site Web pour vous."}
                       </span>
                     </div>
                     <div className="button-wrapp">
@@ -791,7 +824,7 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                           ? "We use cookies to provide you with the best possible experience. They also allow us to analyze user behavior in order to constantly improve the website for you."
                           : language === "Spanish"
                             ? "Utilizamos cookies para brindarle la mejor experiencia posible. También nos permiten analizar el comportamiento del usuario para mejorar constantemente el sitio web para usted."
-                            : "Nous utilisons des cookies pour vous offrir la meilleure expérience possible. Ils nous permettent également d’analyser le comportement des utilisateurs afin d’améliorer constamment le site Web pour vous."}
+                            : "Nous utilisons des cookies pour vous offrir la meilleure expérience possible. Ils nous permettent également d'analyser le comportement des utilisateurs afin d'améliorer constamment le site Web pour vous."}
                       </span>
                     </div>
                     <div className="button-wrapp">
