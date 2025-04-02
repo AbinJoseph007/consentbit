@@ -3,11 +3,11 @@ import React, { useState, useEffect } from "react";
 import "../style/styless.css";
 import { Script as ScriptType, ScriptCategory } from "../types/types";
 import { customCodeApi } from "../services/api";
-import { ClientSecurity } from "../util/Security";
 
 const copyimg = new URL("../assets/fi-rr-copy.png", import.meta.url).href;
 const questionmark = new URL("../assets/Group 20 (1).png", import.meta.url).href;
 const settings = new URL("../assets/setting-2.png", import.meta.url).href;
+const ignored = new URL("../assets/fi-rr-shield-exclamation.png", import.meta.url).href;
 
 const Script: React.FC<{ 
     fetchScripts: boolean; 
@@ -21,6 +21,7 @@ const Script: React.FC<{
     const [saveStatus, setSaveStatus] = useState<{ success: boolean; message: string } | null>(null);
     const categories = ["Essential", "Personalization", "Analytics", "Marketing"];
     const userinfo = localStorage.getItem("wf_hybrid_user");
+    const base_url ="https://cb-server.web-8fb.workers.dev"
 
     useEffect(() => {
         if (fetchScripts) {
