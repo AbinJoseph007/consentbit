@@ -2,7 +2,7 @@ import { useQueryClient, useQuery, useMutation } from "@tanstack/react-query";
 import { jwtDecode } from "jwt-decode";
 import { User, DecodedToken } from "../types/types";
 
-const base_url = "http://localhost:3000";
+const base_url = "https://cb-server.web-8fb.workers.dev";
 
 interface AuthState {
   user: User;
@@ -118,11 +118,11 @@ export function useAuth() {
     onSuccess: (data) => {
       try {
         // Decode the new token
-        const decodedToken = jwtDecode(data.sessionToken) as DecodedToken;
+       const decodedToken = jwtDecode(data.sessionToken) as DecodedToken;
         const userData = {
           sessionToken: data.sessionToken,
-          firstName: decodedToken.user.firstName,
-          email: decodedToken.user.email,
+          firstName: data.firstName,
+          email: data.email,
           exp: decodedToken.exp,
         };
 
@@ -145,52 +145,89 @@ export function useAuth() {
   });
 
   // Function to initiate token exchange process
-  const exchangeAndVerifyIdToken = async () => {
-    // Check if we already have a valid session token
-    const storedUser = localStorage.getItem("wf_hybrid_user");
-    if (storedUser) {
-      try {
-        const userData = JSON.parse(storedUser);
-        if (userData.sessionToken) {
-          const decodedToken = jwtDecode(userData.sessionToken) as DecodedToken;
-          if (decodedToken.exp * 1000 > Date.now()) {
-            return;
-          }
-        }
-      } catch (error) {
-        console.error("Error checking stored token:", error);
-      }
+// Inside your useAuth hook
+const exchangeAndVerifyIdToken = async () => {
+  try {
+    // Get new ID token from Webflow
+    const idToken = await webflow.getIdToken();
+    const siteInfo = await webflow.getSiteInfo();
+    
+    const response = await fetch(`${base_url}/api/auth/token`, {
+      method: "POST",
+      headers: { 
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ 
+        idToken, 
+        siteId: siteInfo.siteId 
+      }),
+    });
+
+    const data = await response.json();
+    console.log("token Exchange Response Data:",data)
+
+    if (!response.ok) {
+      throw new Error(`Token exchange failed: ${data.error}`);
     }
 
-    if (isExchangingToken.current) {
-      console.log("Token exchange already in progress");
+    // Store in localStorage
+    const userData = {
+      sessionToken: data.sessionToken,
+      firstName: data.firstName,
+      email: data.email,
+      exp: Date.now() + (24 * 60 * 60 * 1000) // 24 hours from now
+    };
+    console.log("userdata",userData)
+    localStorage.setItem("wf_hybrid_user", JSON.stringify(userData));
+    localStorage.removeItem("explicitly_logged_out");
+
+    // Update React Query cache
+    console.log("🔄 Updating React Query cache");
+    queryClient.setQueryData<AuthState>(["auth"], {
+      user: {
+        firstName: data.firstName,
+        email: data.email
+      },
+      sessionToken: data.sessionToken
+    });
+
+    console.log("✅ Token exchange completed successfully");
+   const saveLocalstorageData= localStorage.getItem("wf_hybrid_user");
+   console.log("Saved local storage data",saveLocalstorageData);
+  } catch (error) {
+    console.error("❌ Token exchange error:", error);
+    localStorage.removeItem("wf_hybrid_user");
+    throw error;
+  }
+};
+  
+  // Add this to your openAuthScreen function
+  const openAuthScreen = () => {
+    console.log("🔓 Opening auth window...");
+    const authWindow = window.open(
+      `${base_url}/api/auth/authorize?state=webflow_designer`,
+      "_blank",
+      "width=600,height=600"
+    );
+  
+    if (!authWindow) {
+      console.error("❌ Popup blocked!");
       return;
     }
-
-    try {
-      isExchangingToken.current = true;
-      // Small delay to prevent rapid retries
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      // Get new ID token from Webflow
-      const idToken = await webflow.getIdToken();
-
-      // Validate token format
-      if (!idToken || typeof idToken !== "string" || !idToken.trim()) {
-        throw new Error("Invalid or missing ID token");
+  
+    const onAuth = async () => {
+      console.log("👤 User authenticated!");
+      await exchangeAndVerifyIdToken();
+    };
+  
+    const checkWindow = setInterval(() => {
+      if (authWindow?.closed) {
+        console.log("🚪 Auth window closed");
+        clearInterval(checkWindow);
+        onAuth();
       }
-
-      // Exchange token using mutation
-      await tokenMutation.mutateAsync(idToken);
-    } catch (error) {
-      console.error("Detailed error in token exchange:", error);
-      // Clear storage on error to force re-auth
-      localStorage.removeItem("wf_hybrid_user");
-    } finally {
-      isExchangingToken.current = false;
-    }
+    }, 1000);
   };
-
   // Function to handle user logout
   const logout = () => {
     // Set logout flag and clear storage

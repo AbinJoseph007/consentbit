@@ -22,6 +22,10 @@ interface HelpItem {
   href: string;
 }
 
+type BreakpointAndPseudo = {
+  breakpoint: string;
+  pseudoClass: string;
+};
 
 const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
   const [activeTab, setActiveTab] = useState("General Settings");
@@ -64,6 +68,7 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
   const [secondcolor, setSecondcolor] = useState("#483999");
   const [bgColors, setBgColors] = useState("#798EFF");
   const [headColor, setHeadColor] = useState("#483999");
+    const base_url ="https://cb-server.web-8fb.workers.dev"
   const [isBannerAdded, setIsBannerAdded] = useState(false);
 
 
@@ -371,14 +376,19 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
       }
 
       console.log('Calling API with:', { siteIdinfo, tokenPreview: tokewern });
-      const hostingScript = await customCodeApi.registerAnalyticsBlockingScript(tokewern, siteIdinfo.siteId);
+      const hostingScript = await customCodeApi.registerAnalyticsBlockingScript(tokewern);
       console.log('Hosting script response:', hostingScript);
 
       if (hostingScript) {
         try {
-
+          // Log the initial data we're working with
+          console.log("Hosting script data:", hostingScript);
+          console.log("Site ID:", siteIdinfo.siteId);
+          console.log("Token:", tokewern);
+      
           const scriptId = hostingScript.result.id;
-          const version = hostingScript.result.version; // Get version from registration response
+          const version = hostingScript.result.version;
+          
           const params: CodeApplication = {
             targetType: 'site',
             targetId: siteIdinfo.siteId,
@@ -386,20 +396,44 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
             location: 'header',
             version: version
           };
-          const applyScriptResponse = await customCodeApi.applyScript(params, tokewern)
-          console.log("apply script response", applyScriptResponse);
-        } catch (error) {
-          console.log("apply script error", error);
+      
+          // Log the params being sent
+          console.log("Applying script with params:", params);
+      
+          const applyScriptResponse = await customCodeApi.applyScript(params, tokewern);
+          console.log("Script applied successfully:", applyScriptResponse);
+          
+        } 
+        catch (error) {
+          // More detailed error logging
+          console.error("Failed to apply script:", {
+            error: error instanceof Error ? error.message : 'Unknown error',
+            stack: error instanceof Error ? error.stack : undefined,
+            params: {
+              scriptId: hostingScript?.result?.id,
+              siteId: siteIdinfo?.siteId,
+              version: hostingScript?.result?.version
+            }
+          });
+          
+          // You might want to handle the error appropriately here
+          // For example, showing a user-friendly error message
+          throw error; // or handle it differently based on your needs
         }
+      } else {
+        console.warn("No hosting script data available");
       }
-    } catch (error) {
+    }
+      
+
+     catch (error) {
       console.error('=== Component Error ===');
       console.error('Error type:', error.constructor.name);
       console.error('Error message:', error.message);
       console.error('Error stack:', error.stack);
       console.error('Full error object:', error);
     }
-  };
+  }
 
   const ApplyCustomToggle = async () => {
     try {
@@ -515,7 +549,8 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
 
 
 
-  const base_url = "http://localhost:3000";
+
+
 
 
   // const { user } = useAuth();
@@ -1529,6 +1564,7 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                         // ... existing code ...
                         setIsLoading(false);
                         handleCreatePreferences();
+                        fetchAnalyticsBlockingsScripts();
                         setTimeout(() => {
                           setShowPopup(false);
                         }, 30000);
@@ -2215,7 +2251,7 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                           ? "We use cookies to provide you with the best possible experience. They also allow us to analyze user behavior in order to constantly improve the website for you."
                           : language === "Spanish"
                             ? "Utilizamos cookies para brindarle la mejor experiencia posible. También nos permiten analizar el comportamiento del usuario para mejorar constantemente el sitio web para usted."
-                            : "Nous utilisons des cookies pour vous offrir la meilleure expérience possible. Ils nous permettent également d’analyser le comportement des utilisateurs afin d’améliorer constamment le site Web pour vous."}
+                            : "Nous utilisons des cookies pour vous offrir la meilleure expérience possible. Ils nous permettent également d'analyser le comportement des utilisateurs afin d'améliorer constamment le site Web pour vous."}
                       </span>
                     </div>
                     <div className="button-wrapp" style={{ justifyContent: style === "centeralign" ? "center" : undefined, }}>

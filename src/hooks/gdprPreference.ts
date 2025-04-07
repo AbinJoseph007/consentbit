@@ -80,6 +80,10 @@ const translations = {
   }
 };
 
+type BreakpointAndPseudo = {
+  breakpoint: string;
+  pseudoClass: string;
+};
 
 const createCookiePreferences = async (selectedPreferences: string[], language: string = "English", color: string = "#ffffff", btnColor: string = "#F1F1F1", headColor: string = "#483999", paraColor: string = "#1F1D40", secondcolor: string = "secondcolor", buttonRadius: number, animation: string) => {
   try {
