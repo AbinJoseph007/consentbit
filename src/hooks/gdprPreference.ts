@@ -81,49 +81,43 @@ const translations = {
 };
 
 
-
-const createCookiePreferences = async (selectedPreferences: string[], language: string = "English", color: string = "#ffffff", btnColor: string = "#F1F1F1", headColor: string = "#483999", paraColor: string = "#1F1D40", secondcolor: string = "secondcolor") => {
+const createCookiePreferences = async (selectedPreferences: string[], language: string = "English", color: string = "#ffffff", btnColor: string = "#F1F1F1", headColor: string = "#483999", paraColor: string = "#1F1D40", secondcolor: string = "secondcolor", buttonRadius: number, animation: string) => {
   try {
-    console.log("🟢 Button clicked!");
 
     const selectedElement = await webflow.getSelectedElement();
     if (!selectedElement) {
-      console.error("❌ No element selected.");
       webflow.notify({ type: "error", message: "No element selected in the Designer." });
       return;
     }
-    console.log("✅ Selected element:", selectedElement);
-
+    
     const newDiv = await selectedElement.before(webflow.elementPresets.DivBlock);
     if (!newDiv) {
-      console.error("❌ Failed to create div.");
+  
       webflow.notify({ type: "error", message: "Failed to create div." });
       return;
     }
-    console.log("✅ New div created:", newDiv);
+ 
 
     if ((newDiv as any).setDomId) {
-      await (newDiv as any).setDomId("main-banner"); // Type assertion
-      console.log("✅ prefrence button ID set to #simple-accept");
+      await (newDiv as any).setDomId("main-banner"); 
     } else {
-      console.error("❌ setDomId method not available on accept button element");
+      console.error("setDomId method not available on accept button element");
     }
 
     const timestamp = Date.now();
-    const preferenceDiv = `consebit-preference-div-${timestamp}`;
-    const paragraphStyleNames = `consebit-prefrence-text-${timestamp}`;
-    const formfield = `consentbit-formblock-${timestamp}`
-    const preferenceblock = `consentbit-prefrence-block-${timestamp}`
-    const toggledivs = `consentbit-prefrence-toggle-${timestamp}`
-    const buttonContainerStyleName = `consebit-prefrence-container-${timestamp}`;
-    const prefrenceButton = `consent-button-preference-${timestamp}`
-    const checkboxlabeltextstyle = `consentbit-checkbox-label${timestamp}`
-    const buttonStyleName = `consebit-prefrence-accept${timestamp}`;
-    const DeclinebuttonStyleName = `consebit-prefrence-decline${timestamp}`;
-    const headingStyleName = `consebit-prefrence-heading-${timestamp}`;
-    ///////////////////////////////////////////////////////////////////
-    const checkboxContainerStyleName = `consentbit-toggle-${timestamp}`;
-    const changeprefrencediv = `consentbit-change-prefrence-${timestamp}`
+    const preferenceDiv = `consentbit-preference-div`;
+    const paragraphStyleNames = `consentbit-prefrence-text`;
+    const formfield = `consentbit-formblock`
+    const preferenceblock = `consentbit-prefrence-block`
+    const toggledivs = `consentbit-prefrence-toggle`
+    const buttonContainerStyleName = `consentbit-prefrence-container`;
+    const prefrenceButton = `consentbit-button-preference`
+    const checkboxlabeltextstyle = `consentbit-checkbox-label`
+    const buttonStyleName = `consebit-prefrence-accept`;
+    const DeclinebuttonStyleName = `consentbit-prefrence-decline`;
+    const headingStyleName = `consebit-prefrence-heading`;
+    const checkboxContainerStyleName = `consentbit-toggle`;
+    const changepreference = `consentbit-change-preference-${timestamp}`
 
     const divStyle = await webflow.createStyle(preferenceDiv);
     const paragraphStyle = await webflow.createStyle(paragraphStyleNames);
@@ -132,26 +126,34 @@ const createCookiePreferences = async (selectedPreferences: string[], language: 
     const togglediv = await webflow.createStyle(toggledivs)
     const buttonContainerStyle = await webflow.createStyle(buttonContainerStyleName);
     const checkboxContainerStyle = await webflow.createStyle(checkboxContainerStyleName);
-
     const checkboxlabeltext = await webflow.createStyle(checkboxlabeltextstyle)
     const buttonStyle = await webflow.createStyle(buttonStyleName);
     const declinebutton = await webflow.createStyle(DeclinebuttonStyleName)
     const prefrenceButtons = await webflow.createStyle(prefrenceButton)
     const headingStyle = await webflow.createStyle(headingStyleName);
-    const changepre = await webflow.createStyle(changeprefrencediv)
+    const changepre = await webflow.createStyle(changepreference)
 
-    console.log("✅ Created new styles:", preferenceDiv, paragraphStyleNames, buttonContainerStyleName, buttonStyleName, headingStyleName);
 
     const collection = await webflow.getDefaultVariableCollection();
     const webflowBlue = await collection?.createColorVariable("Webflow Blue", "rgba(255, 255, 255, 1)");
-    const webflowBlueValue = (webflowBlue as any)?.value || "rgba(255, 255, 255, 1)";
+
+    const animationAttributeMap = {
+      "fade": "fade",
+      "slide-up": "slide-up",
+      "slide-down": "slide-down",
+      "slide-left": "slide-left",
+      "slide-right": "slide-right",
+      "select": "select", // No attribute if "select"
+    };
+
+    const animationAttribute = animationAttributeMap[animation] || "";
 
     const divPropertyMap: Record<string, string> = {
       "background-color": color,
-      "height": "510px",
-      "width": "435px",
+      "max-height": "510px",
+      "max-width": "435px",
       "position": "fixed",
-      "z-index": "9999",
+      "z-index": "99999",
       "top": "50%",
       "left": "50%",
       "transform": "translate(-50%, -50%)",
@@ -167,6 +169,13 @@ const createCookiePreferences = async (selectedPreferences: string[], language: 
       "padding-left": "20px",
       "box-shadow": "2px 2px 20px rgba(0, 0, 0, 0.51)",
     };
+
+      const responsivePropertyMap: Record<string, string> = {
+        "max-width": "100%", 
+        "width":"100%"
+
+      };
+      const responsiveOptions = { breakpoint: "medium" } as BreakpointAndPseudo;
 
     const paragraphPropertyMap: Record<string, string> = {
       "color": paraColor,
@@ -212,7 +221,7 @@ const createCookiePreferences = async (selectedPreferences: string[], language: 
     };
 
     const buttonPropertyMap: Record<string, string> = {
-      "border-radius": "48px",
+      "border-radius": `${buttonRadius}px`,
       "cursor": "pointer",
       "background-color": secondcolor,
       "margin-left": "5px",
@@ -221,7 +230,7 @@ const createCookiePreferences = async (selectedPreferences: string[], language: 
     };
 
     const declineButtonPropertyMap: Record<string, string> = {
-      "border-radius": "48px",
+      "border-radius": `${buttonRadius}px`,
       "cursor": "pointer",
       "background-color": btnColor,
       "color": "rgba(72, 57, 153, 1)",
@@ -248,11 +257,20 @@ const createCookiePreferences = async (selectedPreferences: string[], language: 
     };
 
     const changepreferencePropertyMap: Record<string, string> = {
-      "color": "rgba(72, 57, 153, 1)",
-      "font-size": "18px",
-      "font-weight": "500",
-    };
-
+      "height": "65px",
+      "width": "65px",
+      "border-radius": "50%",
+      "background-image": "url('https://cdn.prod.website-files.com/6409f0703d2118edcd3ea560/67b8b29754766de084052c4b_88228154495.png')",
+      "background-size": "cover",
+      "box-shadow": "2px 2px 20px rgba(0, 0, 0, 0.51)",
+      "position": "fixed",
+      "z-index": "999",
+      "bottom": "3%",
+      "left": "2%",
+      "cursor": "pointer",
+      "background-position-x": "50%",
+      "background-position-y": "50%"
+  };
 
 
     const formPropertyMap: Record<string, string> = {
@@ -266,6 +284,8 @@ const createCookiePreferences = async (selectedPreferences: string[], language: 
 
 
     await divStyle.setProperties(divPropertyMap);
+    await divStyle.setProperties(responsivePropertyMap, responsiveOptions);
+
     await paragraphStyle.setProperties(paragraphPropertyMap);
     await prefrenceDiv.setProperties(prefrencePropertyMap)
     await togglediv.setProperties(setTooglePropertyMap)
@@ -279,11 +299,15 @@ const createCookiePreferences = async (selectedPreferences: string[], language: 
     await changepre.setProperties(changepreferencePropertyMap)
 
     await headingStyle.setProperties(headingPropertyMap);
-    console.log("✅ Style properties set for all elements");
 
     if (newDiv.setStyles) {
       await newDiv.setStyles([divStyle]);
-      console.log("✅ Div styles applied successfully!");
+    }
+
+    if (newDiv.setCustomAttribute) {
+      await newDiv.setCustomAttribute("data-animation", animationAttribute);
+    } else {
+      console.error("❌ setCustomAttribute method not available on newDiv element");
     }
 
     try {
@@ -293,11 +317,9 @@ const createCookiePreferences = async (selectedPreferences: string[], language: 
       }
       if (tempHeading.setStyles) {
         await tempHeading.setStyles([headingStyle]);
-        console.log("✅ Heading styles applied!");
       }
       if (tempHeading.setTextContent) {
         await tempHeading.setTextContent(translations[language as keyof typeof translations].heading);
-        console.log("✅ Heading text set via setText!");
       } else {
         console.error("❌ setText method not available on heading element");
       }
@@ -309,12 +331,10 @@ const createCookiePreferences = async (selectedPreferences: string[], language: 
 
       if (tempParagraph.setStyles) {
         await tempParagraph.setStyles([paragraphStyle]);
-        console.log("✅ Paragraph styles applied!");
       }
 
       if (tempParagraph.setTextContent) {
         await tempParagraph.setTextContent(translations[language as keyof typeof translations].description);
-        console.log("✅ Paragraph text set via setText!");
       } else {
         console.error("❌ setText method not available on paragraph element");
       }
@@ -389,7 +409,6 @@ const createCookiePreferences = async (selectedPreferences: string[], language: 
           throw new Error(`Failed to create wrapper div for ${section.label}`);
         }
 
-        // ✅ FIRST: Create preference container inside the wrapperDiv
         const prefrenceContainertoggle = await wrapperDiv.append(webflow.elementPresets.DivBlock);
         if (!prefrenceContainertoggle) {
           throw new Error(`Failed to create div block for ${section.label}`);
@@ -406,10 +425,8 @@ const createCookiePreferences = async (selectedPreferences: string[], language: 
         if (toggleParagraph.setTextContent) {
           await toggleParagraph.setTextContent(section.label);
         } else {
-          console.error(`❌ setTextContent method not available on paragraph element for ${section.label}`);
         }
 
-        // ✅ Add Checkbox Field inside the preference container
         const checkboxField = await prefrenceContainertoggle.append(webflow.elementPresets.FormCheckboxInput);
         console.log("the checkboxxxxxxxxxxxxxxxxxxxx", checkboxField);
 
@@ -426,32 +443,39 @@ const createCookiePreferences = async (selectedPreferences: string[], language: 
 
           if (child.type.includes("Label") && child.setTextContent) {
             await child.setTextContent(".");
-
-            console.log(`✅ Checkbox label set to "Essential".`);
           }
         }
+
+        for (const child of children) {
+          console.log("Child type:", child.type);
+          console.log("Child type:", child);
+
+
+          if (child.type.includes("FormCheckboxInput") && child.setCustomAttribute) {
+            await child.setCustomAttribute("data-consent-id", section.id);
+            // await child.setStyles([checkboxContainerStyle]);
+          }
+        }
+
 
         // ✅ Set the ID for the checkbox
         if (checkboxField.setDomId) {
           await checkboxField.setDomId(section.id);
-          console.log(`✅ Checkbox ID set: #${section.id}`);
         } else {
           console.error(`❌ setDomId method not available on checkbox element for ${section.label}`);
         }
 
-        // ✅ Ensure "Essential" checkbox is always checked and disabled
+
         if (section.checked) {
           if (checkboxField.setCustomAttribute) {
             await checkboxField.setCustomAttribute("checked", "true");
             await checkboxField.setCustomAttribute("disabled", "true");
 
-            console.log(`✅ "${section.label}" checkbox is always checked and disabled.`);
           } else {
             console.error(`❌ setCustomAttribute method not available on checkbox element for ${section.label}`);
           }
         }
 
-        // ✅ SECOND: Now add the paragraph inside the wrapperDiv (AFTER the checkbox)
         const wrapperParagraph = await wrapperDiv.append(webflow.elementPresets.Paragraph);
         if (!wrapperParagraph) {
           throw new Error(`Failed to create wrapper paragraph for ${section.label}`);
@@ -468,206 +492,7 @@ const createCookiePreferences = async (selectedPreferences: string[], language: 
           console.error(`❌ setTextContent method not available on wrapper paragraph for ${section.label}`);
         }
 
-        console.log(`✅ Successfully added section: ${section.label}`);
       }
-
-
-      // ... (rest of the code above, including checkbox creation)///////////////////////////////////////
-      // try {
-      //   const codeBlockElement = webflow.elementPresets.HtmlEmbed;
-      //   console.log(`codeBlockElement`,codeBlockElement);
-
-      //   if (!codeBlockElement || !codeBlockElement.create) {
-      //       throw new Error("❌ Failed to create HTML embed element or create function is missing.");
-      //   }
-
-      //   const createdEmbed = codeBlockElement.create({ id: codeBlockElement.id });
-      //   console.log(`createdEmbed: ${createdEmbed}`);
-
-      //   if (!createdEmbed) {
-      //       throw new Error("❌ Failed to create a new HTML embed element.");
-      //   }
-
-      //   console.log(`newDiv before append: ${newDiv}`);
-      //   await newDiv.append(createdEmbed);
-      //   console.log(`newDiv after append: ${newDiv}`);
-      //   console.log(`newDiv.children after append: ${newDiv.children}`);
-
-      //   await new Promise((resolve) => setTimeout(resolve, 100));
-
-      //   console.log(`newDiv.children: ${JSON.stringify(newDiv.children)}`);
-      //   const newEmbed = newDiv.children[newDiv.children.length - 1] as any;
-
-      //   if (!newEmbed) {
-      //       throw new Error("❌ Failed to retrieve the newly appended HTML embed element.");
-      //   }
-
-      //   console.log("✅ Successfully created and appended newEmbed:", newEmbed);
-      //   console.log("🔍 Available properties in newEmbed:", Object.keys(newEmbed || {}));
-      //   console.log("newEmbed.setHtml:", newEmbed.setHtml);
-
-      //   const cssStyles = `
-      //   <style>
-      //       .consentbit-toggle-${timestamp} { ... }
-      //       ...
-      //   </style>
-      //   `;
-
-      //   console.log(`cssStyles: ${cssStyles}`);
-
-      //   if (typeof newEmbed.setHtml === "function") {
-      //       await newEmbed.setHtml(cssStyles.replace(/{{timestamp}}/g, timestamp.toString()));
-      //       console.log("✅ Successfully added CSS styles using setHtml.");
-      //   } else {
-      //       console.warn("⚠️ setHtml method not found. Using innerHTML fallback.");
-      //       newEmbed.innerHTML = cssStyles.replace(/{{timestamp}}/g, timestamp.toString());
-      //   }
-
-      // } catch (error) {
-      //   console.error("❌ An error occurred:", error);
-      // }
-
-
-
-      // // Create a code block element for CSS
-
-
-      // // Generate the CSS with timestamp replacement
-      // const cssCode = `
-      // <style>
-      //     .consentbit-toggle-${timestamp} {
-      //         position: relative;
-      //         display: inline-block;
-      //         width: 60px;
-      //         height: 34px;
-      //     }
-
-      //     .consentbit-toggle-${timestamp} .w-checkbox-input {
-      //         opacity: 0;
-      //         width: 0;
-      //         height: 0;
-      //     }
-
-      //     .consentbit-toggle-${timestamp} .w-form-label {
-      //         position: absolute;
-      //         cursor: pointer;
-      //         top: 0;
-      //         left: 0;
-      //         right: 0;
-      //         bottom: 0;
-      //         background-color: #ccc;
-      //         border-radius: 34px;
-      //         transition: .4s;
-      //     }
-
-      //     .consentbit-toggle-${timestamp} .w-form-label:before {
-      //         position: absolute;
-      //         content: "";
-      //         height: 26px;
-      //         width: 26px;
-      //         left: 4px;
-      //         bottom: 4px;
-      //         background-color: white;
-      //         border-radius: 50%;
-      //         transition: .4s;
-      //     }
-
-      //     .consentbit-toggle-${timestamp} .w-checkbox-input:checked + .w-form-label {
-      //         background-color: #4A00E0;
-      //     }
-
-      //     .consentbit-toggle-${timestamp} .w-checkbox-input:checked + .w-form-label:before {
-      //         transform: translateX(26px);
-      //     }
-      // </style>
-      // `;
-
-      // Set the code block content
-      // if (codeBlockElement.setCode) {
-      //     await codeBlockElement.setCode(cssCode);
-      //     console.log("✅ Code block element added with CSS.");
-      // } else {
-      //     console.error("❌ setCode method not available on code block element");
-      // }
-
-      // ... (rest of the code below)
-//       const codeBlockElement = webflow.elementPresets.HtmlEmbed;
-//       console.log(`codeBlockElement`, codeBlockElement);
-
-//       const newHtmlEmbed = await selectedElement.before(codeBlockElement);
-//       if (!newHtmlEmbed) {
-//         console.error("❌ Failed to create HTML Embed.");
-//         webflow.notify({ type: "error", message: "Failed to create HTML Embed." });
-//         return;
-//       }
-//       console.log("✅ New HTML Embed created:", newHtmlEmbed);
-
-//       const cssContent = `
-//   <style>
-//     .consentbit-toggle-${timestamp} {
-//       position: relative;
-//       display: inline-block;
-//       width: 60px;
-//       height: 34px;
-//     }
-//     .consentbit-toggle-${timestamp} .w-checkbox-input {
-//       opacity: 0;
-//       width: 0;
-//       height: 0;
-//     }
-//     .consentbit-toggle-${timestamp} .w-form-label {
-//       position: absolute;
-//       cursor: pointer;
-//       top: 0;
-//       left: 0;
-//       right: 0;
-//       bottom: 0;
-//       background-color: #ccc;
-//       border-radius: 34px;
-//       transition: .4s;
-//     }
-//     .consentbit-toggle-${timestamp} .w-form-label:before {
-//       position: absolute;
-//       content: "";
-//       height: 26px;
-//       width: 26px;
-//       left: 4px;
-//       bottom: 4px;
-//       background-color: white;
-//       border-radius: 50%;
-//       transition: .4s;
-//     }
-//     .consentbit-toggle-${timestamp} .w-checkbox-input:checked + .w-form-label {
-//       background-color: #4A00E0;
-//     }
-//     .consentbit-toggle-${timestamp} .w-checkbox-input:checked + .w-form-label:before {
-//       transform: translateX(26px);
-//     }
-//   </style>
-// `;
-
-//       // Attempt JavaScript Injection (if applicable and preferred)
-//       try {
-//         const scriptContent = `
-//     const style = document.createElement('style');
-//     style.textContent = \`${cssContent}\`;
-//     document.head.appendChild(style);
-//   `;
-
-//         if (newHtmlEmbed.setCustomAttribute) {
-//           await newHtmlEmbed.setCustomAttribute("data-script", scriptContent); // use custom attribute to store javascript.
-//           console.log("✅ JavaScript injection script set as custom attribute.");
-//         } else {
-//           console.error("❌ setCustomAttribute method not available.");
-//           webflow.notify({ type: "error", message: "Failed to set JavaScript injection script." });
-//         }
-
-//       } catch (javascriptError) {
-//         console.error("❌ JavaScript injection failed:", javascriptError);
-//         webflow.notify({ type: "error", message: "JavaScript injection failed." });
-//       }
-
-
 
       //////////////////////
       const prefrenceContainerinner = await selectedElement.before(webflow.elementPresets.DivBlock);
@@ -675,6 +500,17 @@ const createCookiePreferences = async (selectedPreferences: string[], language: 
         throw new Error("Failed to create button container");
       }
       await prefrenceContainerinner.setStyles([prefrenceDiv]);
+
+      const mainDivBlocks = await selectedElement.before(webflow.elementPresets.DivBlock);
+      console.log("mainDivBlock:", mainDivBlocks);
+      await mainDivBlocks.setStyles([changepre])
+
+      
+      if ((mainDivBlocks as any).setDomId) {
+          await (mainDivBlocks as any).setDomId("toggle-consent-btn"); // Type assertion
+      } else {
+          console.error("ccpa banner id setteled");
+      }
 
       ////////////////////////////////////////////////////////////////////////////////////////
       const buttonContainer = await selectedElement.before(webflow.elementPresets.DivBlock);
@@ -693,9 +529,7 @@ const createCookiePreferences = async (selectedPreferences: string[], language: 
 
       if ((acceptButton as any).setDomId) {
         await (acceptButton as any).setDomId("save-preferences-btn"); // Type assertion
-        console.log("✅ prefrence button ID set to #simple-accept");
       } else {
-        console.error("❌ setDomId method not available on accept button element");
       }
 
       const declineButton = await selectedElement.before(webflow.elementPresets.Button);
@@ -708,7 +542,6 @@ const createCookiePreferences = async (selectedPreferences: string[], language: 
 
       if ((declineButton as any).setDomId) {
         await (declineButton as any).setDomId("cancel-btn"); // Type assertion
-        console.log("✅ prefrence button ID set to #simple-accept");
       } else {
         console.error("❌ setDomId method not available on accept button element");
       }
@@ -719,7 +552,6 @@ const createCookiePreferences = async (selectedPreferences: string[], language: 
         await newDiv.append(tempParagraph);
         await newDiv.append(prefrenceContainer)
         await newDiv.append(buttonContainer);
-        console.log("✅ Appended heading, paragraph, and button container to div!");
 
         if (prefrenceContainer.append && prefrenceContainerinner) {
           // await prefrenceContainer.append(prefrenceContainertoggle)
@@ -735,7 +567,6 @@ const createCookiePreferences = async (selectedPreferences: string[], language: 
           await buttonContainer.append(acceptButton);
           await buttonContainer.append(declineButton);
           await buttonContainer.append(prefrenceButton)
-          console.log("✅ Appended accept and decline buttons to button container!");
         } else {
           console.error("❌ Failed to append buttons to the button container.");
         }
@@ -744,28 +575,25 @@ const createCookiePreferences = async (selectedPreferences: string[], language: 
       }
 
 
+      // const mainDivBlocks = await selectedElement.before(webflow.elementPresets.DivBlock);
+      // console.log("mainDivBlock:", mainDivBlocks);
+      // await mainDivBlocks.setStyles([changepre])
 
-      const mainDivBlock = await selectedElement.before(webflow.elementPresets.DivBlock);
-      console.log("mainDivBlock:", mainDivBlock);
-      await mainDivBlock.setStyles([changepre])
+      // if (!mainDivBlocks) {
+      //     throw new Error("Failed to create main div block");
+      // }
 
-      if ((mainDivBlock as any).setDomId) {
-        await (mainDivBlock as any).setDomId("toggle-consent-btn"); // Type assertion
-        console.log("✅ prefrence button ID set to #simple-accept");
-      } else {
-        console.error("❌ setDomId method not available on accept button element");
-      }
+      // if ((mainDivBlocks as any).setDomId) {
+      //     await (mainDivBlocks as any).setDomId("toggle-consent-btn"); // Type assertion
+      //     console.log("✅ prefrence button ID set to #simple-accept");
+      // } else {
+      //     console.error("ccpa banner id setteled");
+      // }
 
-      const linkBlock = (await mainDivBlock.append(webflow.elementPresets.LinkBlock)) as any;
-
-      const changepara = await selectedElement.before(webflow.elementPresets.Paragraph)
-      await changepara.setTextContent("Change Preference")
-
-      if (linkBlock.append && changepara) {
-        await linkBlock.append(changepara)
-      }
 
       console.log("🎉 Cookie consent banner successfully created!");
+
+      
 
       ////////////////////////////////////change prefrence
 

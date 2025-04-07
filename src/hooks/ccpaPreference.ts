@@ -27,9 +27,8 @@ const ccpaTranslations = {
 };
 
 
-const createCookieccpaPreferences = async (language: string = "English") => {
+const createCookieccpaPreferences = async (language: string = "English" ,  color: string = "#ffffff", btnColor: string = "#F1F1F1", headColor: string = "#483999", paraColor: string = "#1F1D40", secondcolor: string = "secondcolor" , buttonRadius: number, animation: string) => {
     try {
-        console.log("🟢 Button clicked!");
 
         const selectedElement = await webflow.getSelectedElement();
         if (!selectedElement) {
@@ -37,7 +36,6 @@ const createCookieccpaPreferences = async (language: string = "English") => {
             webflow.notify({ type: "error", message: "No element selected in the Designer." });
             return;
         }
-        console.log("✅ Selected element:", selectedElement);
 
         const newDiv = await selectedElement.before(webflow.elementPresets.DivBlock);
         if (!newDiv) {
@@ -45,11 +43,9 @@ const createCookieccpaPreferences = async (language: string = "English") => {
             webflow.notify({ type: "error", message: "Failed to create div." });
             return;
         }
-        console.log("✅ New div created:", newDiv);
 
         if ((newDiv as any).setDomId) {
             await (newDiv as any).setDomId("main-consent-banner"); // Type assertion
-            console.log("✅ prefrence button ID set to #simple-accept");
         } else {
             console.error("❌ setDomId method not available on accept button element");
         }
@@ -86,17 +82,28 @@ const createCookieccpaPreferences = async (language: string = "English") => {
         const webflowBlue = await collection?.createColorVariable("Webflow Blue", "rgba(255, 255, 255, 1)");
         const webflowBlueValue = (webflowBlue as any)?.value || "rgba(255, 255, 255, 1)";
 
+        const animationAttributeMap = {
+            "fade": "fade",
+            "slide-up": "slide-up",
+            "slide-down": "slide-down",
+            "slide-left": "slide-left",
+            "slide-right": "slide-right",
+            "select": "select", // No attribute if "select"
+        };
+      
+        const animationAttribute = animationAttributeMap[animation] || "";
+
         const divPropertyMap: Record<string, string> = {
-            "background-color": webflowBlueValue,
+            "background-color": color,
             "height": "310px",
             "width": "435px",
             "position": "fixed",
-            "z-index": "9999",
+            "z-index": "99999",
             "top": "50%",
             "left": "50%",
             "transform": "translate(-50%, -50%)",
             "border-radius": "12px",
-            "display": "flex",
+            "display": "none",
             "flex-direction": "column",
             "overflow-y": "scroll",
             "align-items": "center",
@@ -110,7 +117,7 @@ const createCookieccpaPreferences = async (language: string = "English") => {
         };
 
         const paragraphPropertyMap: Record<string, string> = {
-            "color": "rgba(25, 25, 25, 1)",
+            "color": paraColor,
             "font-size": "14px",
             "font-weight": "400",
             "line-height": "1.5",
@@ -152,7 +159,7 @@ const createCookieccpaPreferences = async (language: string = "English") => {
         const buttonPropertyMap: Record<string, string> = {
             "border-radius": "48px",
             "cursor": "pointer",
-            "background-color": "rgba(72, 57, 153, 1)",
+            "background-color": secondcolor,
             "margin-left": "5px",
             "margin-right": "5px",
             "min-width": "80px",
@@ -161,7 +168,7 @@ const createCookieccpaPreferences = async (language: string = "English") => {
         const declineButtonPropertyMap: Record<string, string> = {
             "border-radius": "48px",
             "cursor": "pointer",
-            "background-color": "rgba(241, 241, 241, 1)",
+            "background-color": btnColor,
             "color": "rgba(72, 57, 153, 1)",
             "margin-left": "5px",
             "margin-right": "5px",
@@ -170,7 +177,7 @@ const createCookieccpaPreferences = async (language: string = "English") => {
 
 
         const headingPropertyMap: Record<string, string> = {
-            "color": "rgba(72, 57, 153, 1)",
+            "color":headColor,
             "font-size": "20px",
             "font-weight": "500",
             "text-align": "left",
@@ -180,16 +187,16 @@ const createCookieccpaPreferences = async (language: string = "English") => {
         };
 
         const changepreferencePropertyMap: Record<string, string> = {
-            "height": "86px",
-            "width": "89px",
+            "height": "65px",
+            "width": "65px",
             "border-radius": "50%",
             "background-image": "url('https://cdn.prod.website-files.com/6409f0703d2118edcd3ea560/67b8b29754766de084052c4b_88228154495.png')",
             "background-size": "cover",
             "box-shadow": "2px 2px 20px rgba(0, 0, 0, 0.51)",
             "position": "fixed",
             "z-index": "999",
-            "top": "85%",
-            "left": "3%",
+            "bottom": "3%",
+            "left": "2%",
             "cursor": "pointer",
             "background-position-x": "50%",
             "background-position-y": "50%"
@@ -226,11 +233,15 @@ const createCookieccpaPreferences = async (language: string = "English") => {
         await prefrenceButtons.setProperties(declineButtonPropertyMap)
         await checkbosstyle.setProperties(checkboxStyleMap)
         await headingStyle.setProperties(headingPropertyMap);
-        console.log("✅ Style properties set for all elements");
 
         if (newDiv.setStyles) {
             await newDiv.setStyles([divStyle]);
-            console.log("✅ Div styles applied successfully!");
+        }
+
+        if (newDiv.setCustomAttribute) {
+            await newDiv.setCustomAttribute("data-animation", animationAttribute);
+        } else {
+            console.error("❌ setCustomAttribute method not available on newDiv element");
         }
 
         try {
@@ -240,11 +251,9 @@ const createCookieccpaPreferences = async (language: string = "English") => {
             }
             if (tempHeading.setStyles) {
                 await tempHeading.setStyles([headingStyle]);
-                console.log("✅ Heading styles applied!");
             }
             if (tempHeading.setTextContent) {
                 await tempHeading.setTextContent(ccpaTranslations[language as keyof typeof ccpaTranslations].heading);
-                console.log("✅ Heading text set via setText!");
             } else {
                 console.error("❌ setText method not available on heading element");
             }
@@ -256,7 +265,6 @@ const createCookieccpaPreferences = async (language: string = "English") => {
 
             if (tempParagraph.setStyles) {
                 await tempParagraph.setStyles([paragraphStyle]);
-                console.log("✅ Paragraph styles applied!");
             }
 
             if (tempParagraph.setTextContent) {
@@ -311,7 +319,6 @@ const createCookieccpaPreferences = async (language: string = "English") => {
             // Apply styles and text to paragraph
             if (toggleParagraph.setStyles) {
                 await toggleParagraph.setStyles([paragraphStyle]);
-                console.log("✅ Paragraph styles applied!");
             }
 
             if (toggleParagraph.setTextContent) {
@@ -344,7 +351,6 @@ const createCookieccpaPreferences = async (language: string = "English") => {
 
             if ((checkboxField as any).setDomId) {
                 await (checkboxField as any).setDomId("do-not-share-checkbox"); // Type assertion
-                console.log("✅ prefrence button ID set to #simple-accept");
             } else {
                 console.error("ccpa banner id setteled");
             }
@@ -356,7 +362,6 @@ const createCookieccpaPreferences = async (language: string = "English") => {
 
                 if (child.type.includes("Label") && child.setTextContent) {
                     await child.setTextContent(".");
-                    console.log(`✅ Checkbox label set to "Essential".`);
                 }
             }
 
@@ -386,7 +391,6 @@ const createCookieccpaPreferences = async (language: string = "English") => {
 
             if ((acceptButton as any).setDomId) {
                 await (acceptButton as any).setDomId("save-btn"); // Type assertion
-                console.log("✅ prefrence button ID set to #simple-accept");
             } else {
                 console.error("❌ setDomId method not available on accept button element");
             }
@@ -401,7 +405,6 @@ const createCookieccpaPreferences = async (language: string = "English") => {
 
             if ((declineButton as any).setDomId) {
                 await (declineButton as any).setDomId("close-consent-banner"); // Type assertion
-                console.log("✅ prefrence button ID set to #simple-accept");
             } else {
                 console.error("❌ setDomId method not available on accept button element");
             }
@@ -419,7 +422,6 @@ const createCookieccpaPreferences = async (language: string = "English") => {
                 await newDiv.append(tempParagraph);
                 await newDiv.append(prefrenceContainer)
                 await newDiv.append(buttonContainer);
-                console.log("✅ Appended heading, paragraph, and button container to div!");
 
                 if (prefrenceContainer.append && prefrenceContainerinner) {
                     // await prefrenceContainer.append(prefrenceContainertoggle)
@@ -434,17 +436,13 @@ const createCookieccpaPreferences = async (language: string = "English") => {
                 if (buttonContainer.append && acceptButton && declineButton) {
                     await buttonContainer.append(acceptButton);
                     await buttonContainer.append(declineButton);
-                    console.log("✅ Appended accept and decline buttons to button container!");
                 } else {
                     console.error("❌ Failed to append buttons to the button container.");
                 }
             } else {
                 console.error("❌ Failed to append elements to the main div.");
             }
-
             console.log("🎉 Cookie consent banner successfully created!");
-
-
 
             const mainDivBlock = await selectedElement.before(webflow.elementPresets.DivBlock);
             console.log("mainDivBlock:", mainDivBlock);
@@ -456,106 +454,9 @@ const createCookieccpaPreferences = async (language: string = "English") => {
 
             if ((mainDivBlock as any).setDomId) {
                 await (mainDivBlock as any).setDomId("toggle-consent-btn"); // Type assertion
-                console.log("✅ prefrence button ID set to #simple-accept");
             } else {
                 console.error("ccpa banner id setteled");
             }
-
-            // const linkBlock = (await mainDivBlock.append(webflow.elementPresets.LinkBlock)) as any;
-
-            // const imageBlock = await linkBlock.append(webflow.elementPresets.Image);
-            // console.log("imageBlock:", imageBlock);
-
-            // if (!imageBlock) {
-            //     throw new Error("Failed to create image block");
-            // }
-            // await imageBlock.setStyles([changepre])
-
-
-            // // await imageBlock.setAsset({
-            // //     url: "https://cdn.prod.website-files.com/6409f0703d2118edcd3ea560/67b8b29754766de084052c4b_88228154495.png",
-            // //     alt: "Preferences Icon"
-            // // });
-
-            // // await imageBlock.setAltText("Preferences Icon");
-
-            // // const retrievedAsset = await imageBlock.getAsset();
-            // // console.log("Retrieved asset:", retrievedAsset);
-
-            // const assetData = {
-            //     url: "https://cdn.prod.website-files.com/6409f0703d2118edcd3ea560/67b8b29754766de084052c4b_88228154495.png",
-            //     fileName: "preferences-icon.png",
-            //     contentType: "image/png",
-            //     width: 140,
-            //     height: 140,
-            //     fileSize: 403
-            // };
-
-            // // Try setting the asset with full metadata
-            // await imageBlock.setAsset(assetData);
-            // await imageBlock.setAltText("Preferences Icon");
-
-            //             const imageBlock = await linkBlock.append(webflow.elementPresets.Image);
-            // if (!imageBlock) {
-            //     throw new Error("Failed to create image block");
-            // }
-
-            // try {
-            //     await imageBlock.setStyles([changepre]);
-
-            //     // First, create an asset reference
-            //     const assetData = {
-            //         url: "https://cdn.prod.website-files.com/6409f0703d2118edcd3ea560/67b8b29754766de084052c4b_88228154495.png",
-            //         fileName: "preferences-icon.png",
-            //         contentType: "image/png",
-            //         width: 140,
-            //         height: 140,
-            //         fileSize: 403
-            //     };
-
-            //     // Try setting the asset with full metadata
-            //     await imageBlock.setAsset(assetData);
-            //     await imageBlock.setAltText("Preferences Icon");
-
-            //     // Set additional attributes
-            //     await imageBlock.setCustomAttribute("loading", "lazy");
-            //     await imageBlock.setCustomAttribute("width", "140");
-            //     await imageBlock.setCustomAttribute("height", "140");
-
-            //     console.log("✅ Image asset set successfully");
-            // } catch (error) {
-            //     console.error("Error setting image asset:", error);
-
-            //     // Fallback to div with background image if the image setting fails
-            //     try {
-            //         const timestamp = Date.now();
-            //         const imageStyleName = `consentbit-image-${timestamp}`;
-            //         const imageStyle = await webflow.createStyle(imageStyleName);
-
-            //         const imageStyles = {
-            //             "background-image": "url('https://cdn.prod.website-files.com/6409f0703d2118edcd3ea560/67b8b29754766de084052c4b_88228154495.png')",
-            //             "background-size": "contain",
-            //             "background-position": "center",
-            //             "background-repeat": "no-repeat",
-            //             "width": "140px",
-            //             "height": "140px"
-            //         };
-
-            //         await imageStyle.setProperties(imageStyles);
-
-            //         // Remove the image block since it failed
-            //         await imageBlock.remove();
-
-            //         // Create a div instead
-            //         const imageDiv = await linkBlock.append(webflow.elementPresets.DivBlock);
-            //         await imageDiv.setStyles([imageStyle, changepre]);
-
-            //         console.log("✅ Fallback to background image successful");
-            //     } catch (fallbackError) {
-            //         console.error("Fallback also failed:", fallbackError);
-            //     }
-            // }
-
 
         } catch (error) {
             console.error("❌ Error creating cookie banner:", error);
