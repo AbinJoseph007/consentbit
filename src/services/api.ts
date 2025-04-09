@@ -1,7 +1,8 @@
 const base_url = "https://cb-server.web-8fb.workers.dev";
 import { ScriptCategory, SaveCategoriesResponse } from '../types/types';
 import { scriptCategorizationService } from './script-categorization-service';
-import { ClientSecurity } from '../util/Security';
+import { ClientEncryption } from '../util/Secure-Data';
+// import { ClientSecurity } from '../util/Security';
 
 // const base_url = "https://consent-bit-server.web-8fb.workers.dev"
 

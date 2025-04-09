@@ -85,7 +85,7 @@ type BreakpointAndPseudo = {
   pseudoClass: string;
 };
 
-const createCookiePreferences = async (selectedPreferences: string[], language: string = "English", color: string = "#ffffff", btnColor: string = "#F1F1F1", headColor: string = "#483999", paraColor: string = "#1F1D40", secondcolor: string = "secondcolor", buttonRadius: number, animation: string) => {
+const createCookiePreferences = async (selectedPreferences: string[], language: string = "English", color: string = "#ffffff", btnColor: string = "#F1F1F1", headColor: string = "#483999", paraColor: string = "#1F1D40", secondcolor: string = "secondcolor", buttonRadius: number, animation: string ,customToggle: boolean ) => {
   try {
 
     const selectedElement = await webflow.getSelectedElement();
@@ -162,7 +162,7 @@ const createCookiePreferences = async (selectedPreferences: string[], language: 
       "left": "50%",
       "transform": "translate(-50%, -50%)",
       "border-radius": "12px",
-      "display": "flex",
+      "display": "none",
       "flex-direction": "column",
       "align-items": "center",
       "justify-content": "flex-start",
@@ -179,7 +179,7 @@ const createCookiePreferences = async (selectedPreferences: string[], language: 
         "width":"100%"
 
       };
-      const responsiveOptions = { breakpoint: "medium" } as BreakpointAndPseudo;
+      const responsiveOptions = { breakpoint: "small" } as BreakpointAndPseudo;
 
     const paragraphPropertyMap: Record<string, string> = {
       "color": paraColor,
@@ -261,12 +261,12 @@ const createCookiePreferences = async (selectedPreferences: string[], language: 
     };
 
     const changepreferencePropertyMap: Record<string, string> = {
-      "height": "65px",
-      "width": "65px",
+      "height": "55px",
+      "width": "55px",
       "border-radius": "50%",
-      "background-image": "url('https://cdn.prod.website-files.com/6409f0703d2118edcd3ea560/67b8b29754766de084052c4b_88228154495.png')",
+      "background-image": "url('https://cdn.prod.website-files.com/63d5330e6841081487be0bd6/67ebf5ee639d12979361f2bc_consent.png')",
       "background-size": "cover",
-      "box-shadow": "2px 2px 20px rgba(0, 0, 0, 0.51)",
+      // "box-shadow": "2px 2px 20px rgba(0, 0, 0, 0.51)",
       "position": "fixed",
       "z-index": "999",
       "bottom": "3%",
@@ -470,15 +470,14 @@ const createCookiePreferences = async (selectedPreferences: string[], language: 
         }
 
 
-        if (section.checked) {
+     
           if (checkboxField.setCustomAttribute) {
-            await checkboxField.setCustomAttribute("checked", "true");
-            await checkboxField.setCustomAttribute("disabled", "true");
+            await checkboxField.setCustomAttribute("customtoggle", customToggle ? "true" : "false");
 
           } else {
             console.error(`❌ setCustomAttribute method not available on checkbox element for ${section.label}`);
           }
-        }
+        
 
         const wrapperParagraph = await wrapperDiv.append(webflow.elementPresets.Paragraph);
         if (!wrapperParagraph) {
@@ -511,7 +510,8 @@ const createCookiePreferences = async (selectedPreferences: string[], language: 
 
       
       if ((mainDivBlocks as any).setDomId) {
-          await (mainDivBlocks as any).setDomId("toggle-consent-btn"); // Type assertion
+        await mainDivBlocks.setCustomAttribute("scroll-control","true");
+        await (mainDivBlocks as any).setDomId("toggle-consent-btn"); // Type assertion
       } else {
           console.error("ccpa banner id setteled");
       }

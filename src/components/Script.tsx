@@ -223,13 +223,17 @@ const Script: React.FC<{
                                                 />
                                                 <span className="slider"></span>
                                                 <span className="category-label">{category}</span>
-                                                <img src={questionmark} alt="info" className="tooltip-icon" />
+                                                <div className="tooltip-containers">
+                          <img src={questionmark} alt="info" className="tooltip-icon" />
+                          <span className="tooltip-text">For the better user experience use this feature</span>
+                        </div>
                                             </label>
                                         ))}
                                     </div>
                                     <div className="code-block">
                                         <textarea
                                             value={script.fullTag || ''}
+                                            readOnly
                                             onChange={(e) => {
                                                 const newScripts = [...scripts];
                                                 newScripts[index].fullTag = e.target.value;

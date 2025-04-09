@@ -1,6 +1,5 @@
 // src/services/scriptCategorization.ts
 import { ScriptCategory } from '../types/types';
-
 const BASE_URL = "https://cb-server.web-8fb.workers.dev";
 
 export const scriptCategorizationService = {

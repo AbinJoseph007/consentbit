@@ -13,6 +13,9 @@ import webflow, { WebflowAPI } from './types/webflowtypes';
 import { CodeApplication } from "./types/types";
 import createCookiePreferences from "./hooks/gdprPreference";
 import createCookieccpaPreferences from "./hooks/ccpaPreference";
+import usePersistentState from './hooks/usePersistentState'; // Adjust the path as necessary
+import { json } from "stream/consumers";
+
 
 
 type Orientation = "left" | "center" | "right";
@@ -27,40 +30,47 @@ type BreakpointAndPseudo = {
   pseudoClass: string;
 };
 
+type UserData = {
+  firstName: string;
+  email: string;
+  exp: number;
+  sessionToken: string;
+};
+
 const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
-  const [activeTab, setActiveTab] = useState("General Settings");
-  const [expires, setExpires] = useState("");
-  // const [animation, setAnimation] = useState("select");
-  // const [easing, setEasing] = useState("select");
-  const [size, setSize] = useState("16");
-  const [isActive, setIsActive] = useState(false);
-  const [Font, SetFont] = useState("")
-  const [selectedtext, settextSelected] = useState("left");
-  // const [style, setStyle] = useState("align")
-  const [style, setStyle] = useState<BannerStyle>("align");
-  // const [activeMode, setActiveMode] = useState("Simple");
-  const [activeMode, setActiveMode] = useState(() => {
-    const savedMode = localStorage.getItem("activeMode");
-    return savedMode ? JSON.parse(savedMode) : "Simple";
-  });
-  const [selected, setSelected] = useState<Orientation>("right");
-  const [selectedOption, setSelectedOption] = useState("US State laws");
-  const [weight, setWeight] = useState("semibold");
-  // const [language, setLanguage] = useState("English");
-  const [showPopup, setShowPopup] = useState(false);
-  // const [selectedOptions, setSelectedOptions] = useState(["GDPR"]);
-  const [selectedOptions, setSelectedOptions] = useState(() => {
-    const savedOptions = localStorage.getItem("selectedOptions");
-    return savedOptions ? JSON.parse(savedOptions) : ["GDPR"];
-  });
-  const [siteInfo, setSiteInfo] = useState<{ siteId: string; siteName: string; shortName: string } | null>(null);
-  const [accessToken, setAccessToken] = useState<string>('');
-  const [pages, setPages] = useState([]);
-  const [fetchScripts, setFetchScripts] = useState(false);
-  const [borderRadius, setBorderRadius] = useState(16);
-  // const [buttonRadius, setButtonRadius] = useState(2);
-  const [buttonRadius, setButtonRadius] = useState<number>(2);
-  const [isLoading, setIsLoading] = useState(false);
+  // const [activeTab, setActiveTab] = useState("General Settings");
+  // const [expires, setExpires] = useState("");
+  // // const [animation, setAnimation] = useState("select");
+  // // const [easing, setEasing] = useState("select");
+  // const [size, setSize] = useState("16");
+  // const [isActive, setIsActive] = useState(false);
+  // const [Font, SetFont] = useState("")
+  // const [selectedtext, settextSelected] = useState("left");
+  // // const [style, setStyle] = useState("align")
+  // const [style, setStyle] = useState<BannerStyle>("align");
+  // // const [activeMode, setActiveMode] = useState("Simple");
+  // const [activeMode, setActiveMode] = useState(() => {
+  //   const savedMode = localStorage.getItem("activeMode");
+  //   return savedMode ? JSON.parse(savedMode) : "Simple";
+  // });
+  // const [selected, setSelected] = useState<Orientation>("right");
+  // const [selectedOption, setSelectedOption] = useState("US State laws");
+  // const [weight, setWeight] = useState("semibold");
+  // // const [language, setLanguage] = useState("English");
+  // const [showPopup, setShowPopup] = useState(false);
+  // // const [selectedOptions, setSelectedOptions] = useState(["GDPR"]);
+  // const [selectedOptions, setSelectedOptions] = useState(() => {
+  //   const savedOptions = localStorage.getItem("selectedOptions");
+  //   return savedOptions ? JSON.parse(savedOptions) : ["GDPR"];
+  // });
+  // const [siteInfo, setSiteInfo] = useState<{ siteId: string; siteName: string; shortName: string } | null>(null);
+  // const [accessToken, setAccessToken] = useState<string>('');
+  // const [pages, setPages] = useState([]);
+  // const [fetchScripts, setFetchScripts] = useState(false);
+  // const [borderRadius, setBorderRadius] = useState(16);
+  // // const [buttonRadius, setButtonRadius] = useState(2);
+  // const [buttonRadius, setButtonRadius] = useState<number>(2);
+  // const [isLoading, setIsLoading] = useState(false);
   const [color, setColor] = useState("#ffffff");
   const [bgColor, setBgColor] = useState("#ffffff");
   const [btnColor, setBtnColor] = useState("#F1F1F1");
@@ -68,32 +78,63 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
   const [secondcolor, setSecondcolor] = useState("#483999");
   const [bgColors, setBgColors] = useState("#798EFF");
   const [headColor, setHeadColor] = useState("#483999");
-    const base_url ="https://cb-server.web-8fb.workers.dev"
+
+  const [activeTab, setActiveTab] = usePersistentState("activeTab", "General Settings");
+  const [expires, setExpires] = usePersistentState("expires", "");
+  const [size, setSize] = usePersistentState("size", "16");
+  const [isActive, setIsActive] = usePersistentState("isActive", false);
+  const [Font, SetFont] = usePersistentState("Font", "");
+  const [selectedtext, settextSelected] = usePersistentState("selectedtext", "left");
+  const [style, setStyle] = usePersistentState<BannerStyle>("style", "align");
+  const [activeMode, setActiveMode] = usePersistentState("activeMode", "Simple");
+  const [selected, setSelected] = usePersistentState<Orientation>("selected", "right");
+  const [selectedOption, setSelectedOption] = usePersistentState("selectedOption", "US State laws");
+  const [weight, setWeight] = usePersistentState("weight", "semibold");
+  const [showPopup, setShowPopup] = usePersistentState("showPopup", false);
+  const [selectedOptions, setSelectedOptions] = usePersistentState("selectedOptions", ["GDPR"]);
+  const [siteInfo, setSiteInfo] = usePersistentState<{ siteId: string; siteName: string; shortName: string } | null>("siteInfo", null);
+  const [accessToken, setAccessToken] = usePersistentState<string>("accessToken", '');
+  const [pages, setPages] = usePersistentState("pages", []);
+  const [fetchScripts, setFetchScripts] = usePersistentState("fetchScripts", false);
+  const [borderRadius, setBorderRadius] = usePersistentState("borderRadius", 16);
+  const [buttonRadius, setButtonRadius] = usePersistentState<number>("buttonRadius", 2);
+  const [isLoading, setIsLoading] = usePersistentState("isLoading", false);
+  // const [color, setColor] = usePersistentState("color", "#ffffff");
+  // const [bgColor, setBgColor] = usePersistentState("bgColor", "#ffffff");
+  // const [btnColor, setBtnColor] = usePersistentState("btnColor", "#F1F1F1");
+  // const [paraColor, setParaColor] = usePersistentState("paraColor", "#1F1D40");
+  // const [secondcolor, setSecondcolor] = usePersistentState("secondcolor", "#483999");
+  // const [bgColors, setBgColors] = usePersistentState("bgColors", "#798EFF");
+  // const [headColor, setHeadColor] = usePersistentState("headColor", "#483999");
+  const [userlocaldata, setUserlocaldata] = useState<UserData | null>(null);
+
+  const base_url = "https://cb-server.web-8fb.workers.dev"
   const [isBannerAdded, setIsBannerAdded] = useState(false);
 
 
 
-  // const [toggleStates, setToggleStates] = useState({
-  //   customToggle: false,
-  //   resetInteractions: false,
-  //   disableScroll: false,
-  //   storeConsents: false,
-  //   globalvariable: false,
+  const [toggleStates, setToggleStates] = usePersistentState('toggleStates', {
+    customToggle: false,
+    resetInteractions: false,
+    disableScroll: false,
+    storeConsents: false,
+    globalvariable: false,
+  });
+
+
+  // const [toggleStates, setToggleStates] = useState(() => {
+  //   const savedToggles = localStorage.getItem("toggleStates");
+  //   return savedToggles
+  //     ? JSON.parse(savedToggles)
+  //     : {
+  //         customToggle: false,
+  //         resetInteractions: false,
+  //         disableScroll: false,
+  //         storeConsents: false,
+  //         globalvariable: false,
+  //       };
   // });
 
-  const [toggleStates, setToggleStates] = useState(() => {
-    const savedToggles = localStorage.getItem("toggleStates");
-    return savedToggles
-      ? JSON.parse(savedToggles)
-      : {
-          customToggle: false,
-          resetInteractions: false,
-          disableScroll: false,
-          storeConsents: false,
-          globalvariable: false,
-        };
-  });
-  
 
   // Your default states
   const defaultState = {
@@ -102,9 +143,13 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
     language: "English",
   };
 
-  const [animation, setAnimation] = useState(defaultState.animation);
-  const [easing, setEasing] = useState(defaultState.easing);
-  const [language, setLanguage] = useState(defaultState.language);
+  // const [animation, setAnimation] = useState(defaultState.animation);
+  // const [easing, setEasing] = useState(defaultState.easing);
+  // const [language, setLanguage] = useState(defaultState.language);
+
+  const [animation, setAnimation] = usePersistentState('animation', defaultState.animation);
+  const [easing, setEasing] = usePersistentState('easing', defaultState.easing);
+  const [language, setLanguage] = usePersistentState('language', defaultState.language);
 
   const handleToggle = (toggleName: keyof typeof toggleStates) => {
     setToggleStates((prev) => {
@@ -278,6 +323,18 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
   useEffect(() => {
     const fetchPages = async () => {
       try {
+
+        const localstoragedata = localStorage.getItem("wf_hybrid_user");
+        if (localstoragedata) {
+          try {
+            const parsed = JSON.parse(localstoragedata);
+            console.log("session details", parsed);
+            setUserlocaldata(parsed);
+          } catch (error) {
+            console.error("Invalid JSON in localStorage:", error);
+          }
+        }
+
         console.log("Fetching pages...");
         const pagesAndFolders = await webflow.getAllPagesAndFolders();
         console.log("API Response:", pagesAndFolders);
@@ -336,15 +393,6 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
     fetchPages();
   }, [webflow]);
 
-  //   const handlePageChange = (event) => {
-  //   const pageId = event.target.value;
-  //   if (pageId) {
-  //     // Construct the URL with the pageId
-  //     const url = `https://consentbits-stunning-site.design.webflow.com/?pageId=${pageId}`;
-  //     window.location.href = url; // Navigate to the constructed URL
-  //   }
-  // };
-
   //main function for adding custom code to the head
   const fetchAnalyticsBlockingsScripts = async () => {
     try {
@@ -385,10 +433,10 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
           console.log("Hosting script data:", hostingScript);
           console.log("Site ID:", siteIdinfo.siteId);
           console.log("Token:", tokewern);
-      
+
           const scriptId = hostingScript.result.id;
           const version = hostingScript.result.version;
-          
+
           const params: CodeApplication = {
             targetType: 'site',
             targetId: siteIdinfo.siteId,
@@ -396,14 +444,14 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
             location: 'header',
             version: version
           };
-      
+
           // Log the params being sent
           console.log("Applying script with params:", params);
-      
+
           const applyScriptResponse = await customCodeApi.applyScript(params, tokewern);
           console.log("Script applied successfully:", applyScriptResponse);
-          
-        } 
+
+        }
         catch (error) {
           // More detailed error logging
           console.error("Failed to apply script:", {
@@ -415,18 +463,16 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
               version: hostingScript?.result?.version
             }
           });
-          
-          // You might want to handle the error appropriately here
-          // For example, showing a user-friendly error message
+
           throw error; // or handle it differently based on your needs
         }
       } else {
         console.warn("No hosting script data available");
       }
     }
-      
 
-     catch (error) {
+
+    catch (error) {
       console.error('=== Component Error ===');
       console.error('Error type:', error.constructor.name);
       console.error('Error message:', error.message);
@@ -435,127 +481,9 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
     }
   }
 
-  const ApplyCustomToggle = async () => {
-    try {
-      console.log('=== Component Debug for custom toggle ===');
-      console.log('Starting script registration process');
-
-      const userinfo = localStorage.getItem("wf_hybrid_user");
-      console.log('User info from localStorage:', userinfo ? 'Found' : 'Not found');
-
-      if (!userinfo) {
-        console.error("No user info found");
-        return;
-      }
-
-      const tokenss = JSON.parse(userinfo);
-      console.log('Parsed user info:', {
-        hasSessionToken: !!tokenss.sessionToken,
-        tokenPreview: tokenss.sessionToken ? tokenss.sessionToken : 'No token'
-      });
-
-      const tokewern = tokenss.sessionToken;
-      const siteIdinfo = await webflow.getSiteInfo();
-      setSiteInfo(siteIdinfo);
-      console.log('Site ID:', siteIdinfo.siteId);
-
-      if (!tokewern) {
-        console.error("No session token found");
-        return;
-      }
-
-      console.log('Calling API with:', { siteIdinfo, tokenPreview: tokewern });
-      const hostingScript = await customCodeApi.registerCustomToggle(tokewern, siteIdinfo.siteId);
-      console.log('Hosting script response:', hostingScript);
-
-      if (hostingScript) {
-        try {
-
-          const scriptId = hostingScript.result.id;
-          const version = hostingScript.result.version; // Get version from registration response
-          const params: CodeApplication = {
-            targetType: 'site',
-            targetId: siteIdinfo.siteId,
-            scriptId: scriptId,
-            location: 'header',
-            version: version
-          };
-          const applyScriptResponse = await customCodeApi.applyScript(params, tokewern)
-          console.log("apply script response", applyScriptResponse);
-        } catch (error) {
-          console.log("apply script error", error);
-        }
-      }
-    } catch (error) {
-      console.error('=== Component Error ===');
-    }
-  };
-
-  const ApplyScrollcontroll = async () => {
-    try {
-      console.log('=== Component Debug for ApplyScrollcontroll ===');
-      console.log('Starting script registration process');
-
-      const userinfo = localStorage.getItem("wf_hybrid_user");
-      console.log('User info from localStorage:', userinfo ? 'Found' : 'Not found');
-
-      if (!userinfo) {
-        console.error("No user info found");
-        return;
-      }
-
-      const tokenss = JSON.parse(userinfo);
-      console.log('Parsed user info:', {
-        hasSessionToken: !!tokenss.sessionToken,
-        tokenPreview: tokenss.sessionToken ? tokenss.sessionToken : 'No token'
-      });
-
-      const tokewern = tokenss.sessionToken;
-      const siteIdinfo = await webflow.getSiteInfo();
-      setSiteInfo(siteIdinfo);
-      console.log('Site ID:', siteIdinfo.siteId);
-
-      if (!tokewern) {
-        console.error("No session token found");
-        return;
-      }
-
-      console.log('Calling API with:', { siteIdinfo, tokenPreview: tokewern });
-      const hostingScript = await customCodeApi.registerScrollScript(tokewern, siteIdinfo.siteId);
-      console.log('Hosting script response:', hostingScript);
-
-      if (hostingScript) {
-        try {
-
-          const scriptId = hostingScript.result.id;
-          const version = hostingScript.result.version; // Get version from registration response
-          const params: CodeApplication = {
-            targetType: 'site',
-            targetId: siteIdinfo.siteId,
-            scriptId: scriptId,
-            location: 'header',
-            version: version
-          };
-          const applyScriptResponse = await customCodeApi.applyScript(params, tokewern)
-          console.log("apply script response", applyScriptResponse);
-        } catch (error) {
-          console.log("apply script error", error);
-        }
-      }
-    } catch (error) {
-      console.error('=== Component Error ===');
-    }
-  };
-
-
-
-
-
-
 
   // const { user } = useAuth();
   const { user, exchangeAndVerifyIdToken } = useAuth();
-
 
   // Function to open the authorization popup authorization window
   const openAuthScreen = () => {
@@ -580,8 +508,6 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
   };
 
   //GDPR BANNER-------------------------------------------------------------------
-
-
   const handleCreatePreferences = async () => {
     try {
       const selectedPreferences = Object.entries(cookiePreferences)
@@ -594,16 +520,7 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
 
       console.log("✅ Selected Preferences:", selectedPreferences);
 
-      await createCookiePreferences(
-        selectedPreferences,
-        language,
-        color,
-        btnColor,
-        headColor,
-        paraColor,
-        secondcolor,
-        buttonRadius,
-        animation
+      await createCookiePreferences(selectedPreferences, language, color, btnColor, headColor, paraColor, secondcolor, buttonRadius, animation, toggleStates.customToggle
       );
 
       console.log("✅ Cookie preferences created successfully!");
@@ -614,19 +531,10 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
 
 
   //--------------------------------------------------------------------------
-
-
   //createCookieccpaPreferences
   const handleCreatePreferencesccpa = async () => {
     try {
-      await createCookieccpaPreferences(language,
-        color,
-        btnColor,
-        headColor,
-        paraColor,
-        secondcolor,
-        buttonRadius,
-        animation);
+      await createCookieccpaPreferences(language, color, btnColor, headColor, paraColor, secondcolor, buttonRadius, animation);
       console.log("✅ Cookie preferences created successfully!");
     } catch (error) {
       console.error("❌ Error creating cookie preferences:", error);
@@ -647,13 +555,13 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
     }
   }, [style]);
 
-
+  //need help dropdown
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
   const buttonRef = useRef<HTMLDivElement | null>(null);
 
   const helpItems: HelpItem[] = [
-    { label: 'Watch tutorial', href: '#' }, // Replace '#' with your actual URL
+    { label: 'Watch tutorial', href: '#' },
     { label: 'Check docs', href: '#' },
     { label: 'Get support', href: '#' },
     { label: 'Send feedback', href: '#' },
@@ -680,13 +588,13 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [isOpen]);
-  
+
   return (
     <div className="app">
       {/* Top Navigation */}
       <div className="navbar">
         <div>
-          {user.firstName ? (
+          {user?.firstName ? (
             <p>Hello, {user.firstName}!</p>
           ) : (
             <button className="publish-buttons" onClick={openAuthScreen}>
@@ -700,26 +608,26 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
           <h5>Need help?</h5>
         </div> */}
 
-<div className="help-dropdown-container">
-      <div className="need-help" onClick={toggleOpen} ref={buttonRef}>
-        <img src={questionmark} alt="Need help?" />
-        <h5>Need help?</h5>
-      </div>
+        <div className="help-dropdown-container">
+          <div className="need-help" onClick={toggleOpen} ref={buttonRef}>
+            <img src={questionmark} alt="Need help?" />
+            <h5>Need help?</h5>
+          </div>
 
-      {isOpen && (
-        <div className="help-dropdown" ref={dropdownRef}>
-          <ul>
-            {helpItems.map((item, index) => (
-              <li key={index}>
-                <a href={item.href} target="_blank" rel="noopener noreferrer">
-                  {item.label}
-                </a>
-              </li>
-            ))}
-          </ul>
+          {isOpen && (
+            <div className="help-dropdown" ref={dropdownRef}>
+              <ul>
+                {helpItems.map((item, index) => (
+                  <li key={index}>
+                    <a href={item.href} target="_blank" rel="noopener noreferrer">
+                      {item.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
-      )}
-    </div>
       </div>
 
       {/* Configuration Section */}
@@ -756,20 +664,19 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
           {activeTab !== "Script" && (
             <div>
               <div>
-                {!isBannerAdded ? (
+                {/* {!isBannerAdded ? ( */}
                   <button className="publish-button" onClick={() => setShowPopup(true)}>
                     Add Your Banner
                   </button>
-                ) : (
+                {/* ) : (
                   <button className="publish-buttons">
                     Update Your Banner
                   </button>
-                )}
+                )} */}
               </div>
 
             </div>
           )}
-
 
           {activeTab === "Script" && (
             <div>
@@ -781,8 +688,6 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
           )}
         </div>
       </div>
-
-
 
       {/* Popup Modal */}
       {showPopup && (
@@ -797,6 +702,8 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                 <button
                   className="confirm-button"
                   onClick={async () => {
+                    const isBannerAlreadyAdded = localStorage.getItem("cookieBannerAdded") === "true";
+
                     try {
                       const selectedElement = await webflow.getSelectedElement();
                       if (!selectedElement) {
@@ -849,8 +756,6 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
 
                       const divPropertyMap: Record<string, string> = {
                         "background-color": color,
-                        // "height": "220px",
-                        // "width": "438px",
                         "position": "fixed",
                         "font-family": Font,
                         "z-index": "9999",
@@ -858,8 +763,6 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                         "padding-right": "20px",
                         "padding-bottom": "20px",
                         "padding-left": "20px",
-                        // "top": "65%", // Remove static position
-                        // "right": "5%", // Remove static position
                         "border-radius": `${borderRadius}px`,
                         "display": "flex",
                         "flex-direction": "column",
@@ -916,6 +819,17 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                           divPropertyMap["min-height"] = "220px";
                           break;
                       }
+
+                      const responsivePropertyMap: Record<string, string> = {
+                        "max-width": "100%",
+                        "width": "100%", 
+                        "bottom": "0",
+                        "left": "0",
+                        "right": "0",
+                        "top": "auto", 
+                        "transform": "none" 
+                      };
+                      const responsiveOptions = { breakpoint: "small" } as BreakpointAndPseudo;
 
 
                       const paragraphPropertyMap: Record<string, string> = {
@@ -1007,6 +921,7 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
 
 
                       await divStyle.setProperties(divPropertyMap);
+                      await divStyle.setProperties(responsivePropertyMap, responsiveOptions);
                       await paragraphStyle.setProperties(paragraphPropertyMap);
                       await buttonContainerStyle.setProperties(buttonContainerPropertyMap);
                       await buttonStyle.setProperties(buttonPropertyMap);
@@ -1021,6 +936,8 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
 
                       if (newDiv.setCustomAttribute) {
                         await newDiv.setCustomAttribute("data-animation", animationAttribute);
+                        await newDiv.setCustomAttribute("scrollcontrol", toggleStates.disableScroll ? "true" : "false");
+
                       } else {
                         console.error("❌ setCustomAttribute method not available on newDiv element");
                       }
@@ -1080,10 +997,6 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                         await acceptButton.setTextContent(translations[language as keyof typeof translations].accept);
                         console.log("acceptButton:", acceptButton);
 
-                        // if (acceptButton.setCustomAttribute) {
-                        //   await acceptButton.setCustomAttribute("consent","simple-accept");
-                        //   console.log("✅ Accept button ID set to #simple-accept");
-                        // }
                         if ((acceptButton as any).setDomId) {
                           await (acceptButton as any).setDomId("simple-accept"); // Type assertion
                         } else {
@@ -1098,12 +1011,6 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                         await declineButton.setTextContent(translations[language as keyof typeof translations].reject);
                         console.log("declineButton:", declineButton);
 
-                        // if (declineButton.setCustomAttribute) {
-                        //   await declineButton.setCustomAttribute("consent","simple-reject" );
-                        //   console.log("✅ Decline button ID set to #simple-reject");
-                        // } else {
-                        //   console.error("❌ setAttributes method not available on decline button element");
-                        // }
 
                         if ((declineButton as any).setDomId) {
                           await (declineButton as any).setDomId("simple-reject"); // Type assertion
@@ -1111,24 +1018,6 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                         } else {
                           console.error("❌ setDomId method not available on accept button element");
                         }
-
-                        // if (newDiv.append && tempHeading && tempParagraph && buttonContainer) {
-                        //   if (SecondDiv) await newDiv.append(SecondDiv);
-                        //   await newDiv.append(tempHeading);
-                        //   await newDiv.append(tempParagraph);
-                        //   await newDiv.append(buttonContainer);
-                        //   console.log("✅ Appended heading, paragraph, and button container to div!");
-
-                        //   if (buttonContainer.append && acceptButton && declineButton) {
-                        //     await buttonContainer.append(acceptButton);
-                        //     await buttonContainer.append(declineButton);
-                        //     console.log("✅ Appended accept and decline buttons to button container!");
-                        //   } else {
-                        //     console.error("❌ Failed to append buttons to the button container.");
-                        //   }
-                        // } else {
-                        //   console.error("❌ Failed to append elements to the main div.");
-                        // }
 
                         if (newDiv.append && innerdiv && tempHeading && tempParagraph && buttonContainer) {
                           // Append elements inside innerDiv
@@ -1155,6 +1044,10 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
 
 
                         console.log("🎉 Cookie consent banner successfully created!");
+                        if (!isBannerAlreadyAdded) {
+                          fetchAnalyticsBlockingsScripts()
+                          localStorage.setItem("cookieBannerAdded", "true");
+                        }
                         setShowPopup(false)
                         setIsBannerAdded(true);
 
@@ -1176,6 +1069,7 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                   className={`confirm-button ${isLoading ? "loading" : ""}`}
                   onClick={async () => {
                     setIsLoading(true);
+                    // const isBannerAlreadyAdded = localStorage.getItem("cookieBannerAdded") === "true";
                     try {
 
                       const selectedElement = await webflow.getSelectedElement();
@@ -1188,6 +1082,8 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
 
 
                       const newDiv = await selectedElement.before(webflow.elementPresets.DivBlock);
+                      console.log("the main div", newDiv);
+
                       if (!newDiv) {
                         webflow.notify({ type: "error", message: "Failed to create div." });
                         return;
@@ -1240,18 +1136,14 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
 
                       const divPropertyMap: Record<string, string> = {
                         "background-color": color,
-                        // "height": "220px",
-                        // "width": "438px",
                         "position": "fixed",
                         "z-index": "99999",
                         "padding-top": "20px",
                         "padding-right": "20px",
                         "padding-bottom": "20px",
                         "padding-left": "20px",
-                        // "top": "65%", // Remove static position
-                        // "right": "5%", // Remove static position
                         "border-radius": `${borderRadius}px`,
-                        "display": "flex",
+                        "display": "none",
                         "flex-direction": "column",
                         "align-items": "center",
                         "justify-content": "center",
@@ -1262,9 +1154,6 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                         divPropertyMap["width"] = "100%";
                         divPropertyMap["height"] = "40%";
                       }
-
-
-
                       divPropertyMap["bottom"] = "3%";
 
                       switch (selected) {
@@ -1314,12 +1203,13 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                       }
 
                       const responsivePropertyMap: Record<string, string> = {
-                        "max-width": "100%", // Full width
+                        "max-width": "100%",
+                        "width": "100%", 
                         "bottom": "0",
                         "left": "0",
                         "right": "0",
-                        "top": "auto", // Reset top to auto
-                        "transform": "none" // Reset transform to none
+                        "top": "auto", 
+                        "transform": "none" 
                       };
                       const responsiveOptions = { breakpoint: "small" } as BreakpointAndPseudo;
 
@@ -1363,6 +1253,14 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                         "margin-right": "5px",
                         "min-width": "80px",
                       };
+
+                      const responsivebuttonPropertyMap: Record<string, string> = {
+                        "margin-bottom": "10px",
+                        "flex-direction": "column",
+                        "justify-content": "center",
+                        "text-align": "center"
+                      };
+                      const responsivebuttonOptions = { breakpoint: "small" } as BreakpointAndPseudo;
 
                       const declineButtonPropertyMap: Record<string, string> = {
                         "border-radius": `${buttonRadius}px`,
@@ -1415,37 +1313,31 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
 
                       await paragraphStyle.setProperties(paragraphPropertyMap);
                       await buttonContainerStyle.setProperties(buttonContainerPropertyMap);
+                      await buttonContainerStyle.setProperties(responsivebuttonPropertyMap, responsivebuttonOptions);
+
                       await buttonStyle.setProperties(buttonPropertyMap);
                       await declinebutton.setProperties(declineButtonPropertyMap)
                       await prefrenceButtons.setProperties(declineButtonPropertyMap)
                       await headingStyle.setProperties(headingPropertyMap);
                       await secondivstyle.setProperties(secondbackgroundPropertyMap)
                       await innerdivstyle.setProperties(innerdivPropertyMap)
-
-
                       if (newDiv.setStyles) {
                         await newDiv.setStyles([divStyle]);
-
                       }
-
                       if (newDiv.setCustomAttribute) {
                         await newDiv.setCustomAttribute("data-animation", animationAttribute);
-
+                        await newDiv.setCustomAttribute("data-cookie-banner", toggleStates.disableScroll ? "true" : "false");
                       } else {
                         console.error("❌ setCustomAttribute method not available on newDiv element");
                       }
-
                       try {
-
                         let SecondDiv;
                         if (style === "alignstyle") {
                           SecondDiv = await selectedElement.before(webflow.elementPresets.DivBlock);
                           if (SecondDiv.setStyles) {
                             await SecondDiv.setStyles([secondivstyle]);
-
                           }
                         }
-
                         const innerdiv = await selectedElement.before(webflow.elementPresets.DivBlock);
                         await innerdiv.setStyles([innerdivstyle]);
 
@@ -1455,20 +1347,16 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                         }
                         if (tempHeading.setStyles) {
                           await tempHeading.setStyles([headingStyle]);
-
                         }
                         if (tempHeading.setTextContent) {
                           await tempHeading.setTextContent(translations[language as keyof typeof translations].heading);
-
                         } else {
                           console.error("❌ setText method not available on heading element");
                         }
-
                         const tempParagraph = await selectedElement.before(webflow.elementPresets.Paragraph);
                         if (!tempParagraph) {
                           throw new Error("Failed to create paragraph");
                         }
-
                         if (tempParagraph.setStyles) {
                           await tempParagraph.setStyles([paragraphStyle]);
 
@@ -1555,16 +1443,14 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                           console.error("❌ Failed to append elements to the main div.");
                         }
 
-
-                        // setIsLoading(false);
-                        // handleCreatePreferences()
-                        // // fetchAnalyticsBlockingsScripts()
-                        // setShowPopup(false)
-
                         // ... existing code ...
                         setIsLoading(false);
                         handleCreatePreferences();
-                        fetchAnalyticsBlockingsScripts();
+                        // if (!isBannerAlreadyAdded) {
+                          fetchAnalyticsBlockingsScripts()
+                        //   localStorage.setItem("cookieBannerAdded", "true");
+                        // }
+
                         setTimeout(() => {
                           setShowPopup(false);
                         }, 30000);
@@ -1593,6 +1479,8 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
               {selectedOptions.includes("US State laws") && activeMode === "Advanced" && (<button
                 className="confirm-button"
                 onClick={async () => {
+                  const isBannerAlreadyAdded = localStorage.getItem("cookieBannerAdded") === "true";
+
                   try {
                     console.log("🟢 Button clicked!");
 
@@ -1625,7 +1513,7 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                     const buttonContainerStyleName = `consentbit-ccpa-button-container`;
                     const buttonStyleName = `consentbit-ccpa--button-accept`;
                     const headingStyleName = `consentbit-ccpa-banner-heading`;
-                    const linktextstyle = `consentbit-linkblock`
+                    const linktextstyle = `consentbit-ccpa-linkblock`
 
                     const divStyle = await webflow.createStyle(divStyleName);
                     const paragraphStyle = await webflow.createStyle(paragraphStyleName);
@@ -1886,6 +1774,10 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
 
                       console.log("🎉 Cookie consent banner successfully created!");
                       handleCreatePreferencesccpa()
+                      if (!isBannerAlreadyAdded) {
+                        fetchAnalyticsBlockingsScripts()
+                        localStorage.setItem("cookieBannerAdded", "true");
+                      }
                       setTimeout(() => {
                         setShowPopup(false);
                       }, 40000);
@@ -2073,18 +1965,13 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                         type="checkbox"
                         className="toggle-checkbox"
                         checked={toggleStates.customToggle}
-
-                        onChange={() => {
-                          if (!toggleStates.customToggle) { // Only allow enabling, not disabling
-                            handleToggle("customToggle");
-                            ApplyCustomToggle(); // Call the function when enabling
-                          }
-                        }}
-                        disabled={toggleStates.customToggle} // Disable checkbox after it's checked
+                        onChange={() => handleToggle("customToggle")}
                       />
+
                       <div className={`toggle ${toggleStates.customToggle ? "toggled" : ""}`}></div>
                     </label>
                   </div>
+
                 )}
 
                 {/* Reset Interactions - Available in BOTH Simple & Advanced Modes */}
@@ -2162,21 +2049,24 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
 
                         <div className="tooltip-containers">
                           <img src={questionmark} alt="info" className="tooltip-icon" />
-                          <span className="tooltip-text">this options dissable the scroll of the page when banner is shown</span>
+                          <span className="tooltip-text">This option disables the scroll of the page when banner is shown</span>
                         </div>
                       </div>
+
                       <input
                         type="checkbox"
                         className="toggle-checkbox"
                         checked={toggleStates.disableScroll}
                         onChange={() => {
-                          if (!toggleStates.disableScroll) { // Only allow enabling, not disabling
-                            handleToggle("disableScroll");
-                            ApplyScrollcontroll(); // Call the function when enabling
-                          }
+                          handleToggle("disableScroll");
+
+                          // Optionally call the scroll function only when enabling
+                          // if (!toggleStates.disableScroll) {
+                          //   ApplyScrollcontroll();
+                          // }
                         }}
-                        disabled={toggleStates.disableScroll} // Disable checkbox after it's checked
                       />
+
                       <div className={`toggle ${toggleStates.disableScroll ? "toggled" : ""}`}></div>
                     </label>
                   </div>

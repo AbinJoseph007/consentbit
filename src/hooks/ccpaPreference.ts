@@ -26,6 +26,10 @@ const ccpaTranslations = {
     }
 };
 
+type BreakpointAndPseudo = {
+    breakpoint: string;
+    pseudoClass: string;
+  };
 
 const createCookieccpaPreferences = async (language: string = "English" ,  color: string = "#ffffff", btnColor: string = "#F1F1F1", headColor: string = "#483999", paraColor: string = "#1F1D40", secondcolor: string = "secondcolor" , buttonRadius: number, animation: string) => {
     try {
@@ -116,6 +120,12 @@ const createCookieccpaPreferences = async (language: string = "English" ,  color
 
         };
 
+        const responsivePropertyMap: Record<string, string> = {
+            "max-width": "100%", 
+            "width":"100%"
+          };
+          const responsiveOptions = { breakpoint: "small" } as BreakpointAndPseudo;
+
         const paragraphPropertyMap: Record<string, string> = {
             "color": paraColor,
             "font-size": "14px",
@@ -187,8 +197,8 @@ const createCookieccpaPreferences = async (language: string = "English" ,  color
         };
 
         const changepreferencePropertyMap: Record<string, string> = {
-            "height": "65px",
-            "width": "65px",
+            "height": "55px",
+            "width": "55px",
             "border-radius": "50%",
             "background-image": "url('https://cdn.prod.website-files.com/6409f0703d2118edcd3ea560/67b8b29754766de084052c4b_88228154495.png')",
             "background-size": "cover",
@@ -222,6 +232,7 @@ const createCookieccpaPreferences = async (language: string = "English" ,  color
 
 
         await divStyle.setProperties(divPropertyMap);
+        await divStyle.setProperties(responsivePropertyMap, responsiveOptions);
         await paragraphStyle.setProperties(paragraphPropertyMap);
         await prefrenceDiv.setProperties(prefrencePropertyMap)
         await togglediv.setProperties(setTooglePropertyMap)
