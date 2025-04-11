@@ -14,6 +14,7 @@ const normalstyle = new URL("../assets/normal style.png", import.meta.url).href;
 const bigstyle = new URL("../assets/big style.png", import.meta.url).href;
 const centeralign = new URL("../assets/center style.png", import.meta.url).href;
 const fullwidth = new URL("../assets/full width.png", import.meta.url).href;
+const dots = new URL("../assets/dots.png", import.meta.url).href;
 
 
 type Orientation = "left" | "center" | "right";
@@ -199,11 +200,11 @@ const Customization: React.FC<CustomizationProps> = ({
   const previewDimensions = React.useMemo(() => {
     switch (style) {
       case "bigstyle":
-        return { width: "250px", height: "151px" };
-      case "fullwidth":
+        return { width: "250px", minHeight: "151px" };
+        case "fullwidth":
         return { width: "443px", dislay: "flex" };
       case "centeralign":
-        return { width: "303px", height: "103px" };
+        return { width: "303px" };
       default:
         return { width: "65%" }; // Default
     }
@@ -522,8 +523,10 @@ const Customization: React.FC<CustomizationProps> = ({
         <div className="settings-group-preview">
           <h3>Preview</h3>
           <div className="preview-area">
-            <div className="topbar"></div>
-
+            <div className="topbar">
+              <img src={dots} alt="" className="threedots" />
+            </div>
+              {/* gdpr */}
             <div
               className={`cookie-banner ${animation} ${isActive ? "active" : ""}`}
               style={{
@@ -541,7 +544,7 @@ const Customization: React.FC<CustomizationProps> = ({
                 alignItems: style === "centeralign" ? "center" : undefined, // Change dynamically
                 fontWeight: weight, 
                 width: previewDimensions.width,
-                height: previewDimensions.height,
+                height: previewDimensions.minHeight,
                 borderRadius: `${borderRadius}px`,
                 backgroundColor: color,
               }}
@@ -565,6 +568,49 @@ const Customization: React.FC<CustomizationProps> = ({
                 <button className="btn-accept" style={{ borderRadius: `${buttonRadius}px`, backgroundColor: secondcolor }} >Accept</button>
               </div>
             </div>
+
+            {/* ccpa banner */}
+            {/* <div
+              className={`cookie-banner ${animation} ${isActive ? "active" : ""}`}
+              style={{
+                transition: `transform 0.5s ${easing}, opacity 0.5s ${easing}`,
+                position: "absolute",
+                ...(style !== "fullwidth" && {
+                  bottom: "10px",
+                  left: selected === "left" ? "10px" : selected === "center" ? "50%" : "auto",
+                  right: selected === "right" ? "10px" : "auto",
+                  transform: selected === "center" ? "translateX(-50%)" : "none",
+                }),
+                transform: selected === "center" ? "translateX(-50%)" : "none",
+                fontFamily: Font,
+                textAlign: selectedtext,
+                alignItems: style === "centeralign" ? "center" : undefined, // Change dynamically
+                fontWeight: weight, 
+                width: previewDimensions.width,
+                height: previewDimensions.height,
+                borderRadius: `${borderRadius}px`,
+                backgroundColor: color,
+              }}
+            >
+              {style === "alignstyle" && <div className="secondclass" style={{ backgroundColor: bgColors , borderBottomRightRadius:`${borderRadius}px` , borderTopRightRadius:`${borderRadius}px` }}></div>}
+              <div className="space" style={{ color: headColor, fontWeight: weight, marginBottom:"0px" }}><h4>We value your Privacy</h4></div>
+
+              <div className="padding" style={{ color: paraColor , alignItems: style === "centeralign" ? "center" : undefined, }}>
+                <span  style={{ alignItems: style === "centeralign" ? "center" : undefined, }}>
+                  {language === "English"
+                    ? "We use cookies to provide you with the best possible experience. They also allow us to analyze user behavior in order to constantly improve the website for you."
+                    : language === "Spanish"
+                      ? "Utilizamos cookies para brindarle la mejor experiencia posible. También nos permiten analizar el comportamiento del usuario para mejorar constantemente el sitio web para usted."
+                      : "Nous utilisons des cookies pour vous offrir la meilleure expérience possible. Ils nous permettent également d’analyser le comportement des utilisateurs afin d’améliorer constamment le site Web pour vous."}
+                </span>
+
+              </div>
+              <div className="button-wrapp"  style={{ justifyContent:  style === "centeralign" ? "center" : undefined, }}>
+                
+                <p className="btn-accept" style={{ borderRadius: `${buttonRadius}px`, backgroundColor: secondcolor }} >do not share my Personal informations</p>
+              </div>
+            </div> */}
+
           </div>
           <div>
             <div className="preference-banner">

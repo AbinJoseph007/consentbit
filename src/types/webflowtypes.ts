@@ -1,6 +1,4 @@
-// import { ColorVariable } from './global';
-
-// ✅ Define a WebflowStyle interface for styling properties
+// // ✅ Define a WebflowStyle interface for styling properties
 // export interface WebflowStyle {
 //   setProperty: (prop: string, value: string) => Promise<void>;
 //   setProperties: (properties: Record<string, string>) => Promise<void>;
@@ -166,16 +164,18 @@
 
 
 
+type BreakpointAndPseudo = {
+  breakpoint: string;
+  pseudoClass: string;
+};
 // Define a WebflowStyle interface for styling properties
 export interface WebflowStyle {
   setProperty: (prop: string, value: string) => Promise<void>;
-  setProperties: (properties: Record<string, string>) => Promise<void>;
+  // setProperties: (properties: Record<string, string>) => Promise<void>;
+  setProperties(props: Record<string, string>, options?: BreakpointAndPseudo): Promise<void>;
   save: () => Promise<void>;
 }
 
-// export interface WebflowElement {
-//   setHtml?: (html: string) => Promise<void>;
-// }
 
 interface WebflowElement {
   setStyles?: (styles: WebflowStyle[]) => Promise<void>;
@@ -191,6 +191,7 @@ export interface WebflowAPI {
     siteId: string;
     siteName: string;
     shortName: string;
+    url:string;
   }>;
   
     getIdToken: () => Promise<string>;
@@ -216,7 +217,30 @@ export interface WebflowAPI {
       // getAsset?: () => Promise<Asset | null>;
       addAnimation
       setHtmlContent
-      
+      addComboClass
+      removeComboClass
+    }>;
+    after: (preset: any) => Promise<{
+      setInnerHTML: (html: string) => Promise<void>;
+      setText?: (text: string) => Promise<void>;
+      append?: (child: any) => Promise<void>;
+      setStyles?: (styles: WebflowStyle[]) => Promise<void>;
+      getStyles?: () => Promise<Record<string, string>>;
+      applyStyle?: (style: WebflowStyle) => Promise<void>;
+      setAttribute?: (name: string, value: string) => Promise<null>; // or similar      
+      setCustomAttribute?: (name: string, value: string) => Promise<null>;
+      setTextContent?: (text: string) => Promise<void>;
+      getChildren?: () => Promise<any[]>;
+      createChild
+      children
+      findChild
+      setHtml
+      setAsset
+      // getAsset?: () => Promise<Asset | null>;
+      addAnimation
+      setHtmlContent
+      addComboClass
+      removeComboClass
     }>;
     append?: (child: any) => Promise<void>;
     setStyles?: (styles: WebflowStyle[]) => Promise<void>;
@@ -259,10 +283,10 @@ export interface WebflowAPI {
     
   }>;
 
-  getCurrentPage: () => Promise<{ id: string; name: string }>;
+  getCurrentPage: () => Promise<{ id: string; name: string ,}>;
   createPage: (options: { name: string; content: string }) => Promise<{ id: string }>;
   switchPage?: (pageId: string) => Promise<void>;
-  getAllPagesAndFolders?: () => Promise<Array<{ id: string; type: string; getName: () => Promise<string> }>>;
+  getAllPagesAndFolders?: () => Promise<Array<{ id: string; type: string; getName: () => Promise<string> ; url:string }>>;
 
   createStyle: (name: string) => Promise<WebflowStyle>;
   getStyleByName: (name: string) => Promise<WebflowStyle | null>;

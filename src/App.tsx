@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import ReactDOM from "react-dom/client";
 import "./style/styless.css";
 import Customization from "./components/Customization";
@@ -6,51 +6,76 @@ import Script from "./components/Script";
 const questionmark = new URL("./assets/questionmark.png", import.meta.url).href;
 const openeye = new URL("./assets/closedeye.png", import.meta.url).href;
 const eye = new URL("./assets/eye.png", import.meta.url).href;
+const dots = new URL("./assets/dots.png", import.meta.url).href;
+const book = new URL("./assets/book.png", import.meta.url).href;
+const users = new URL("./assets/user.png", import.meta.url).href;
+const watch = new URL("./assets/fi-rr-play (1).png", import.meta.url).href;
+const doc = new URL("./assets/message.png", import.meta.url).href;
 import { customCodeApi } from "./services/api";
 import { useAuth } from "../src/hooks/userAuth";
 import webflow, { WebflowAPI } from './types/webflowtypes';
 import { CodeApplication } from "./types/types";
 import createCookiePreferences from "./hooks/gdprPreference";
 import createCookieccpaPreferences from "./hooks/ccpaPreference";
+import usePersistentState from './hooks/usePersistentState'; // Adjust the path as necessary
+import { json } from "stream/consumers";
+
 
 
 type Orientation = "left" | "center" | "right";
 type BannerStyle = "align" | "alignstyle" | "bigstyle" | "centeralign" | "fullwidth" | "";
+interface HelpItem {
+  label: string;
+  href: string;
+  icon: string;
+}
 
+type BreakpointAndPseudo = {
+  breakpoint: string;
+  pseudoClass: string;
+};
+
+type UserData = {
+  firstName: string;
+  email: string;
+  exp: number;
+  sessionToken: string;
+};
 
 const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
-  const [activeTab, setActiveTab] = useState("General Settings");
-  const [expires, setExpires] = useState("");
-  // const [animation, setAnimation] = useState("select");
-  // const [easing, setEasing] = useState("select");
-  const [size, setSize] = useState("16");
-  const [isActive, setIsActive] = useState(false);
-  const [Font, SetFont] = useState("")
-  const [selectedtext, settextSelected] = useState("left");
-  // const [style, setStyle] = useState("align")
-  const [style, setStyle] = useState<BannerStyle>("align");
-  // const [activeMode, setActiveMode] = useState("Simple");
-  const [activeMode, setActiveMode] = useState(() => {
-    const savedMode = localStorage.getItem("activeMode");
-    return savedMode ? JSON.parse(savedMode) : "Simple";
-  });
-  const [selected, setSelected] = useState<Orientation>("right"); 
-  const [selectedOption, setSelectedOption] = useState("US State laws");
-  const [weight, setWeight] = useState("semibold");
-  // const [language, setLanguage] = useState("English");
-  const [showPopup, setShowPopup] = useState(false);
-  // const [selectedOptions, setSelectedOptions] = useState(["GDPR"]);
-  const [selectedOptions, setSelectedOptions] = useState(() => {
-    const savedOptions = localStorage.getItem("selectedOptions");
-    return savedOptions ? JSON.parse(savedOptions) : ["GDPR"];
-  });
-  const [siteInfo, setSiteInfo] = useState<{ siteId: string; siteName: string; shortName: string } | null>(null);
-  const [accessToken, setAccessToken] = useState<string>('');
-  const [pages, setPages] = useState([]);
-  const [fetchScripts, setFetchScripts] = useState(false);
-  const [borderRadius, setBorderRadius] = useState(16);
-  const [buttonRadius, setButtonRadius] = useState(2);
-  const [isLoading, setIsLoading] = useState(false); 
+  // const [activeTab, setActiveTab] = useState("General Settings");
+  // const [expires, setExpires] = useState("");
+  // // const [animation, setAnimation] = useState("select");
+  // // const [easing, setEasing] = useState("select");
+  // const [size, setSize] = useState("16");
+  // const [isActive, setIsActive] = useState(false);
+  // const [Font, SetFont] = useState("")
+  // const [selectedtext, settextSelected] = useState("left");
+  // // const [style, setStyle] = useState("align")
+  // const [style, setStyle] = useState<BannerStyle>("align");
+  // // const [activeMode, setActiveMode] = useState("Simple");
+  // const [activeMode, setActiveMode] = useState(() => {
+  //   const savedMode = localStorage.getItem("activeMode");
+  //   return savedMode ? JSON.parse(savedMode) : "Simple";
+  // });
+  // const [selected, setSelected] = useState<Orientation>("right");
+  // const [selectedOption, setSelectedOption] = useState("US State laws");
+  // const [weight, setWeight] = useState("semibold");
+  // // const [language, setLanguage] = useState("English");
+  // const [showPopup, setShowPopup] = useState(false);
+  // // const [selectedOptions, setSelectedOptions] = useState(["GDPR"]);
+  // const [selectedOptions, setSelectedOptions] = useState(() => {
+  //   const savedOptions = localStorage.getItem("selectedOptions");
+  //   return savedOptions ? JSON.parse(savedOptions) : ["GDPR"];
+  // });
+  // const [siteInfo, setSiteInfo] = useState<{ siteId: string; siteName: string; shortName: string } | null>(null);
+  // const [accessToken, setAccessToken] = useState<string>('');
+  // const [pages, setPages] = useState([]);
+  // const [fetchScripts, setFetchScripts] = useState(false);
+  // const [borderRadius, setBorderRadius] = useState(16);
+  // // const [buttonRadius, setButtonRadius] = useState(2);
+  // const [buttonRadius, setButtonRadius] = useState<number>(2);
+  // const [isLoading, setIsLoading] = useState(false);
   const [color, setColor] = useState("#ffffff");
   const [bgColor, setBgColor] = useState("#ffffff");
   const [btnColor, setBtnColor] = useState("#F1F1F1");
@@ -58,16 +83,64 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
   const [secondcolor, setSecondcolor] = useState("#483999");
   const [bgColors, setBgColors] = useState("#798EFF");
   const [headColor, setHeadColor] = useState("#483999");
-    const base_url ="https://cb-server.web-8fb.workers.dev"
+
+  const [activeTab, setActiveTab] = usePersistentState("activeTab", "General Settings");
+  const [expires, setExpires] = usePersistentState("expires", "");
+  const [size, setSize] = usePersistentState("size", "16");
+  const [isActive, setIsActive] = usePersistentState("isActive", false);
+  const [Font, SetFont] = usePersistentState("Font", "");
+  const [selectedtext, settextSelected] = usePersistentState("selectedtext", "left");
+  const [style, setStyle] = usePersistentState<BannerStyle>("style", "align");
+  const [activeMode, setActiveMode] = usePersistentState("activeMode", "Simple");
+  const [selected, setSelected] = usePersistentState<Orientation>("selected", "right");
+  const [selectedOption, setSelectedOption] = usePersistentState("selectedOption", "US State laws");
+  const [weight, setWeight] = usePersistentState("weight", "semibold");
+  const [showPopup, setShowPopup] = usePersistentState("showPopup", false);
+  const [selectedOptions, setSelectedOptions] = usePersistentState("selectedOptions", ["GDPR"]);
+  const [siteInfo, setSiteInfo] = usePersistentState<{ siteId: string; siteName: string; shortName: string } | null>("siteInfo", null);
+  const [accessToken, setAccessToken] = usePersistentState<string>("accessToken", '');
+  const [pages, setPages] = usePersistentState("pages", []);
+  const [fetchScripts, setFetchScripts] = usePersistentState("fetchScripts", false);
+  const [borderRadius, setBorderRadius] = usePersistentState("borderRadius", 16);
+  const [buttonRadius, setButtonRadius] = usePersistentState<number>("buttonRadius", 2);
+  const [isLoading, setIsLoading] = usePersistentState("isLoading", false);
+  // const [color, setColor] = usePersistentState("color", "#ffffff");
+  // const [bgColor, setBgColor] = usePersistentState("bgColor", "#ffffff");
+  // const [btnColor, setBtnColor] = usePersistentState("btnColor", "#F1F1F1");
+  // const [paraColor, setParaColor] = usePersistentState("paraColor", "#1F1D40");
+  // const [secondcolor, setSecondcolor] = usePersistentState("secondcolor", "#483999");
+  // const [bgColors, setBgColors] = usePersistentState("bgColors", "#798EFF");
+  // const [headColor, setHeadColor] = usePersistentState("headColor", "#483999");
+  const [userlocaldata, setUserlocaldata] = useState<UserData | null>(null);
+  const [showSuccessPopup, setShowSuccessPopup] = useState(false);
+
+  const base_url = "https://cb-server.web-8fb.workers.dev"
+  const [isBannerAdded, setIsBannerAdded] = useState(false);
 
 
-  const [toggleStates, setToggleStates] = useState({
+
+  const [toggleStates, setToggleStates] = usePersistentState('toggleStates', {
     customToggle: false,
     resetInteractions: false,
     disableScroll: false,
     storeConsents: false,
-    globalvariable: true,
+    globalvariable: false,
   });
+
+
+  // const [toggleStates, setToggleStates] = useState(() => {
+  //   const savedToggles = localStorage.getItem("toggleStates");
+  //   return savedToggles
+  //     ? JSON.parse(savedToggles)
+  //     : {
+  //         customToggle: false,
+  //         resetInteractions: false,
+  //         disableScroll: false,
+  //         storeConsents: false,
+  //         globalvariable: false,
+  //       };
+  // });
+
 
   // Your default states
   const defaultState = {
@@ -76,9 +149,13 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
     language: "English",
   };
 
-  const [animation, setAnimation] = useState(defaultState.animation);
-  const [easing, setEasing] = useState(defaultState.easing);
-  const [language, setLanguage] = useState(defaultState.language);
+  // const [animation, setAnimation] = useState(defaultState.animation);
+  // const [easing, setEasing] = useState(defaultState.easing);
+  // const [language, setLanguage] = useState(defaultState.language);
+
+  const [animation, setAnimation] = usePersistentState('animation', defaultState.animation);
+  const [easing, setEasing] = usePersistentState('easing', defaultState.easing);
+  const [language, setLanguage] = usePersistentState('language', defaultState.language);
 
   const handleToggle = (toggleName: keyof typeof toggleStates) => {
     setToggleStates((prev) => {
@@ -253,6 +330,18 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
   useEffect(() => {
     const fetchPages = async () => {
       try {
+
+        const localstoragedata = localStorage.getItem("wf_hybrid_user");
+        if (localstoragedata) {
+          try {
+            const parsed = JSON.parse(localstoragedata);
+            console.log("session details", parsed);
+            setUserlocaldata(parsed);
+          } catch (error) {
+            console.error("Invalid JSON in localStorage:", error);
+          }
+        }
+
         console.log("Fetching pages...");
         const pagesAndFolders = await webflow.getAllPagesAndFolders();
         console.log("API Response:", pagesAndFolders);
@@ -282,7 +371,50 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
     fetchPages();
   }, [webflow]);
 
+  // useEffect(() => {
+  //   const fetchPages = async () => {
+  //     try {
+  //       console.log("Fetching pages...");
+  //       const pagesAndFolders = await webflow.getAllPagesAndFolders();
+  //       console.log("API Response:", pagesAndFolders);
 
+  //       if (Array.isArray(pagesAndFolders) && pagesAndFolders.length > 0) {
+  //         const pages = pagesAndFolders.filter(i => i.type === "Page");
+  //         const pageDetails = await Promise.all(
+  //           pages.map(async page => ({
+  //             id: page.id,
+  //             name: await page.getName(),
+  //           }))
+  //         );
+
+  //         setPages(pageDetails);
+  //         console.log("Pages set in state:", pageDetails);
+  //       } else {
+  //         console.warn("No pages found.");
+  //       }
+  //     } catch (error) {
+  //       console.error("Error fetching pages:", error);
+  //     }
+  //   };
+
+  //   fetchPages();
+  // }, [webflow]);
+
+  const handlePageChange = async (event) => {
+    const pageId = event.target.value;
+    const selectedPage = pages.find(page => page.id === pageId);
+    if (selectedPage) {
+      try {
+        console.log(`Switching to page: ${selectedPage.name}`);
+        await webflow.switchPage(selectedPage);
+        console.log("Page switch successful");
+      } catch (error) {
+        console.error("Failed to switch page:", error);
+      }
+    }
+  };
+
+  //main function for adding custom code to the head
   const fetchAnalyticsBlockingsScripts = async () => {
     try {
       console.log('=== Component Debug ===');
@@ -322,10 +454,10 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
           console.log("Hosting script data:", hostingScript);
           console.log("Site ID:", siteIdinfo.siteId);
           console.log("Token:", tokewern);
-      
+
           const scriptId = hostingScript.result.id;
           const version = hostingScript.result.version;
-          
+
           const params: CodeApplication = {
             targetType: 'site',
             targetId: siteIdinfo.siteId,
@@ -333,14 +465,14 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
             location: 'header',
             version: version
           };
-      
+
           // Log the params being sent
           console.log("Applying script with params:", params);
-      
+
           const applyScriptResponse = await customCodeApi.applyScript(params, tokewern);
           console.log("Script applied successfully:", applyScriptResponse);
-          
-        } 
+
+        }
         catch (error) {
           // More detailed error logging
           console.error("Failed to apply script:", {
@@ -352,18 +484,16 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
               version: hostingScript?.result?.version
             }
           });
-          
-          // You might want to handle the error appropriately here
-          // For example, showing a user-friendly error message
+
           throw error; // or handle it differently based on your needs
         }
       } else {
         console.warn("No hosting script data available");
       }
     }
-      
 
-     catch (error) {
+
+    catch (error) {
       console.error('=== Component Error ===');
       console.error('Error type:', error.constructor.name);
       console.error('Error message:', error.message);
@@ -372,127 +502,9 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
     }
   }
 
-  const ApplyCustomToggle = async () => {
-    try {
-      console.log('=== Component Debug for custom toggle ===');
-      console.log('Starting script registration process');
-
-      const userinfo = localStorage.getItem("wf_hybrid_user");
-      console.log('User info from localStorage:', userinfo ? 'Found' : 'Not found');
-
-      if (!userinfo) {
-        console.error("No user info found");
-        return;
-      }
-
-      const tokenss = JSON.parse(userinfo);
-      console.log('Parsed user info:', {
-        hasSessionToken: !!tokenss.sessionToken,
-        tokenPreview: tokenss.sessionToken ? tokenss.sessionToken : 'No token'
-      });
-
-      const tokewern = tokenss.sessionToken;
-      const siteIdinfo = await webflow.getSiteInfo();
-      setSiteInfo(siteIdinfo);
-      console.log('Site ID:', siteIdinfo.siteId);
-
-      if (!tokewern) {
-        console.error("No session token found");
-        return;
-      }
-
-      console.log('Calling API with:', { siteIdinfo, tokenPreview: tokewern });
-      const hostingScript = await customCodeApi.registerCustomToggle(tokewern, siteIdinfo.siteId);
-      console.log('Hosting script response:', hostingScript);
-
-      if (hostingScript) {
-        try {
-
-          const scriptId = hostingScript.result.id;
-          const version = hostingScript.result.version; // Get version from registration response
-          const params: CodeApplication = {
-            targetType: 'site',
-            targetId: siteIdinfo.siteId,
-            scriptId: scriptId,
-            location: 'header',
-            version: version
-          };
-          const applyScriptResponse = await customCodeApi.applyScript(params, tokewern)
-          console.log("apply script response", applyScriptResponse);
-        } catch (error) {
-          console.log("apply script error", error);
-        }
-      }
-    } catch (error) {
-      console.error('=== Component Error ===');
-    }
-  };
-
-  const ApplyScrollcontroll = async () => {
-    try {
-      console.log('=== Component Debug for ApplyScrollcontroll ===');
-      console.log('Starting script registration process');
-
-      const userinfo = localStorage.getItem("wf_hybrid_user");
-      console.log('User info from localStorage:', userinfo ? 'Found' : 'Not found');
-
-      if (!userinfo) {
-        console.error("No user info found");
-        return;
-      }
-
-      const tokenss = JSON.parse(userinfo);
-      console.log('Parsed user info:', {
-        hasSessionToken: !!tokenss.sessionToken,
-        tokenPreview: tokenss.sessionToken ? tokenss.sessionToken : 'No token'
-      });
-
-      const tokewern = tokenss.sessionToken;
-      const siteIdinfo = await webflow.getSiteInfo();
-      setSiteInfo(siteIdinfo);
-      console.log('Site ID:', siteIdinfo.siteId);
-
-      if (!tokewern) {
-        console.error("No session token found");
-        return;
-      }
-
-      console.log('Calling API with:', { siteIdinfo, tokenPreview: tokewern });
-      const hostingScript = await customCodeApi.registerScrollScript(tokewern, siteIdinfo.siteId);
-      console.log('Hosting script response:', hostingScript);
-
-      if (hostingScript) {
-        try {
-
-          const scriptId = hostingScript.result.id;
-          const version = hostingScript.result.version; // Get version from registration response
-          const params: CodeApplication = {
-            targetType: 'site',
-            targetId: siteIdinfo.siteId,
-            scriptId: scriptId,
-            location: 'header',
-            version: version
-          };
-          const applyScriptResponse = await customCodeApi.applyScript(params, tokewern)
-          console.log("apply script response", applyScriptResponse);
-        } catch (error) {
-          console.log("apply script error", error);
-        }
-      }
-    } catch (error) {
-      console.error('=== Component Error ===');
-    }
-  };
-
-
-
-
-
-
 
   // const { user } = useAuth();
   const { user, exchangeAndVerifyIdToken } = useAuth();
-
 
   // Function to open the authorization popup authorization window
   const openAuthScreen = () => {
@@ -517,8 +529,6 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
   };
 
   //GDPR BANNER-------------------------------------------------------------------
-
-
   const handleCreatePreferences = async () => {
     try {
       const selectedPreferences = Object.entries(cookiePreferences)
@@ -531,14 +541,7 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
 
       console.log("✅ Selected Preferences:", selectedPreferences);
 
-      await createCookiePreferences(
-        selectedPreferences,
-        language,
-        color,
-        btnColor,
-        headColor,
-        paraColor,
-        secondcolor
+      await createCookiePreferences(selectedPreferences, language, color, btnColor, headColor, paraColor, secondcolor, buttonRadius, animation, toggleStates.customToggle
       );
 
       console.log("✅ Cookie preferences created successfully!");
@@ -549,12 +552,10 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
 
 
   //--------------------------------------------------------------------------
-
-
   //createCookieccpaPreferences
   const handleCreatePreferencesccpa = async () => {
     try {
-      await createCookieccpaPreferences(language);
+      await createCookieccpaPreferences(language, color, btnColor, headColor, paraColor, secondcolor, buttonRadius, animation);
       console.log("✅ Cookie preferences created successfully!");
     } catch (error) {
       console.error("❌ Error creating cookie preferences:", error);
@@ -575,23 +576,80 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
     }
   }, [style]);
 
+  //need help dropdown
+  const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement | null>(null);
+  const buttonRef = useRef<HTMLDivElement | null>(null);
+
+  const helpItems: HelpItem[] = [
+    { label: 'Watch tutorial', href: '#', icon: watch },
+    { label: 'Check docs', href: '#', icon: book },
+    { label: 'Get support', href: '#', icon: users },
+    { label: 'Send feedback', href: '#', icon: doc },
+  ];
+
+  const toggleOpen = () => {
+    setIsOpen(!isOpen);
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (isOpen && dropdownRef.current && !dropdownRef.current.contains(event.target as Node) && buttonRef.current && !buttonRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    } else {
+      document.removeEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isOpen]);
+
   return (
     <div className="app">
       {/* Top Navigation */}
       <div className="navbar">
         <div>
-          {user.firstName ? (
+          {user?.firstName ? (
             <p>Hello, {user.firstName}!</p>
           ) : (
-            <button className="publish-button" onClick={openAuthScreen}>
+            <button className="publish-buttons" onClick={openAuthScreen}>
               Authenticate
             </button>
           )}
         </div>
 
-        <div className="need-help">
+        {/* <div className="need-help">
           <img src={questionmark} alt="" />
           <h5>Need help?</h5>
+        </div> */}
+
+        <div className="help-dropdown-container">
+          <div className="need-help" onClick={toggleOpen} ref={buttonRef}>
+            <img src={questionmark} alt="Need help?" />
+            <h5>Need help?</h5>
+          </div>
+
+          {isOpen && (
+            <div className="help-dropdown" ref={dropdownRef}>
+              <p className="helptext">help</p>
+              <ul>
+            {helpItems.map((item, index) => (
+              <li key={index}>
+                <a href={item.href} target="_blank" rel="noopener noreferrer">
+                  <img src={item.icon} alt={item.label} style={{ marginRight: '8px', verticalAlign: 'middle' }} width="16" height="16" />
+                  {item.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+            </div>
+          )}
         </div>
       </div>
 
@@ -628,19 +686,24 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
 
           {activeTab !== "Script" && (
             <div>
-              <button className="publish-button" onClick={() => {
-                setShowPopup(true);
+              <div>
+                {/* {!isBannerAdded ? ( */}
+                <button className="publish-button" onClick={() => setShowPopup(true)}>
+                  Add Your Banner
+                </button>
+                {/* ) : (
+                  <button className="publish-buttons">
+                    Update Your Banner
+                  </button>
+                )} */}
+              </div>
 
-              }}>
-                Create Components
-              </button>
             </div>
           )}
 
-
           {activeTab === "Script" && (
             <div>
-              <button className="publish-button" onClick={() => setFetchScripts(true)}>
+              <button className="publish-buttons" onClick={() => setFetchScripts(true)}>
                 Scan Project
               </button>
 
@@ -648,8 +711,6 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
           )}
         </div>
       </div>
-
-
 
       {/* Popup Modal */}
       {showPopup && (
@@ -659,76 +720,39 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
               <span className="spanbox">We are installing the script in your code...</span>
               <span className="spanbox">we are adding a banner on your project</span>
             </div>
-            {/* 
-            <button
-              className="confirm-button"
-              onClick={async () => {
-                try {
-                  // Get site information
-                  const info = await webflow.getSiteInfo();
-                  setSiteInfo(info);
-                  console.log('Site ID:', info.siteId);
-                  console.log('Site Name:', info.siteName);
-
-                  // Proceed with your installation logic
-                  // await handleAddCookieBanner();
-
-                  setShowPopup(false);
-                } catch (error) {
-                  console.error('Error getting site info:', error);
-                  alert('Failed to get site information');
-                }
-              }}
-            >
-              Confirm
-            </button> */}
-
             <div className="gap">
-
               {activeMode === "Simple" && (
                 <button
                   className="confirm-button"
                   onClick={async () => {
-                    try {
-                      console.log("🟢 Button clicked!");
+                    const isBannerAlreadyAdded = localStorage.getItem("cookieBannerAdded") === "true";
 
+                    try {
                       const selectedElement = await webflow.getSelectedElement();
                       if (!selectedElement) {
-                        console.error("❌ No element selected.");
                         webflow.notify({ type: "error", message: "No element selected in the Designer." });
                         return;
                       }
-                      console.log("✅ Selected element:", selectedElement);
 
                       const newDiv = await selectedElement.before(webflow.elementPresets.DivBlock);
                       if (!newDiv) {
-                        console.error("❌ Failed to create div.");
                         webflow.notify({ type: "error", message: "Failed to create div." });
                         return;
                       }
-                      console.log("✅ New div created:", newDiv);
-
-                      // if (newDiv.setCustomAttribute) {
-                      //   await newDiv.setCustomAttribute("consent","Simple-consent-banner");
-                      //   console.log("✅ Main div ID set to #Simple-consent-banner");
-                      // } else {
-                      //   console.error("❌ setAttributes method not available on div element");
-                      // }
                       if ((newDiv as any).setDomId) {
                         await (newDiv as any).setDomId("simple-consent-banner"); // Type assertion
-                        console.log("✅ Accept button ID set to #simple-accept");
                       } else {
-                        console.error("❌ setDomId method not available on accept button element");
                       }
 
                       const timestamp = Date.now();
-                      const divStyleName = `consebit-banner-div-${timestamp}`;
-                      const paragraphStyleName = `consebit-banner-text-${timestamp}`;
-                      const buttonContainerStyleName = `consebit-button-container-${timestamp}`;
-                      const buttonStyleName = `consebit-button-accept${timestamp}`;
-                      const DeclinebuttonStyleName = `consebit-button-decline${timestamp}`;
-                      const headingStyleName = `consebit-banner-heading-${timestamp}`;
-                      const secondbackgorundstyle = `consentbit-second-background-${timestamp}`
+                      const divStyleName = `consentbit-banner-div`;
+                      const paragraphStyleName = `consentbit-banner-text`;
+                      const buttonContainerStyleName = `consentbit-button-container`;
+                      const buttonStyleName = `consentbit-button-accept`;
+                      const DeclinebuttonStyleName = `consentbit-button-decline`;
+                      const headingStyleName = `consentbit-banner-heading`;
+                      const secondbackgorundstyle = `consentbit-second-background`
+                      const innerdivstyles = `consentbit-innerdiv`
 
                       const divStyle = await webflow.createStyle(divStyleName);
                       const paragraphStyle = await webflow.createStyle(paragraphStyleName);
@@ -737,31 +761,37 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                       const declinebutton = await webflow.createStyle(DeclinebuttonStyleName)
                       const headingStyle = await webflow.createStyle(headingStyleName);
                       const secondivstyle = await webflow.createStyle(secondbackgorundstyle)
-                      console.log("✅ Created new styles:", divStyleName, paragraphStyleName, buttonContainerStyleName, buttonStyleName, headingStyleName);
+                      const innerdivstyle = await webflow.createStyle(innerdivstyles)
 
                       const collection = await webflow.getDefaultVariableCollection();
                       const webflowBlue = await collection?.createColorVariable("Webflow Blue", "rgba(255, 255, 255, 1)");
-                      // const webflowBlueValue = (webflowBlue as any)?.value || "rgba(255, 255, 255, 1)";
+
+                      const animationAttributeMap = {
+                        "fade": "fade",
+                        "slide-up": "slide-up",
+                        "slide-down": "slide-down",
+                        "slide-left": "slide-left",
+                        "slide-right": "slide-right",
+                        "select": "select", // No attribute if "select"
+                      };
+
+                      const animationAttribute = animationAttributeMap[animation] || "";
 
                       const divPropertyMap: Record<string, string> = {
                         "background-color": color,
-                        // "height": "220px",
-                        // "width": "438px",
                         "position": "fixed",
-                        "z-index": "999",
+                        "font-family": Font,
+                        "z-index": "9999",
                         "padding-top": "20px",
                         "padding-right": "20px",
                         "padding-bottom": "20px",
                         "padding-left": "20px",
-                        // "top": "65%", // Remove static position
-                        // "right": "5%", // Remove static position
                         "border-radius": `${borderRadius}px`,
                         "display": "flex",
                         "flex-direction": "column",
                         "align-items": "center",
                         "justify-content": "center",
                         "box-shadow": "2px 2px 20px rgba(0, 0, 0, 0.51)",
-                        
                       };
 
                       if (window.innerWidth <= 768) { // Adjusting for mobile screens
@@ -790,28 +820,39 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                       }
                       switch (style) {
                         case "bigstyle":
-                          divPropertyMap["width"] = "370px";
+                          divPropertyMap["max-width"] = "370px";
                           divPropertyMap["min-height"] = "284px";
                           break;
                         case "fullwidth":
-                          divPropertyMap["width"] = "100%";
+                          divPropertyMap["max-width"] = "100%";
                           divPropertyMap["min-height"] = "167px";
                           delete divPropertyMap["left"];
                           delete divPropertyMap["right"];
                           divPropertyMap["bottom"] = "0px" // Or set to "auto"
                           break;
                         case "centeralign":
-                          divPropertyMap["width"] = "566px";
+                          divPropertyMap["max-width"] = "566px";
                           divPropertyMap["min-height"] = "167px";
-                       
+
                           break;
                         case "align":
-                        case "alignstyle": 
-                        default: 
-                          divPropertyMap["width"] = "438px"; 
-                          divPropertyMap["min-height"] = "220px"; 
+                        case "alignstyle":
+                        default:
+                          divPropertyMap["max-width"] = "438px";
+                          divPropertyMap["min-height"] = "220px";
                           break;
                       }
+
+                      const responsivePropertyMap: Record<string, string> = {
+                        "max-width": "100%",
+                        "width": "100%",
+                        "bottom": "0",
+                        "left": "0",
+                        "right": "0",
+                        "top": "auto",
+                        "transform": "none"
+                      };
+                      const responsiveOptions = { breakpoint: "small" } as BreakpointAndPseudo;
 
 
                       const paragraphPropertyMap: Record<string, string> = {
@@ -895,19 +936,33 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                       };
 
 
+                      const innerdivPropertyMap: Record<string, string> = {
+                        "max-width": "877px",
+                        "margin-left": "auto",
+                        "margin-right": "auto",
+                      };
+
 
                       await divStyle.setProperties(divPropertyMap);
+                      await divStyle.setProperties(responsivePropertyMap, responsiveOptions);
                       await paragraphStyle.setProperties(paragraphPropertyMap);
                       await buttonContainerStyle.setProperties(buttonContainerPropertyMap);
                       await buttonStyle.setProperties(buttonPropertyMap);
                       await declinebutton.setProperties(declineButtonPropertyMap)
                       await headingStyle.setProperties(headingPropertyMap);
                       await secondivstyle.setProperties(secondbackgroundPropertyMap)
-                      console.log("✅ Style properties set for all elements");
+                      await innerdivstyle.setProperties(innerdivPropertyMap)
 
                       if (newDiv.setStyles) {
                         await newDiv.setStyles([divStyle]);
-                        console.log("✅ Div styles applied successfully!");
+                      }
+
+                      if (newDiv.setCustomAttribute) {
+                        await newDiv.setCustomAttribute("data-animation", animationAttribute);
+                        await newDiv.setCustomAttribute("scrollcontrol", toggleStates.disableScroll ? "true" : "false");
+
+                      } else {
+                        console.error("❌ setCustomAttribute method not available on newDiv element");
                       }
 
                       try {
@@ -917,20 +972,21 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                           SecondDiv = await selectedElement.before(webflow.elementPresets.DivBlock);
                           if (SecondDiv.setStyles) {
                             await SecondDiv.setStyles([secondivstyle]);
-                            console.log("✅ SecondDiv styles applied!");
                           }
                         }
+
+                        const innerdiv = await selectedElement.before(webflow.elementPresets.DivBlock);
+                        await innerdiv.setStyles([innerdivstyle]);
+
                         const tempHeading = await selectedElement.before(webflow.elementPresets.Heading);
                         if (!tempHeading) {
                           throw new Error("Failed to create heading");
                         }
                         if (tempHeading.setStyles) {
                           await tempHeading.setStyles([headingStyle]);
-                          console.log("✅ Heading styles applied!");
                         }
                         if (tempHeading.setTextContent) {
                           await tempHeading.setTextContent(translations[language as keyof typeof translations].heading);
-                          console.log("✅ Heading text set via setText!");
                         } else {
                           console.error("❌ setText method not available on heading element");
                         }
@@ -942,12 +998,10 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
 
                         if (tempParagraph.setStyles) {
                           await tempParagraph.setStyles([paragraphStyle]);
-                          console.log("✅ Paragraph styles applied!");
                         }
 
                         if (tempParagraph.setTextContent) {
                           await tempParagraph.setTextContent(translations[language as keyof typeof translations].description);
-                          console.log("✅ Paragraph text set via setText!");
                         } else {
                           console.error("❌ setText method not available on paragraph element");
                         }
@@ -966,13 +1020,8 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                         await acceptButton.setTextContent(translations[language as keyof typeof translations].accept);
                         console.log("acceptButton:", acceptButton);
 
-                        // if (acceptButton.setCustomAttribute) {
-                        //   await acceptButton.setCustomAttribute("consent","simple-accept");
-                        //   console.log("✅ Accept button ID set to #simple-accept");
-                        // }
                         if ((acceptButton as any).setDomId) {
                           await (acceptButton as any).setDomId("simple-accept"); // Type assertion
-                          console.log("✅ Accept button ID set to #simple-accept");
                         } else {
                           console.error("❌ setDomId method not available on accept button element");
                         }
@@ -985,12 +1034,6 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                         await declineButton.setTextContent(translations[language as keyof typeof translations].reject);
                         console.log("declineButton:", declineButton);
 
-                        // if (declineButton.setCustomAttribute) {
-                        //   await declineButton.setCustomAttribute("consent","simple-reject" );
-                        //   console.log("✅ Decline button ID set to #simple-reject");
-                        // } else {
-                        //   console.error("❌ setAttributes method not available on decline button element");
-                        // }
 
                         if ((declineButton as any).setDomId) {
                           await (declineButton as any).setDomId("simple-reject"); // Type assertion
@@ -999,26 +1042,39 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                           console.error("❌ setDomId method not available on accept button element");
                         }
 
-                        if (newDiv.append && tempHeading && tempParagraph && buttonContainer) {
-                          if (SecondDiv) await newDiv.append(SecondDiv);
-                          await newDiv.append(tempHeading);
-                          await newDiv.append(tempParagraph);
-                          await newDiv.append(buttonContainer);
-                          console.log("✅ Appended heading, paragraph, and button container to div!");
+                        if (newDiv.append && innerdiv && tempHeading && tempParagraph && buttonContainer) {
+                          // Append elements inside innerDiv
+                          await newDiv.append(innerdiv);
+                          if (SecondDiv) await innerdiv.append(SecondDiv);
+                          await innerdiv.append(tempHeading);
+                          await innerdiv.append(tempParagraph);
+                          await innerdiv.append(buttonContainer);
 
+                          console.log("✅ Wrapped all elements inside innerDiv!");
+
+                          // Append buttons inside buttonContainer
                           if (buttonContainer.append && acceptButton && declineButton) {
                             await buttonContainer.append(acceptButton);
                             await buttonContainer.append(declineButton);
-                            console.log("✅ Appended accept and decline buttons to button container!");
                           } else {
                             console.error("❌ Failed to append buttons to the button container.");
                           }
+
+                          // Append innerDiv inside newDiv
                         } else {
-                          console.error("❌ Failed to append elements to the main div.");
+                          console.error("❌ Failed to append elements to the innerDiv or newDiv.");
                         }
 
+
                         console.log("🎉 Cookie consent banner successfully created!");
+                        if (!isBannerAlreadyAdded) {
+                          fetchAnalyticsBlockingsScripts()
+                          localStorage.setItem("cookieBannerAdded", "true");
+                        }
                         setShowPopup(false)
+                        setIsBannerAdded(true);
+                        setShowSuccessPopup(true);
+
                       } catch (error) {
                         console.error("❌ Error creating cookie banner:", error);
                         webflow.notify({ type: "error", message: "An error occurred while creating the cookie banner." });
@@ -1037,8 +1093,8 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                   className={`confirm-button ${isLoading ? "loading" : ""}`}
                   onClick={async () => {
                     setIsLoading(true);
+                    // const isBannerAlreadyAdded = localStorage.getItem("cookieBannerAdded") === "true";
                     try {
-                      console.log("🟢 Button clicked!");
 
                       const selectedElement = await webflow.getSelectedElement();
                       if (!selectedElement) {
@@ -1047,32 +1103,35 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                         setIsLoading(false); // Reset loading state
                         return;
                       }
-                      console.log("✅ Selected element:", selectedElement);
+
 
                       const newDiv = await selectedElement.before(webflow.elementPresets.DivBlock);
+                      console.log("the main div", newDiv);
+
                       if (!newDiv) {
-                        console.error("❌ Failed to create div.");
                         webflow.notify({ type: "error", message: "Failed to create div." });
                         return;
                       }
-                      console.log("✅ New div created:", newDiv);
+
 
                       if ((newDiv as any).setDomId) {
                         await (newDiv as any).setDomId("consent-banner"); // Type assertion
-                        console.log("✅ prefrence button ID set to #simple-accept");
+
                       } else {
                         console.error("❌ setDomId method not available on accept button element");
                       }
 
                       const timestamp = Date.now();
-                      const divStyleName = `consebit-banner-div-${timestamp}`;
-                      const paragraphStyleName = `consebit-banner-text-${timestamp}`;
-                      const buttonContainerStyleName = `consebit-button-container-${timestamp}`;
-                      const prefrenceButton = `consent-button-preference-${timestamp}`
-                      const buttonStyleName = `consebit-button-accept${timestamp}`;
-                      const DeclinebuttonStyleName = `consebit-button-decline${timestamp}`;
-                      const headingStyleName = `consebit-banner-heading-${timestamp}`;
-                      const secondbackgorundstyle = `consentbit-second-background-${timestamp}`
+                      const divStyleName = `consentbit-gdpr-banner-div`;
+                      const paragraphStyleName = `consentbit-banner-text`;
+                      const buttonContainerStyleName = `consentbit-banner-button-container`;
+                      const prefrenceButton = `consentbit-banner-button-preference`
+                      const buttonStyleName = `consentbit-banner-button-accept`;
+                      const DeclinebuttonStyleName = `consentbit-banner-button-decline`;
+                      const headingStyleName = `consentbit-banner-headings`;
+                      const secondbackgorundstyle = `consentbit-second-backgrounds`
+                      const innerdivstyles = `consentbit-innerdiv`
+
 
                       const divStyle = await webflow.createStyle(divStyleName);
                       const paragraphStyle = await webflow.createStyle(paragraphStyleName);
@@ -1082,60 +1141,64 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                       const prefrenceButtons = await webflow.createStyle(prefrenceButton)
                       const headingStyle = await webflow.createStyle(headingStyleName);
                       const secondivstyle = await webflow.createStyle(secondbackgorundstyle)
-                      console.log("✅ Created new styles:", divStyleName, paragraphStyleName, buttonContainerStyleName, buttonStyleName, headingStyleName);
+                      const innerdivstyle = await webflow.createStyle(innerdivstyles)
 
                       const collection = await webflow.getDefaultVariableCollection();
                       const webflowBlue = await collection?.createColorVariable("Webflow Blue", "rgba(255, 255, 255, 1)");
                       const webflowBlueValue = (webflowBlue as any)?.value || "rgba(255, 255, 255, 1)";
 
+                      const animationAttributeMap = {
+                        "fade": "fade",
+                        "slide-up": "slide-up",
+                        "slide-down": "slide-down",
+                        "slide-left": "slide-left",
+                        "slide-right": "slide-right",
+                        "select": "select", // No attribute if "select"
+                      };
+
+                      const animationAttribute = animationAttributeMap[animation] || "";
+
                       const divPropertyMap: Record<string, string> = {
                         "background-color": color,
-                        // "height": "220px",
-                        // "width": "438px",
                         "position": "fixed",
                         "z-index": "99999",
                         "padding-top": "20px",
                         "padding-right": "20px",
                         "padding-bottom": "20px",
                         "padding-left": "20px",
-                        // "top": "65%", // Remove static position
-                        // "right": "5%", // Remove static position
                         "border-radius": `${borderRadius}px`,
-                        "display": "flex",
+                        "display": "none",
                         "flex-direction": "column",
                         "align-items": "center",
                         "justify-content": "center",
                         "box-shadow": "2px 2px 20px rgba(0, 0, 0, 0.51)",
                       };
 
-                      if (window.innerWidth <= 768) { 
+                      if (window.innerWidth <= 768) {
                         divPropertyMap["width"] = "100%";
                         divPropertyMap["height"] = "40%";
                       }
-
-
-                     
-                      divPropertyMap["bottom"] = "3%"; 
+                      divPropertyMap["bottom"] = "3%";
 
                       switch (selected) {
                         case "left":
                           divPropertyMap["left"] = "3%";
-                         
-                          delete divPropertyMap["right"]; 
+
+                          delete divPropertyMap["right"];
                           break;
 
                         case "center":
-                          divPropertyMap["left"] = "50%"; 
-                         
-                          delete divPropertyMap["right"]; 
-                          
+                          divPropertyMap["left"] = "50%";
+
+                          delete divPropertyMap["right"];
+
                           divPropertyMap["transform"] = "translateX(-50%)";
                           break;
                         case "right":
-                        default: 
+                        default:
                           divPropertyMap["right"] = "5%";
-                          
-                          delete divPropertyMap["left"]; 
+
+                          delete divPropertyMap["left"];
                           break;
                       }
                       switch (style) {
@@ -1148,20 +1211,31 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                           divPropertyMap["min-height"] = "167px";
                           delete divPropertyMap["left"];
                           delete divPropertyMap["right"];
-                          divPropertyMap["bottom"] = "0px" 
+                          divPropertyMap["bottom"] = "0px"
                           break;
                         case "centeralign":
                           divPropertyMap["width"] = "566px";
                           divPropertyMap["min-height"] = "167px";
-                        
+
                           break;
                         case "align":
-                        case "alignstyle": 
-                        default: 
-                          divPropertyMap["width"] = "438px"; 
-                          divPropertyMap["min-height"] = "220px"; 
+                        case "alignstyle":
+                        default:
+                          divPropertyMap["width"] = "438px";
+                          divPropertyMap["min-height"] = "220px";
                           break;
                       }
+
+                      const responsivePropertyMap: Record<string, string> = {
+                        "max-width": "100%",
+                        "width": "100%",
+                        "bottom": "0",
+                        "left": "0",
+                        "right": "0",
+                        "top": "auto",
+                        "transform": "none"
+                      };
+                      const responsiveOptions = { breakpoint: "small" } as BreakpointAndPseudo;
 
                       const paragraphPropertyMap: Record<string, string> = {
                         "color": paraColor,
@@ -1204,8 +1278,16 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                         "min-width": "80px",
                       };
 
+                      const responsivebuttonPropertyMap: Record<string, string> = {
+                        "margin-bottom": "10px",
+                        "flex-direction": "column",
+                        "justify-content": "center",
+                        "text-align": "center"
+                      };
+                      const responsivebuttonOptions = { breakpoint: "small" } as BreakpointAndPseudo;
+
                       const declineButtonPropertyMap: Record<string, string> = {
-                        "border-radius": "48px",
+                        "border-radius": `${buttonRadius}px`,
                         "cursor": "pointer",
                         "background-color": btnColor,
                         "color": "rgba(72, 57, 153, 1)",
@@ -1243,32 +1325,45 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                           break;
                       }
 
+                      const innerdivPropertyMap: Record<string, string> = {
+                        "max-width": "877px",
+                        "margin-left": "auto",
+                        "margin-right": "auto",
+                      };
+
+
                       await divStyle.setProperties(divPropertyMap);
+                      await divStyle.setProperties(responsivePropertyMap, responsiveOptions);
+
                       await paragraphStyle.setProperties(paragraphPropertyMap);
                       await buttonContainerStyle.setProperties(buttonContainerPropertyMap);
+                      await buttonContainerStyle.setProperties(responsivebuttonPropertyMap, responsivebuttonOptions);
+
                       await buttonStyle.setProperties(buttonPropertyMap);
                       await declinebutton.setProperties(declineButtonPropertyMap)
                       await prefrenceButtons.setProperties(declineButtonPropertyMap)
-
                       await headingStyle.setProperties(headingPropertyMap);
                       await secondivstyle.setProperties(secondbackgroundPropertyMap)
-                      console.log("✅ Style properties set for all elements");
-
+                      await innerdivstyle.setProperties(innerdivPropertyMap)
                       if (newDiv.setStyles) {
                         await newDiv.setStyles([divStyle]);
-                        console.log("✅ Div styles applied successfully!");
                       }
-
+                      if (newDiv.setCustomAttribute) {
+                        await newDiv.setCustomAttribute("data-animation", animationAttribute);
+                        await newDiv.setCustomAttribute("data-cookie-banner", toggleStates.disableScroll ? "true" : "false");
+                      } else {
+                        console.error("❌ setCustomAttribute method not available on newDiv element");
+                      }
                       try {
-
                         let SecondDiv;
                         if (style === "alignstyle") {
                           SecondDiv = await selectedElement.before(webflow.elementPresets.DivBlock);
                           if (SecondDiv.setStyles) {
                             await SecondDiv.setStyles([secondivstyle]);
-                            console.log("✅ SecondDiv styles applied!");
                           }
                         }
+                        const innerdiv = await selectedElement.before(webflow.elementPresets.DivBlock);
+                        await innerdiv.setStyles([innerdivstyle]);
 
                         const tempHeading = await selectedElement.before(webflow.elementPresets.Heading);
                         if (!tempHeading) {
@@ -1276,28 +1371,24 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                         }
                         if (tempHeading.setStyles) {
                           await tempHeading.setStyles([headingStyle]);
-                          console.log("✅ Heading styles applied!");
                         }
                         if (tempHeading.setTextContent) {
                           await tempHeading.setTextContent(translations[language as keyof typeof translations].heading);
-                          console.log("✅ Heading text set via setText!");
                         } else {
                           console.error("❌ setText method not available on heading element");
                         }
-
                         const tempParagraph = await selectedElement.before(webflow.elementPresets.Paragraph);
                         if (!tempParagraph) {
                           throw new Error("Failed to create paragraph");
                         }
-
                         if (tempParagraph.setStyles) {
                           await tempParagraph.setStyles([paragraphStyle]);
-                          console.log("✅ Paragraph styles applied!");
+
                         }
 
                         if (tempParagraph.setTextContent) {
                           await tempParagraph.setTextContent(translations[language as keyof typeof translations].description);
-                          console.log("✅ Paragraph text set via setText!");
+
                         } else {
                           console.error("❌ setText method not available on paragraph element");
                         }
@@ -1319,7 +1410,7 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
 
                         if ((prefrenceButton as any).setDomId) {
                           await (prefrenceButton as any).setDomId("preferences-btn"); // Type assertion
-                          console.log("✅ Accept button ID set to #simple-accept");
+
                         } else {
                           console.error("❌ setDomId method not available on accept button element");
                         }
@@ -1330,11 +1421,11 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                         }
                         await acceptButton.setStyles([buttonStyle]);
                         await acceptButton.setTextContent(translations[language as keyof typeof translations].accept);
-                        console.log("acceptButton:", acceptButton);
+
 
                         if ((acceptButton as any).setDomId) {
                           await (acceptButton as any).setDomId("accept-btn"); // Type assertion
-                          console.log("✅ prefrence button ID set to #simple-accept");
+
                         } else {
                           console.error("❌ setDomId method not available on accept button element");
                         }
@@ -1345,28 +1436,30 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                         }
                         await declineButton.setStyles([declinebutton]);
                         await declineButton.setTextContent(translations[language as keyof typeof translations].reject);
-                        console.log("declineButton:", declineButton);
+
 
                         if ((declineButton as any).setDomId) {
                           await (declineButton as any).setDomId("decline-btn"); // Type assertion
-                          console.log("✅ prefrence button ID set to #simple-accept");
+
                         } else {
                           console.error("❌ setDomId method not available on accept button element");
                         }
 
 
-                        if (newDiv.append && tempHeading && tempParagraph && buttonContainer) {
-                          if (SecondDiv) await newDiv.append(SecondDiv);
-                          await newDiv.append(tempHeading);
-                          await newDiv.append(tempParagraph);
-                          await newDiv.append(buttonContainer);
-                          console.log("✅ Appended heading, paragraph, and button container to div!");
+
+                        if (newDiv.append && innerdiv && tempHeading && tempParagraph && buttonContainer) {
+                          // Append elements inside innerDiv
+                          await newDiv.append(innerdiv);
+                          if (SecondDiv) await innerdiv.append(SecondDiv);
+                          await innerdiv.append(tempHeading);
+                          await innerdiv.append(tempParagraph);
+                          await innerdiv.append(buttonContainer);
 
                           if (buttonContainer.append && acceptButton && declineButton && prefrenceButton) {
                             await buttonContainer.append(acceptButton);
                             await buttonContainer.append(declineButton);
                             await buttonContainer.append(prefrenceButton)
-                            console.log("✅ Appended accept and decline buttons to button container!");
+
                           } else {
                             console.error("❌ Failed to append buttons to the button container.");
                           }
@@ -1374,14 +1467,22 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                           console.error("❌ Failed to append elements to the main div.");
                         }
 
-                        console.log("🎉 Cookie consent banner successfully created!");
+                        // ... existing code ...
                         setIsLoading(false);
-                        handleCreatePreferences()
+                        handleCreatePreferences();
+                        // if (!isBannerAlreadyAdded) {
                         fetchAnalyticsBlockingsScripts()
-                        setShowPopup(false)
+                        //   localStorage.setItem("cookieBannerAdded", "true");
+                        // }
+
+                        setTimeout(() => {
+                          setShowPopup(false);
+                        }, 30000);
+                        setIsBannerAdded(true);
+
 
                       } catch (error) {
-                        console.error("❌ Error creating cookie banner:", error);
+
                         webflow.notify({ type: "error", message: "An error occurred while creating the cookie banner." });
 
                       }
@@ -1393,7 +1494,7 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                   }}
                 >
                   {isLoading ? (
-                    <span>wait...</span> 
+                    <span>wait...</span>
                   ) : (
                     "Confirm"
                   )}
@@ -1402,6 +1503,8 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
               {selectedOptions.includes("US State laws") && activeMode === "Advanced" && (<button
                 className="confirm-button"
                 onClick={async () => {
+                  const isBannerAlreadyAdded = localStorage.getItem("cookieBannerAdded") === "true";
+
                   try {
                     console.log("🟢 Button clicked!");
 
@@ -1429,12 +1532,12 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                     }
 
                     const timestamp = Date.now();
-                    const divStyleName = `consebit-ccpa-banner-div-${timestamp}`;
-                    const paragraphStyleName = `consebit-ccpa-banner-text-${timestamp}`;
-                    const buttonContainerStyleName = `consebit-ccpa-button-container-${timestamp}`;
-                    const buttonStyleName = `consebit-ccpa--button-accept${timestamp}`;
-                    const headingStyleName = `consebit-ccpa-banner-heading-${timestamp}`;
-                    const linktextstyle = `consnetbit-linkblock-${timestamp}`
+                    const divStyleName = `consentbit-ccpa-banner-div`;
+                    const paragraphStyleName = `consentbit-ccpa-banner-text`;
+                    const buttonContainerStyleName = `consentbit-ccpa-button-container`;
+                    const buttonStyleName = `consentbit-ccpa--button-accept`;
+                    const headingStyleName = `consentbit-ccpa-banner-heading`;
+                    const linktextstyle = `consentbit-ccpa-linkblock`
 
                     const divStyle = await webflow.createStyle(divStyleName);
                     const paragraphStyle = await webflow.createStyle(paragraphStyleName);
@@ -1446,6 +1549,17 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                     const collection = await webflow.getDefaultVariableCollection();
                     const webflowBlue = await collection?.createColorVariable("Webflow Blue", "rgba(255, 255, 255, 1)");
                     const webflowBlueValue = (webflowBlue as any)?.value || "rgba(255, 255, 255, 1)";
+
+                    const animationAttributeMap = {
+                      "fade": "fade",
+                      "slide-up": "slide-up",
+                      "slide-down": "slide-down",
+                      "slide-left": "slide-left",
+                      "slide-right": "slide-right",
+                      "select": "select", // No attribute if "select"
+                    };
+
+                    const animationAttribute = animationAttributeMap[animation] || "";
 
                     const divPropertyMap: Record<string, string> = {
                       "background-color": color,
@@ -1460,39 +1574,39 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                       // "top": "65%", // Remove static position
                       // "right": "5%", // Remove static position
                       "border-radius": `${borderRadius}px`,
-                      "display": "flex",
+                      "display": "none",
                       "flex-direction": "column",
                       "align-items": "center",
                       "justify-content": "center",
                       "box-shadow": "2px 2px 20px rgba(0, 0, 0, 0.51)",
                     };
 
-                    if (window.innerWidth <= 768) { 
+                    if (window.innerWidth <= 768) {
                       divPropertyMap["width"] = "100%";
                       divPropertyMap["height"] = "40%";
                     }
-                   
-                    divPropertyMap["bottom"] = "3%"; 
+
+                    divPropertyMap["bottom"] = "3%";
 
                     switch (selected) {
                       case "left":
                         divPropertyMap["left"] = "3%";
-                       
-                        delete divPropertyMap["right"]; 
+
+                        delete divPropertyMap["right"];
                         break;
 
                       case "center":
-                        divPropertyMap["left"] = "50%"; 
-                       
-                        delete divPropertyMap["right"]; 
-                        
+                        divPropertyMap["left"] = "50%";
+
+                        delete divPropertyMap["right"];
+
                         divPropertyMap["transform"] = "translateX(-50%)";
                         break;
                       case "right":
-                      default: 
+                      default:
                         divPropertyMap["right"] = "5%";
-                        
-                        delete divPropertyMap["left"]; 
+
+                        delete divPropertyMap["left"];
                         break;
                     }
                     switch (style) {
@@ -1505,20 +1619,29 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                         divPropertyMap["min-height"] = "167px";
                         delete divPropertyMap["left"];
                         delete divPropertyMap["right"];
-                        divPropertyMap["bottom"] = "0px" 
+                        divPropertyMap["bottom"] = "0px"
                         break;
                       case "centeralign":
                         divPropertyMap["width"] = "566px";
                         divPropertyMap["min-height"] = "167px";
-                      
+
                         break;
                       case "align":
-                      case "alignstyle": 
-                      default: 
-                        divPropertyMap["width"] = "438px"; 
-                        divPropertyMap["min-height"] = "220px"; 
+                      case "alignstyle":
+                      default:
+                        divPropertyMap["width"] = "438px";
+                        divPropertyMap["min-height"] = "220px";
                         break;
                     }
+                    const responsivePropertyMap: Record<string, string> = {
+                      "max-width": "100%", // Full width
+                      "bottom": "0",
+                      "left": "0",
+                      "right": "0",
+                      "top": "auto", // Reset top to auto
+                      "transform": "none" // Reset transform to none
+                    };
+                    const responsiveOptions = { breakpoint: "small" } as BreakpointAndPseudo;
 
                     const paragraphPropertyMap: Record<string, string> = {
                       "color": "rgba(25, 25, 25, 1)",
@@ -1534,6 +1657,11 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                       "display": "block",
                       "width": "100%",
                     };
+                    switch (style) {
+                      case "centeralign":
+                        paragraphPropertyMap["text-align"] = "center";
+                        break;
+                    }
 
                     const buttonContainerPropertyMap: Record<string, string> = {
                       "display": "flex",
@@ -1541,16 +1669,11 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                       "margin-top": "10px",
                       "width": "100%",
                     };
-
-                    const buttonPropertyMap: Record<string, string> = {
-                      "text-align": "left",
-                      "cursor": "pointer",
-                      "color": "rgba(72, 57, 153, 1)",
-                      "font-size": "16px",
-                      "font-weight": "500",
-                      "text-decoration": "none"
-
-                    };
+                    switch (style) {
+                      case "centeralign":
+                        buttonContainerPropertyMap["justify-content"] = "center";
+                        break;
+                    }
 
                     const declineButtonPropertyMap: Record<string, string> = {
                       "border-radius": "48px",
@@ -1566,20 +1689,24 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                     const headingPropertyMap: Record<string, string> = {
                       "color": "rgba(72, 57, 153, 1)",
                       "font-size": "20px",
-                      "font-weight": "500",
-                      "text-align": "left",
+                      "font-weight": `${weight}`,
+                      "text-align": `${selectedtext}`,
                       "margin-top": "0",
                       "margin-bottom": "10px",
                       "width": "100%",
                     };
+                    switch (style) {
+                      case "centeralign":
+                        headingPropertyMap["text-align"] = "center";
+                        break;
+                    }
+
 
                     await divStyle.setProperties(divPropertyMap);
+                    await divStyle.setProperties(responsivePropertyMap, responsiveOptions);
                     await paragraphStyle.setProperties(paragraphPropertyMap);
                     await buttonContainerStyle.setProperties(buttonContainerPropertyMap);
                     await Linktext.setProperties(declineButtonPropertyMap);
-
-
-
                     await headingStyle.setProperties(headingPropertyMap);
                     console.log("✅ Style properties set for all elements");
 
@@ -1587,6 +1714,14 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                       await newDiv.setStyles([divStyle]);
                       console.log("✅ Div styles applied successfully!");
                     }
+
+                    if (newDiv.setCustomAttribute) {
+                      await newDiv.setCustomAttribute("data-animation", animationAttribute);
+                      console.log(`✅ Attribute "data-animation" set to "${animationAttribute}"!`);
+                    } else {
+                      console.error("❌ setCustomAttribute method not available on newDiv element");
+                    }
+
 
                     try {
                       const tempHeading = await selectedElement.before(webflow.elementPresets.Heading);
@@ -1663,7 +1798,15 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
 
                       console.log("🎉 Cookie consent banner successfully created!");
                       handleCreatePreferencesccpa()
-                      setShowPopup(false)
+                      if (!isBannerAlreadyAdded) {
+                        fetchAnalyticsBlockingsScripts()
+                        localStorage.setItem("cookieBannerAdded", "true");
+                      }
+                      setTimeout(() => {
+                        setShowPopup(false);
+                      }, 40000);
+                      setIsBannerAdded(true);
+
 
                     } catch (error) {
                       console.error("❌ Error creating cookie banner:", error);
@@ -1680,6 +1823,14 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
 
 
               <button className="cancel-btn" onClick={() => setShowPopup(false)}>Cancel</button>
+
+              {showSuccessPopup && (
+                <div className="success-popup">
+                  <p>🎉 Banner added successfully! Now publish your site to make it live.</p>
+                  <button onClick={() => setShowSuccessPopup(false)}>Close</button>
+                </div>
+              )}
+
 
             </div>
 
@@ -1794,69 +1945,79 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                 </div>
 
                 {/* Cookie Settings - Visible only in Advanced Mode */}
-                {activeMode === "Advanced" && selectedOptions.includes("GDPR") && (
-                  <div className="cookie-settings">
-                    <h3 className="cookie-title">Categories</h3>
+                <div className={`cookie-settings ${(activeMode === "Advanced" && selectedOptions.includes("GDPR")) ? "active" : ""}`}>
+                  <h3 className="cookie-title">Categories</h3>
 
-                    {/* Essentials - Always active */}
-                    <div className="cookie-category">
-                      <span className="category-name">Essentials</span>
-                      <span className="category-status">Always active</span>
-                    </div>
-
-                    {/* Dynamically render other categories */}
-                    {Object.keys(cookiePreferences).map((category) => {
-                      const isChecked = cookiePreferences[category];
-
-                      return (
-                        <label key={category} className="cookie-category">
-                          <input
-                            type="checkbox"
-                            checked={isChecked}
-                            onChange={() => toggleCategory(category)}
-                          />
-                          <span className="custom-checkbox"></span>
-                          <span className="category-name">
-                            {category.charAt(0).toUpperCase() + category.slice(1)}
-                          </span>
-                          <img
-                            src={isChecked ? eye : openeye}
-                            alt={isChecked ? "Enabled" : "Disabled"}
-                            className="category-icon"
-                          />
-                        </label>
-                      );
-                    })}
+                  {/* Essentials - Always active */}
+                  <div className="cookie-category">
+                    <span className="category-name">Essentials</span>
+                    <span className="category-status">Always active</span>
                   </div>
-                )}
+
+                  {/* Dynamically render other categories */}
+                  {Object.keys(cookiePreferences).map((category) => {
+                    const isChecked = cookiePreferences[category];
+
+                    return (
+                      <label key={category} className="cookie-category">
+                        <input
+                          type="checkbox"
+                          checked={isChecked}
+                          onChange={() => toggleCategory(category)}
+                        />
+                        <span className="custom-checkbox"></span>
+                        <span className="category-name">
+                          {category.charAt(0).toUpperCase() + category.slice(1)}
+                        </span>
+                        <img
+                          src={isChecked ? eye : openeye}
+                          alt={isChecked ? "Enabled" : "Disabled"}
+                          className="category-icon"
+                        />
+                      </label>
+                    );
+                  })}
+                </div>
+
 
                 {/* Use Custom Toggle Button - Advanced Mode Only */}
                 {activeMode === "Advanced" && (
                   <div className="togglediv">
                     <label className="toggle-container">
-                      <span className="toggle-label">Use Custom toggle button</span>
+                      <div className="flex">
+                        <span className="toggle-label">Use custom toggle button</span>
+
+                        <div className="tooltip-containers">
+                          <img src={questionmark} alt="info" className="tooltip-icon" />
+                          <span className="tooltip-text">For the better user experience use this feature</span>
+                        </div>
+                      </div>
+
                       <input
                         type="checkbox"
                         className="toggle-checkbox"
                         checked={toggleStates.customToggle}
-
-                        onChange={() => {
-                          if (!toggleStates.customToggle) { // Only allow enabling, not disabling
-                            handleToggle("customToggle");
-                            ApplyCustomToggle(); // Call the function when enabling
-                          }
-                        }}
-                        disabled={toggleStates.customToggle} // Disable checkbox after it's checked
+                        onChange={() => handleToggle("customToggle")}
                       />
+
                       <div className={`toggle ${toggleStates.customToggle ? "toggled" : ""}`}></div>
                     </label>
                   </div>
+
                 )}
 
                 {/* Reset Interactions - Available in BOTH Simple & Advanced Modes */}
                 <div className="togglediv">
                   <label className="toggle-container">
-                    <span className="toggle-label">Reset interactions</span>
+                    <div className="flex">
+                      <span className="toggle-label">Reset interactions</span>
+
+                      <div className="tooltip-containers">
+                        <img src={questionmark} alt="info" className="tooltip-icons" />
+                        <span className="tooltip-text">this will reset the interactions that you have added</span>
+                      </div>
+                    </div>
+
                     <input
                       type="checkbox"
                       className="toggle-checkbox"
@@ -1869,7 +2030,15 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
 
                 <div className="togglediv">
                   <label className="toggle-container">
-                    <span className="toggle-label">Use Global Banner</span>
+                    <div className="flex">
+                      <span className="toggle-label">Use Global Banner</span>
+
+                      <div className="tooltip-containers">
+                        <img src={questionmark} alt="info" className="tooltip-icons" />
+                        <span className="tooltip-text">this will set the Banner Globally</span>
+                      </div>
+                    </div>
+
                     <input
                       type="checkbox"
                       className="toggle-checkbox"
@@ -1882,62 +2051,73 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
 
                 {/* Conditionally render the settings-group */}
                 {toggleStates.globalvariable && (
+                  // <div className="settings-group border">
+                  //   <div className="flex">
+                  //     <label htmlFor="source">Source</label>
+                  //     <div className="tooltip-container">
+                  //       <img src={questionmark} alt="info" className="tooltip-icon" />
+                  //       <span className="tooltip-text">Pages of your site</span>
+                  //     </div>
+                  //   </div>
+                  //   <div className="setting-groups">
+                  //     <select id="pages">
+                  //       {/* <option value="">Select a page</option> */}
+                  //       {pages.map((page) => (
+                  //         <option key={page.id} value={page.id}>
+                  //           {page.name}
+                  //         </option>
+                  //       ))}
+                  //     </select>
+                  //   </div>
+                  // </div>
                   <div className="settings-group border">
-                    <div className="flex">
-                      <label htmlFor="source">Source</label>
-                      <div className="tooltip-container">
-                        <img src={questionmark} alt="info" className="tooltip-icon" />
-                        <span className="tooltip-text">Pages of your site</span>
-                      </div>
-                    </div>
-                    <select id="pages">
-                      <option value="">Select a page</option>
-                      {pages.map((page) => (
-                        <option key={page.id} value={page.id}>
-                          {page.name}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
+  <div className="flex">
+    <label htmlFor="source">Source</label>
+    <div className="tooltip-container">
+      <img src={questionmark} alt="info" className="tooltip-icon" />
+      <span className="tooltip-text">Pages of your site</span>
+    </div>
+  </div>
+  <div className="setting-groups">
+    <select id="pages" onChange={handlePageChange}>
+      {/* <option value="">Select a page</option> */}
+      {pages.map((page) => (
+        <option key={page.id} value={page.id}>
+          {page.name}
+        </option>
+      ))}
+    </select>
+  </div>
+</div>
                 )}
 
-
-                {/* Disable Scroll - Advanced Mode Only
+                {/* Disable Scroll - Advanced Mode Only */}
                 {activeMode === "Advanced" ? (
                   <div className="togglediv">
                     <label className="toggle-container">
-                      <span className="toggle-label">Disable scroll</span>
+                      <div className="flex">
+                        <span className="toggle-label">Disable scroll</span>
+
+                        <div className="tooltip-containers">
+                          <img src={questionmark} alt="info" className="tooltip-icon" />
+                          <span className="tooltip-text">This option disables the scroll of the page when banner is shown</span>
+                        </div>
+                      </div>
+
                       <input
                         type="checkbox"
                         className="toggle-checkbox"
                         checked={toggleStates.disableScroll}
                         onChange={() => {
                           handleToggle("disableScroll");
-                          ApplyCustomToggle(); // Call the function here
-                        }}
-                      />
-                      <div className={`toggle ${toggleStates.disableScroll ? "toggled" : ""}`}></div>
-                    </label>
-                  </div>
-                ) : null} */}
 
-                {/* Disable Scroll - Advanced Mode Only */}
-                {activeMode === "Advanced" ? (
-                  <div className="togglediv">
-                    <label className="toggle-container">
-                      <span className="toggle-label">Disable scroll</span>
-                      <input
-                        type="checkbox"
-                        className="toggle-checkbox"
-                        checked={toggleStates.disableScroll}
-                        onChange={() => {
-                          if (!toggleStates.disableScroll) { // Only allow enabling, not disabling
-                            handleToggle("disableScroll");
-                            ApplyScrollcontroll(); // Call the function when enabling
-                          }
+                          // Optionally call the scroll function only when enabling
+                          // if (!toggleStates.disableScroll) {
+                          //   ApplyScrollcontroll();
+                          // }
                         }}
-                        disabled={toggleStates.disableScroll} // Disable checkbox after it's checked
                       />
+
                       <div className={`toggle ${toggleStates.disableScroll ? "toggled" : ""}`}></div>
                     </label>
                   </div>
@@ -1955,7 +2135,7 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                     </label>
 
                     <div className="checkbox-group">
-                      {["US State laws", "GDPR"].map((option) => (
+                      {["US State laws", "GDPR"].map((option) => ( //US State laws
                         <label key={option} className="custom-checkboxs">
                           <input
                             type="checkbox"
@@ -1977,7 +2157,9 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
               <div className="settings-group-preview">
                 <h3>Preview</h3>
                 <div className="preview-area">
-                  <div className="topbar"></div>
+                  <div className="topbar">
+                    <img src={dots} alt="" className="threedots" />
+                  </div>
                   <div
                     className={`cookie-banner ${animation} ${isActive ? "active" : ""}`}
                     style={{
@@ -1993,7 +2175,7 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                       fontFamily: Font,
                       textAlign: selectedtext as "left" | "center" | "right",
                       alignItems: style === "centeralign" ? "center" : undefined, // Change dynamically
-                      fontWeight: weight, 
+                      fontWeight: weight,
                       width: previewDimensions.width,
                       height: previewDimensions.height,
                       borderRadius: `${borderRadius}px`,
@@ -2002,7 +2184,7 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                   >
 
                     {style === "alignstyle" && <div className="secondclass" style={{ backgroundColor: bgColors, borderBottomRightRadius: `${borderRadius}px`, borderTopRightRadius: `${borderRadius}px` }}></div>}
-                    <div className="space" style={{ color: headColor , fontWeight: weight,  }}><h4>Cookie Setting</h4></div>
+                    <div className="space" style={{ color: headColor, fontWeight: weight, }}><h4>Cookie Setting</h4></div>
 
                     <div className="padding" style={{ color: paraColor }}>
                       <span>
@@ -2013,7 +2195,7 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                             : "Nous utilisons des cookies pour vous offrir la meilleure expérience possible. Ils nous permettent également d'analyser le comportement des utilisateurs afin d'améliorer constamment le site Web pour vous."}
                       </span>
                     </div>
-                    <div className="button-wrapp" style={{ justifyContent:  style === "centeralign" ? "center" : undefined, }}>
+                    <div className="button-wrapp" style={{ justifyContent: style === "centeralign" ? "center" : undefined, }}>
                       {activeMode === "Advanced" && (<button className="btn-preferences" style={{ borderRadius: `${buttonRadius}px`, backgroundColor: btnColor }} >Preferences</button>)}
                       <button className="btn-reject" style={{ borderRadius: `${buttonRadius}px`, backgroundColor: btnColor }} >Reject</button>
                       <button className="btn-accept" style={{ borderRadius: `${buttonRadius}px`, backgroundColor: secondcolor }} >Accept</button>
