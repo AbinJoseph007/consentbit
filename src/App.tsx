@@ -191,6 +191,7 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
       return updatedPreferences;
     });
   };
+ 
 
   // const handleToggles = (option) => {
   //   setSelectedOptions((prev) =>
@@ -281,7 +282,7 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
     fetchPages();
   }, [webflow]);
 
-  //main function for adding custom code to the head
+
   const fetchAnalyticsBlockingsScripts = async () => {
     try {
       console.log('=== Component Debug ===');
@@ -1376,7 +1377,7 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                         console.log("🎉 Cookie consent banner successfully created!");
                         setIsLoading(false);
                         handleCreatePreferences()
-                        // fetchAnalyticsBlockingsScripts()
+                        fetchAnalyticsBlockingsScripts()
                         setShowPopup(false)
 
                       } catch (error) {

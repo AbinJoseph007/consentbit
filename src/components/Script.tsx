@@ -21,7 +21,6 @@ const Script: React.FC<{
     const [saveStatus, setSaveStatus] = useState<{ success: boolean; message: string } | null>(null);
     const categories = ["Essential", "Personalization", "Analytics", "Marketing"];
     const userinfo = localStorage.getItem("wf_hybrid_user");
-    const base_url ="https://cb-server.web-8fb.workers.dev"
 
     useEffect(() => {
         if (fetchScripts) {
@@ -40,8 +39,8 @@ const Script: React.FC<{
             const result = await customCodeApi.analyticsScript(tokewern);
             console.log("Analytics Script Result:", result);
             
-            if (result?.success && result?.data?.data?.analyticsScripts) {
-                const scriptsResponse = result?.data?.data?.analyticsScripts ?? [];
+            if (result?.success && result?.data?.analyticsScripts) {
+                const scriptsResponse = result?.data?.analyticsScripts ?? [];
                 console.log("Inside formatted script:", scriptsResponse);
                 
                 // Filter out scripts with null or empty fullTag
@@ -75,20 +74,87 @@ const Script: React.FC<{
         }
     };
 
+    // const handleSaveAll = async () => {
+    //     try {
+    //         setIsSaving(true);
+    //         setSaveStatus(null);
+
+    //         const siteId = "67c6b33db14886f99df46d69";
+    //         const tokenss = JSON.parse(userinfo);
+    //         const tokewern = tokenss.sessionToken;
+
+    //         // Filter scripts that have categories selected
+    //         const scriptsWithCategories = scripts.filter(script => 
+    //             script.selectedCategories.length > 0
+    //         );
+
+    //         if (scriptsWithCategories.length === 0) {
+    //             setSaveStatus({
+    //                 success: false,
+    //                 message: "Please select at least one category for a script"
+    //             });
+    //             return;
+    //         }
+
+    //         const scriptsToSave: ScriptCategory[] = scriptsWithCategories.map(script => ({
+    //             src: script.src || script.url || null,
+    //             content: script.content || script.script || null,
+    //             selectedCategories: script.selectedCategories || []
+    //         }));
+
+    //         const result = await customCodeApi.saveScriptCategorizations(
+    //             tokewern,
+    //             scriptsToSave
+    //         );
+            
+    //         if (result.success) {
+    //             setSaveStatus({
+    //                 success: true,
+    //                 message: "Script categories saved successfully!"
+    //             });
+    //         } else {
+    //             throw new Error(result.error || "Failed to save categories");
+    //         }
+    //     } catch (error) {
+    //         setSaveStatus({
+    //             success: false,
+    //             message: error instanceof Error ? error.message : "Failed to save categories"
+    //         });
+    //     } finally {
+    //         setIsSaving(false);
+    //     }
+    // };
+
+    // const handleToggle = (category: string, scriptIndex: number) => {
+    //     setScripts(prevScripts => {
+    //         const newScripts = [...prevScripts];
+    //         const script = newScripts[scriptIndex];
+            
+    //         if (script.selectedCategories.includes(category)) {
+    //             script.selectedCategories = script.selectedCategories.filter(c => c !== category);
+    //         } else {
+    //             script.selectedCategories.push(category);
+    //         }
+            
+    //         return newScripts;
+    //     });
+    // };
+//new code
+
     const handleSaveAll = async () => {
         try {
             setIsSaving(true);
             setSaveStatus(null);
-
-            const siteId = "67c6b33db14886f99df46d69";
+    
+           
             const tokenss = JSON.parse(userinfo);
             const tokewern = tokenss.sessionToken;
-
-            // Filter scripts that have categories selected
-            const scriptsWithCategories = scripts.filter(script => 
-                script.selectedCategories.length > 0
+    
+            // Filter scripts that have a data-category attribute in the fullTag
+            const scriptsWithCategories = scripts.filter(script =>
+                (script.fullTag || '').includes('data-category=')
             );
-
+    
             if (scriptsWithCategories.length === 0) {
                 setSaveStatus({
                     success: false,
@@ -96,13 +162,13 @@ const Script: React.FC<{
                 });
                 return;
             }
-
-            const scriptsToSave: ScriptCategory[] = scriptsWithCategories.map(script => ({
+    
+            const scriptsToSave : ScriptCategory[] = scriptsWithCategories.map(script => ({
                 src: script.src || script.url || null,
-                content: script.content || script.script || null,
-                selectedCategories: script.selectedCategories || []
+                content: script.fullTag || script.script || null,
+                // no need for selectedCategories anymore
             }));
-
+    
             const result = await customCodeApi.saveScriptCategorizations(
                 tokewern,
                 scriptsToSave
@@ -125,21 +191,50 @@ const Script: React.FC<{
             setIsSaving(false);
         }
     };
+    
+
 
     const handleToggle = (category: string, scriptIndex: number) => {
         setScripts(prevScripts => {
             const newScripts = [...prevScripts];
             const script = newScripts[scriptIndex];
-            
+    
+            // Toggle the category
             if (script.selectedCategories.includes(category)) {
                 script.selectedCategories = script.selectedCategories.filter(c => c !== category);
             } else {
                 script.selectedCategories.push(category);
             }
-            
+    
+            // Update the script tag's data-category attribute
+            const selectedCategories = script.selectedCategories;
+            const content = script.fullTag || '';
+            const tagRegex = /<script\b([^>]*)>/i;
+            const match = content.match(tagRegex);
+    
+            if (match) {
+                let attrs = match[1];
+    
+                // Remove existing data-category if present
+                attrs = attrs.replace(/\s*data-category\s*=\s*"[^"]*"/i, '');
+    
+                // Add data-category only if there are selected categories
+                const categoryAttr = selectedCategories.length > 0
+                    ? ` data-category="${selectedCategories.join(',')}"`
+                    : '';
+    
+                const updatedTag = `<script${attrs}${categoryAttr}>`;
+                const updatedScript = content.replace(tagRegex, updatedTag);
+    
+                // Save the updated script back
+                script.fullTag = updatedScript;
+                script.script = updatedScript;
+            }
+    
             return newScripts;
         });
     };
+    
 
     const handleDismiss = (scriptIndex: number) => {
         setScripts(prevScripts => {
