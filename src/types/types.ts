@@ -177,6 +177,7 @@ export interface Script {
   crossorigin?: string | null;
   category?: string;
   fullTag?: string | null;
+  isEdited: boolean;
 }
 
 export interface ScriptCategory {

@@ -7,6 +7,10 @@ const questionmark = new URL("./assets/questionmark.png", import.meta.url).href;
 const openeye = new URL("./assets/closedeye.png", import.meta.url).href;
 const eye = new URL("./assets/eye.png", import.meta.url).href;
 const dots = new URL("./assets/dots.png", import.meta.url).href;
+const book = new URL("./assets/book.png", import.meta.url).href;
+const users = new URL("./assets/user.png", import.meta.url).href;
+const watch = new URL("./assets/fi-rr-play (1).png", import.meta.url).href;
+const doc = new URL("./assets/message.png", import.meta.url).href;
 import { customCodeApi } from "./services/api";
 import { useAuth } from "../src/hooks/userAuth";
 import webflow, { WebflowAPI } from './types/webflowtypes';
@@ -23,6 +27,7 @@ type BannerStyle = "align" | "alignstyle" | "bigstyle" | "centeralign" | "fullwi
 interface HelpItem {
   label: string;
   href: string;
+  icon: string;
 }
 
 type BreakpointAndPseudo = {
@@ -107,6 +112,7 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
   // const [bgColors, setBgColors] = usePersistentState("bgColors", "#798EFF");
   // const [headColor, setHeadColor] = usePersistentState("headColor", "#483999");
   const [userlocaldata, setUserlocaldata] = useState<UserData | null>(null);
+  const [showSuccessPopup, setShowSuccessPopup] = useState(false);
 
   const base_url = "https://cb-server.web-8fb.workers.dev"
   const [isBannerAdded, setIsBannerAdded] = useState(false);
@@ -364,34 +370,48 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
     fetchPages();
   }, [webflow]);
 
-  useEffect(() => {
-    const fetchPages = async () => {
+  // useEffect(() => {
+  //   const fetchPages = async () => {
+  //     try {
+  //       console.log("Fetching pages...");
+  //       const pagesAndFolders = await webflow.getAllPagesAndFolders();
+  //       console.log("API Response:", pagesAndFolders);
+
+  //       if (Array.isArray(pagesAndFolders) && pagesAndFolders.length > 0) {
+  //         const pages = pagesAndFolders.filter(i => i.type === "Page");
+  //         const pageDetails = await Promise.all(
+  //           pages.map(async page => ({
+  //             id: page.id,
+  //             name: await page.getName(),
+  //           }))
+  //         );
+
+  //         setPages(pageDetails);
+  //         console.log("Pages set in state:", pageDetails);
+  //       } else {
+  //         console.warn("No pages found.");
+  //       }
+  //     } catch (error) {
+  //       console.error("Error fetching pages:", error);
+  //     }
+  //   };
+
+  //   fetchPages();
+  // }, [webflow]);
+
+  const handlePageChange = async (event) => {
+    const pageId = event.target.value;
+    const selectedPage = pages.find(page => page.id === pageId);
+    if (selectedPage) {
       try {
-        console.log("Fetching pages...");
-        const pagesAndFolders = await webflow.getAllPagesAndFolders();
-        console.log("API Response:", pagesAndFolders);
-
-        if (Array.isArray(pagesAndFolders) && pagesAndFolders.length > 0) {
-          const pages = pagesAndFolders.filter(i => i.type === "Page");
-          const pageDetails = await Promise.all(
-            pages.map(async page => ({
-              id: page.id,
-              name: await page.getName(),
-            }))
-          );
-
-          setPages(pageDetails);
-          console.log("Pages set in state:", pageDetails);
-        } else {
-          console.warn("No pages found.");
-        }
+        console.log(`Switching to page: ${selectedPage.name}`);
+        await webflow.switchPage(selectedPage);
+        console.log("Page switch successful");
       } catch (error) {
-        console.error("Error fetching pages:", error);
+        console.error("Failed to switch page:", error);
       }
-    };
-
-    fetchPages();
-  }, [webflow]);
+    }
+  };
 
   //main function for adding custom code to the head
   const fetchAnalyticsBlockingsScripts = async () => {
@@ -561,10 +581,10 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
   const buttonRef = useRef<HTMLDivElement | null>(null);
 
   const helpItems: HelpItem[] = [
-    { label: 'Watch tutorial', href: '#' },
-    { label: 'Check docs', href: '#' },
-    { label: 'Get support', href: '#' },
-    { label: 'Send feedback', href: '#' },
+    { label: 'Watch tutorial', href: '#', icon: watch },
+    { label: 'Check docs', href: '#', icon: book },
+    { label: 'Get support', href: '#', icon: users },
+    { label: 'Send feedback', href: '#', icon: doc },
   ];
 
   const toggleOpen = () => {
@@ -616,15 +636,17 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
 
           {isOpen && (
             <div className="help-dropdown" ref={dropdownRef}>
+              <p className="helptext">help</p>
               <ul>
-                {helpItems.map((item, index) => (
-                  <li key={index}>
-                    <a href={item.href} target="_blank" rel="noopener noreferrer">
-                      {item.label}
-                    </a>
-                  </li>
-                ))}
-              </ul>
+            {helpItems.map((item, index) => (
+              <li key={index}>
+                <a href={item.href} target="_blank" rel="noopener noreferrer">
+                  <img src={item.icon} alt={item.label} style={{ marginRight: '8px', verticalAlign: 'middle' }} width="16" height="16" />
+                  {item.label}
+                </a>
+              </li>
+            ))}
+          </ul>
             </div>
           )}
         </div>
@@ -665,9 +687,9 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
             <div>
               <div>
                 {/* {!isBannerAdded ? ( */}
-                  <button className="publish-button" onClick={() => setShowPopup(true)}>
-                    Add Your Banner
-                  </button>
+                <button className="publish-button" onClick={() => setShowPopup(true)}>
+                  Add Your Banner
+                </button>
                 {/* ) : (
                   <button className="publish-buttons">
                     Update Your Banner
@@ -822,12 +844,12 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
 
                       const responsivePropertyMap: Record<string, string> = {
                         "max-width": "100%",
-                        "width": "100%", 
+                        "width": "100%",
                         "bottom": "0",
                         "left": "0",
                         "right": "0",
-                        "top": "auto", 
-                        "transform": "none" 
+                        "top": "auto",
+                        "transform": "none"
                       };
                       const responsiveOptions = { breakpoint: "small" } as BreakpointAndPseudo;
 
@@ -1050,6 +1072,7 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                         }
                         setShowPopup(false)
                         setIsBannerAdded(true);
+                        setShowSuccessPopup(true);
 
                       } catch (error) {
                         console.error("❌ Error creating cookie banner:", error);
@@ -1204,12 +1227,12 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
 
                       const responsivePropertyMap: Record<string, string> = {
                         "max-width": "100%",
-                        "width": "100%", 
+                        "width": "100%",
                         "bottom": "0",
                         "left": "0",
                         "right": "0",
-                        "top": "auto", 
-                        "transform": "none" 
+                        "top": "auto",
+                        "transform": "none"
                       };
                       const responsiveOptions = { breakpoint: "small" } as BreakpointAndPseudo;
 
@@ -1447,7 +1470,7 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                         setIsLoading(false);
                         handleCreatePreferences();
                         // if (!isBannerAlreadyAdded) {
-                          fetchAnalyticsBlockingsScripts()
+                        fetchAnalyticsBlockingsScripts()
                         //   localStorage.setItem("cookieBannerAdded", "true");
                         // }
 
@@ -1800,6 +1823,14 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
 
               <button className="cancel-btn" onClick={() => setShowPopup(false)}>Cancel</button>
 
+              {showSuccessPopup && (
+                <div className="success-popup">
+                  <p>🎉 Banner added successfully! Now publish your site to make it live.</p>
+                  <button onClick={() => setShowSuccessPopup(false)}>Close</button>
+                </div>
+              )}
+
+
             </div>
 
           </div>
@@ -2019,25 +2050,44 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
 
                 {/* Conditionally render the settings-group */}
                 {toggleStates.globalvariable && (
+                  // <div className="settings-group border">
+                  //   <div className="flex">
+                  //     <label htmlFor="source">Source</label>
+                  //     <div className="tooltip-container">
+                  //       <img src={questionmark} alt="info" className="tooltip-icon" />
+                  //       <span className="tooltip-text">Pages of your site</span>
+                  //     </div>
+                  //   </div>
+                  //   <div className="setting-groups">
+                  //     <select id="pages">
+                  //       {/* <option value="">Select a page</option> */}
+                  //       {pages.map((page) => (
+                  //         <option key={page.id} value={page.id}>
+                  //           {page.name}
+                  //         </option>
+                  //       ))}
+                  //     </select>
+                  //   </div>
+                  // </div>
                   <div className="settings-group border">
-                    <div className="flex">
-                      <label htmlFor="source">Source</label>
-                      <div className="tooltip-container">
-                        <img src={questionmark} alt="info" className="tooltip-icon" />
-                        <span className="tooltip-text">Pages of your site</span>
-                      </div>
-                    </div>
-                    <div className="setting-groups">
-                      <select id="pages">
-                        {/* <option value="">Select a page</option> */}
-                        {pages.map((page) => (
-                          <option key={page.id} value={page.id}>
-                            {page.name}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                  </div>
+  <div className="flex">
+    <label htmlFor="source">Source</label>
+    <div className="tooltip-container">
+      <img src={questionmark} alt="info" className="tooltip-icon" />
+      <span className="tooltip-text">Pages of your site</span>
+    </div>
+  </div>
+  <div className="setting-groups">
+    <select id="pages" onChange={handlePageChange}>
+      {/* <option value="">Select a page</option> */}
+      {pages.map((page) => (
+        <option key={page.id} value={page.id}>
+          {page.name}
+        </option>
+      ))}
+    </select>
+  </div>
+</div>
                 )}
 
                 {/* Disable Scroll - Advanced Mode Only */}
