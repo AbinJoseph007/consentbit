@@ -183,7 +183,7 @@ export interface Script {
 export interface ScriptCategory {
   src: string | null;
   content: string | null;
-  selectedCategories: string[];
+  selectedCategories?: string[];
 }
 
 export interface SaveCategoriesResponse {

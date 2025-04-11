@@ -268,6 +268,7 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
       return updatedPreferences;
     });
   };
+ 
 
   // const handleToggles = (option) => {
   //   setSelectedOptions((prev) =>

@@ -1,12 +1,9 @@
 const base_url = "https://cb-server.web-8fb.workers.dev";
 import { ScriptCategory, SaveCategoriesResponse } from '../types/types';
 import { scriptCategorizationService } from './script-categorization-service';
-// import { ClientSecurity } from '../util/Security';
-
-// const base_url = "https://consent-bit-server.web-8fb.workers.dev"
+import { ClientEncryption } from '../util/Secure-Data';
 
 import { ScriptRegistrationRequest, CodeApplication } from "../types/types";
-import {FetchAnalyticsScript} from '../util/Script-Fetch'
 
 
 export const customCodeApi = {
@@ -156,6 +153,9 @@ updateScriptCategorizations: async (siteId: string, token: string, newCategoriza
 
 
 // src/services/api.ts
+
+
+
 analyticsScript: async (token: string) => {
   try {
     // Validate token
@@ -184,31 +184,14 @@ analyticsScript: async (token: string) => {
     const data = await response.json();
     console.log("Analytics Response:", data);
 
-    // Validate response structure
-    if (!data.success) {
-      throw new Error(data.error || "Invalid response from server");
-    }
-
-    // /// Process and decrypt scripts
-    // const { scripts, error } = ClientSecurity.processAnalyticsResponse(data);
-    
-    // if (error) {
-    //   console.error("Error processing scripts:", error);
-    //   return {
-    //     success: false,
-    //     error: error,
-    //     data: null
-    //   };
-    // }
-
-    // Return the processed data with decrypted scripts
+   
     return {
-      success: Boolean(data.success),
-      data: {
-        ...data,
-        analyticsScripts: Array.isArray(data.analyticsScripts) ? data.analyticsScripts : []
+      success: true,
+       ...data
       }
-    };
+    
+  
+    
     
   } catch (error) {
     console.error("Error in analyticsScript:", error);
