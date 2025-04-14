@@ -55,32 +55,60 @@ const createCookieccpaPreferences = async (language: string = "English" ,  color
         }
 
         const timestamp = Date.now();
-        const preferenceDiv = `consebit-ccpa-preference-div-${timestamp}`;
-        const paragraphStyleNames = `consebit-ccpa-prefrence-text-${timestamp}`;
-        const formfield = `consentbit-ccpa-formblock-${timestamp}`
-        const preferenceblock = `consentbit-ccpa-prefrence-block-${timestamp}`
-        const toggledivs = `consentbit-ccpa-prefrence-toggle-${timestamp}`
-        const buttonContainerStyleName = `consebit-ccpa-prefrence-container-${timestamp}`;
-        const prefrenceButton = `consentbit-ccpa-button-preference-${timestamp}`
-        const checkboxstyle = `consentbit-ccpa-checkbox-${timestamp}`
-        const buttonStyleName = `consebit-ccpa-prefrence-accept${timestamp}`;
-        const DeclinebuttonStyleName = `consebit-ccpa-prefrence-decline${timestamp}`;
-        const headingStyleName = `consebit-ccpa-prefrence-heading-${timestamp}`;
-        const changepreference = `consentbit-change-preference-${timestamp}`
 
-        const divStyle = await webflow.createStyle(preferenceDiv);
-        const paragraphStyle = await webflow.createStyle(paragraphStyleNames);
-        const formBlockStyle = await webflow.createStyle(formfield)
-        const prefrenceDiv = await webflow.createStyle(preferenceblock)
-        const togglediv = await webflow.createStyle(toggledivs)
-        const buttonContainerStyle = await webflow.createStyle(buttonContainerStyleName);
-        const buttonStyle = await webflow.createStyle(buttonStyleName);
-        const changepre = await webflow.createStyle(changepreference)
-        const declinebutton = await webflow.createStyle(DeclinebuttonStyleName)
-        const prefrenceButtons = await webflow.createStyle(prefrenceButton)
-        const checkbosstyle = await webflow.createStyle(checkboxstyle)
-        const headingStyle = await webflow.createStyle(headingStyleName);
-        console.log("✅ Created new styles:", preferenceDiv, paragraphStyleNames, buttonContainerStyleName, buttonStyleName, headingStyleName);
+
+        const styleNames = {
+            preferenceDiv : `consebit-ccpa-preference-div`,
+            paragraphStyleNames : `consebit-ccpa-prefrence-text`,
+            formfield : `consentbit-ccpa-formblock`,
+            preferenceblock : `consentbit-ccpa-prefrence-block`,
+            toggledivs : `consentbit-ccpa-prefrence-toggle`,
+            buttonContainerStyleName : `consebit-ccpa-prefrence-container`,
+            prefrenceButton : `consentbit-ccpa-button-preference`,
+            checkboxstyle:"consentbit-ccpa-checkbox",
+            buttonStyleName : `consebit-ccpa-prefrence-accept`,
+            DeclinebuttonStyleName : `consebit-ccpa-prefrence-decline`,
+            headingStyleName : `consebit-ccpa-prefrence-heading`,
+            checkboxContainerStyleName : `consentbit-toggle`,
+            changepreference : `consentbit-change-preference-${timestamp}`
+     
+         };
+     
+         const styles = await Promise.all(
+           Object.values(styleNames).map(async (name) => {
+             return (await webflow.getStyleByName(name)) || (await webflow.createStyle(name));
+           })
+         );
+     
+         const [divStyle, paragraphStyle, formBlockStyle, prefrenceDiv, togglediv, buttonContainerStyle, prefrenceButtons,buttonStyle, declinebutton,headingStyle,checkbosstyle,changepre] = styles;
+
+         
+        // const preferenceDiv = `consebit-ccpa-preference-div-${timestamp}`;
+        // const paragraphStyleNames = `consebit-ccpa-prefrence-text-${timestamp}`;
+        // const formfield = `consentbit-ccpa-formblock-${timestamp}`
+        // const preferenceblock = `consentbit-ccpa-prefrence-block-${timestamp}`
+        // const toggledivs = `consentbit-ccpa-prefrence-toggle-${timestamp}`
+        // const buttonContainerStyleName = `consebit-ccpa-prefrence-container-${timestamp}`;
+        // const prefrenceButton = `consentbit-ccpa-button-preference-${timestamp}`
+        // const checkboxstyle = `consentbit-ccpa-checkbox-${timestamp}`
+        // const buttonStyleName = `consebit-ccpa-prefrence-accept${timestamp}`;
+        // const DeclinebuttonStyleName = `consebit-ccpa-prefrence-decline${timestamp}`;
+        // const headingStyleName = `consebit-ccpa-prefrence-heading-${timestamp}`;
+        // const changepreference = `consentbit-change-preference-${timestamp}`
+
+        // const divStyle = await webflow.createStyle(preferenceDiv);
+        // const paragraphStyle = await webflow.createStyle(paragraphStyleNames);
+        // const formBlockStyle = await webflow.createStyle(formfield)
+        // const prefrenceDiv = await webflow.createStyle(preferenceblock)
+        // const togglediv = await webflow.createStyle(toggledivs)
+        // const buttonContainerStyle = await webflow.createStyle(buttonContainerStyleName);
+        // const buttonStyle = await webflow.createStyle(buttonStyleName);
+        // const changepre = await webflow.createStyle(changepreference)
+        // const declinebutton = await webflow.createStyle(DeclinebuttonStyleName)
+        // const prefrenceButtons = await webflow.createStyle(prefrenceButton)
+        // const checkbosstyle = await webflow.createStyle(checkboxstyle)
+        // const headingStyle = await webflow.createStyle(headingStyleName);
+        // console.log("✅ Created new styles:", preferenceDiv, paragraphStyleNames, buttonContainerStyleName, buttonStyleName, headingStyleName);
 
         const collection = await webflow.getDefaultVariableCollection();
         const webflowBlue = await collection?.createColorVariable("Webflow Blue", "rgba(255, 255, 255, 1)");
@@ -375,6 +403,17 @@ const createCookieccpaPreferences = async (language: string = "English" ,  color
                     await child.setTextContent(".");
                 }
             }
+
+            for (const child of children) {
+                console.log("Child type:", child.type);
+                console.log("Child type:", child);
+      
+      
+                if (child.type.includes("FormCheckboxInput") && child.setCustomAttribute) {
+                  await child.setCustomAttribute("data-consent-id","do-not-share-checkbox");
+                  // await child.setStyles([checkboxContainerStyle]);
+                }
+              }
 
 
             //////////////////////

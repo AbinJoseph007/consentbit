@@ -107,35 +107,62 @@ const createCookiePreferences = async (selectedPreferences: string[], language: 
     } else {
       console.error("setDomId method not available on accept button element");
     }
-
     const timestamp = Date.now();
-    const preferenceDiv = `consentbit-preference-div`;
-    const paragraphStyleNames = `consentbit-prefrence-text`;
-    const formfield = `consentbit-formblock`
-    const preferenceblock = `consentbit-prefrence-block`
-    const toggledivs = `consentbit-prefrence-toggle`
-    const buttonContainerStyleName = `consentbit-prefrence-container`;
-    const prefrenceButton = `consentbit-button-preference`
-    const checkboxlabeltextstyle = `consentbit-checkbox-label`
-    const buttonStyleName = `consebit-prefrence-accept`;
-    const DeclinebuttonStyleName = `consentbit-prefrence-decline`;
-    const headingStyleName = `consebit-prefrence-heading`;
-    const checkboxContainerStyleName = `consentbit-toggle`;
-    const changepreference = `consentbit-change-preference-${timestamp}`
 
-    const divStyle = await webflow.createStyle(preferenceDiv);
-    const paragraphStyle = await webflow.createStyle(paragraphStyleNames);
-    const formBlockStyle = await webflow.createStyle(formfield)
-    const prefrenceDiv = await webflow.createStyle(preferenceblock)
-    const togglediv = await webflow.createStyle(toggledivs)
-    const buttonContainerStyle = await webflow.createStyle(buttonContainerStyleName);
-    const checkboxContainerStyle = await webflow.createStyle(checkboxContainerStyleName);
-    const checkboxlabeltext = await webflow.createStyle(checkboxlabeltextstyle)
-    const buttonStyle = await webflow.createStyle(buttonStyleName);
-    const declinebutton = await webflow.createStyle(DeclinebuttonStyleName)
-    const prefrenceButtons = await webflow.createStyle(prefrenceButton)
-    const headingStyle = await webflow.createStyle(headingStyleName);
-    const changepre = await webflow.createStyle(changepreference)
+    const styleNames = {
+       preferenceDiv : `consentbit-preference-div`,
+       paragraphStyleNames : `consentbit-prefrence-text`,
+       formfield : `consentbit-formblock`,
+       preferenceblock : `consentbit-prefrence-block`,
+       toggledivs : `consentbit-prefrence-toggle`,
+       buttonContainerStyleName : `consentbit-prefrence-container`,
+       prefrenceButton : `consentbit-button-preference`,
+       checkboxlabeltextstyle : `consentbit-checkbox-label`,
+       buttonStyleName : `consebit-prefrence-accept`,
+       DeclinebuttonStyleName : `consentbit-prefrence-decline`,
+       headingStyleName : `consebit-prefrence-heading`,
+       checkboxContainerStyleName : `consentbit-toggle`,
+       changepreference : `consentbit-change-preference-${timestamp}`
+
+    };
+
+    const styles = await Promise.all(
+      Object.values(styleNames).map(async (name) => {
+        return (await webflow.getStyleByName(name)) || (await webflow.createStyle(name));
+      })
+    );
+
+    const [divStyle, paragraphStyle, formBlockStyle, prefrenceDiv, togglediv, buttonContainerStyle,checkboxlabeltext, prefrenceButtons,buttonStyle, declinebutton,headingStyle,checkboxContainerStyle,changepre] = styles;
+
+
+
+    // const preferenceDiv = `consentbit-preference-div`;
+    // const paragraphStyleNames = `consentbit-prefrence-text`;
+    // const formfield = `consentbit-formblock`
+    // const preferenceblock = `consentbit-prefrence-block`
+    // const toggledivs = `consentbit-prefrence-toggle`
+    // const buttonContainerStyleName = `consentbit-prefrence-container`;
+    // const prefrenceButton = `consentbit-button-preference`
+    // const checkboxlabeltextstyle = `consentbit-checkbox-label`
+    // const buttonStyleName = `consebit-prefrence-accept`;
+    // const DeclinebuttonStyleName = `consentbit-prefrence-decline`;
+    // const headingStyleName = `consebit-prefrence-heading`;
+    // const checkboxContainerStyleName = `consentbit-toggle`;
+    // const changepreference = `consentbit-change-preference-${timestamp}`
+
+    // const divStyle = await webflow.createStyle(preferenceDiv);
+    // const paragraphStyle = await webflow.createStyle(paragraphStyleNames);
+    // const formBlockStyle = await webflow.createStyle(formfield)
+    // const prefrenceDiv = await webflow.createStyle(preferenceblock)
+    // const togglediv = await webflow.createStyle(toggledivs)
+    // const buttonContainerStyle = await webflow.createStyle(buttonContainerStyleName);
+    // const checkboxContainerStyle = await webflow.createStyle(checkboxContainerStyleName);
+    // const checkboxlabeltext = await webflow.createStyle(checkboxlabeltextstyle)
+    // const buttonStyle = await webflow.createStyle(buttonStyleName);
+    // const declinebutton = await webflow.createStyle(DeclinebuttonStyleName)
+    // const prefrenceButtons = await webflow.createStyle(prefrenceButton)
+    // const headingStyle = await webflow.createStyle(headingStyleName);
+    // const changepre = await webflow.createStyle(changepreference)
 
 
     const collection = await webflow.getDefaultVariableCollection();
@@ -567,10 +594,10 @@ const createCookiePreferences = async (selectedPreferences: string[], language: 
           // await prefrenceContainerinner.append(prefeParagraph)
         }
 
-        if (buttonContainer.append && acceptButton && declineButton && prefrenceButton) {
+        if (buttonContainer.append && acceptButton && declineButton ) {
           await buttonContainer.append(acceptButton);
           await buttonContainer.append(declineButton);
-          await buttonContainer.append(prefrenceButton)
+          // await buttonContainer.append(prefrenceButton)
         } else {
           console.error("❌ Failed to append buttons to the button container.");
         }

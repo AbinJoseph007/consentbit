@@ -190,3 +190,14 @@ export interface SaveCategoriesResponse {
   success: boolean;
   error?: string;
 }
+
+export type ScriptType = {
+  id: string;
+  fullTag: string;
+  script: string;
+  src: string;
+  url: string; 
+  category?: "Essential" | "Personalization" | "Analytics" | "Marketing";
+  isDismissed?: boolean;
+  selectedCategories?: string[];
+};

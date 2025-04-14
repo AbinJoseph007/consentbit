@@ -389,9 +389,9 @@ const Customization: React.FC<CustomizationProps> = ({
                   <div className="color-picker-dropdown" ref={dropdownRef}>
                     {/* Button to Open Color Picker */}
                     <button className="color-picker-button" onClick={() => setIsOpen(!isOpen)}>
-                      <div className="color-preview" style={{ backgroundColor: color }}></div>
                       <span className="color-text">{color}</span>
-                      <span className="dropdown-arrow">▼</span>
+                      <div className="color-preview" style={{ backgroundColor: color }}></div>
+                      {/* <span className="dropdown-arrow">▼</span> */}
                     </button>
 
                     {/* Color Picker (Hidden/Shown with CSS) */}
@@ -405,10 +405,10 @@ const Customization: React.FC<CustomizationProps> = ({
                 <div>
                   <span>Button color</span>
                   <div className="color-picker-dropdown" ref={btnDropdownRef}>
-                    <button className="color-picker-button" onClick={() => setBtnOpen(!btnOpen)}>
-                      <div className="color-preview" style={{ backgroundColor: btnColor }}></div>
+                    <button className="color-picker-button" onClick={() => setBtnOpen(!btnOpen)}>                    
                       <span className="color-text">{btnColor}</span>
-                      <span className="dropdown-arrow">▼</span>
+                      <div className="color-preview" style={{ backgroundColor: btnColor }}></div>
+                      {/* <span className="dropdown-arrow">▼</span> */}
                     </button>
                     <div ref={btnPickerRef} className={`color-picker-container ${btnOpen ? "visible" : "hidden"}`}></div>
                   </div>
@@ -423,10 +423,10 @@ const Customization: React.FC<CustomizationProps> = ({
                 <div>
                   <span>second Backgorund</span>
                   <div className="color-picker-dropdown" ref={secondbgDropdownRef}>
-                    <button className="color-picker-button" onClick={() => setSecondbgopen(!secondbgOpen)}>
-                      <div className="color-preview" style={{ backgroundColor: bgColors }}></div>
+                    <button className="color-picker-button" onClick={() => setSecondbgopen(!secondbgOpen)}>                     
                       <span className="color-text">{bgColors}</span>
-                      <span className="dropdown-arrow">▼</span>
+                      <div className="color-preview" style={{ backgroundColor: bgColors }}></div>
+                      {/* <span className="dropdown-arrow">▼</span> */}
                     </button>
                     <div ref={secondbgPickerRef} className={`color-picker-container ${secondbgOpen ? "visible" : "hidden"}`}></div>
                   </div>
@@ -437,9 +437,9 @@ const Customization: React.FC<CustomizationProps> = ({
                   <span>Accept Button Color</span>
                   <div className="color-picker-dropdown" ref={secondbtnDropdownRef}>
                     <button className="color-picker-button" onClick={() => setSecondButtonOpen(!secondbuttonOpen)}>
-                      <div className="color-preview" style={{ backgroundColor: secondcolor }}></div>
                       <span className="color-text">{secondcolor}</span>
-                      <span className="dropdown-arrow">▼</span>
+                      <div className="color-preview" style={{ backgroundColor: secondcolor }}></div>
+                      {/* <span className="dropdown-arrow">▼</span> */}
                     </button>
                     <div ref={secondbtnPickerRef} className={`color-picker-container ${secondbuttonOpen ? "visible" : "hidden"}`}></div>
                   </div>
@@ -451,10 +451,10 @@ const Customization: React.FC<CustomizationProps> = ({
               <div>
                   <span>Body Text Color</span>
                   <div className="color-picker-dropdown" ref={paraDropdownRef}>
-                    <button className="color-picker-button" onClick={() => setParaOpen(!paraOpen)}>
-                      <div className="color-preview" style={{ backgroundColor: paraColor }}></div>
+                    <button className="color-picker-button" onClick={() => setParaOpen(!paraOpen)}> 
                       <span className="color-text">{paraColor}</span>
-                      <span className="dropdown-arrow">▼</span>
+                      <div className="color-preview" style={{ backgroundColor: paraColor }}></div>
+                      {/* <span className="dropdown-arrow">▼</span> */}
                     </button>
                     <div ref={paraPickerRef} className={`color-picker-container ${paraOpen ? "visible" : "hidden"}`}></div>
                   </div>
@@ -462,10 +462,10 @@ const Customization: React.FC<CustomizationProps> = ({
                 <div>
                   <span>Title Text Color</span>
                   <div className="color-picker-dropdown" ref={headDropdownRef}>
-                    <button className="color-picker-button" onClick={() => setHeadOpen(!headOpen)}>
-                      <div className="color-preview" style={{ backgroundColor: headColor }}></div>
+                    <button className="color-picker-button" onClick={() => setHeadOpen(!headOpen)}>                     
                       <span className="color-text">{headColor}</span>
-                      <span className="dropdown-arrow">▼</span>
+                      <div className="color-preview" style={{ backgroundColor: headColor }}></div>
+                      {/* <span className="dropdown-arrow">▼</span> */}
                     </button>
                     <div ref={headPickerRef} className={`color-picker-container ${headOpen ? "visible" : "hidden"}`}></div>
                   </div>

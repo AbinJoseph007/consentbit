@@ -18,8 +18,8 @@ import { CodeApplication } from "./types/types";
 import createCookiePreferences from "./hooks/gdprPreference";
 import createCookieccpaPreferences from "./hooks/ccpaPreference";
 import usePersistentState from './hooks/usePersistentState'; // Adjust the path as necessary
-import { json } from "stream/consumers";
-
+import { Script as ScriptType } from "../src/types/types";
+import { useQueryClient } from "@tanstack/react-query";
 
 
 type Orientation = "left" | "center" | "right";
@@ -95,12 +95,13 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
   const [selected, setSelected] = usePersistentState<Orientation>("selected", "right");
   const [selectedOption, setSelectedOption] = usePersistentState("selectedOption", "US State laws");
   const [weight, setWeight] = usePersistentState("weight", "semibold");
-  const [showPopup, setShowPopup] = usePersistentState("showPopup", false);
+  const [showPopup, setShowPopup] = useState(false);
   const [selectedOptions, setSelectedOptions] = usePersistentState("selectedOptions", ["GDPR"]);
   const [siteInfo, setSiteInfo] = usePersistentState<{ siteId: string; siteName: string; shortName: string } | null>("siteInfo", null);
   const [accessToken, setAccessToken] = usePersistentState<string>("accessToken", '');
   const [pages, setPages] = usePersistentState("pages", []);
   const [fetchScripts, setFetchScripts] = usePersistentState("fetchScripts", false);
+
   const [borderRadius, setBorderRadius] = usePersistentState("borderRadius", 16);
   const [buttonRadius, setButtonRadius] = usePersistentState<number>("buttonRadius", 2);
   const [isLoading, setIsLoading] = usePersistentState("isLoading", false);
@@ -113,6 +114,7 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
   // const [headColor, setHeadColor] = usePersistentState("headColor", "#483999");
   const [userlocaldata, setUserlocaldata] = useState<UserData | null>(null);
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
+
 
   const base_url = "https://cb-server.web-8fb.workers.dev"
   const [isBannerAdded, setIsBannerAdded] = useState(false);
@@ -268,7 +270,7 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
       return updatedPreferences;
     });
   };
- 
+
 
   // const handleToggles = (option) => {
   //   setSelectedOptions((prev) =>
@@ -370,35 +372,6 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
 
     fetchPages();
   }, [webflow]);
-
-  // useEffect(() => {
-  //   const fetchPages = async () => {
-  //     try {
-  //       console.log("Fetching pages...");
-  //       const pagesAndFolders = await webflow.getAllPagesAndFolders();
-  //       console.log("API Response:", pagesAndFolders);
-
-  //       if (Array.isArray(pagesAndFolders) && pagesAndFolders.length > 0) {
-  //         const pages = pagesAndFolders.filter(i => i.type === "Page");
-  //         const pageDetails = await Promise.all(
-  //           pages.map(async page => ({
-  //             id: page.id,
-  //             name: await page.getName(),
-  //           }))
-  //         );
-
-  //         setPages(pageDetails);
-  //         console.log("Pages set in state:", pageDetails);
-  //       } else {
-  //         console.warn("No pages found.");
-  //       }
-  //     } catch (error) {
-  //       console.error("Error fetching pages:", error);
-  //     }
-  //   };
-
-  //   fetchPages();
-  // }, [webflow]);
 
   const handlePageChange = async (event) => {
     const pageId = event.target.value;
@@ -528,6 +501,31 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
     }, 1000);
   };
 
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    const stored = localStorage.getItem("wf_hybrid_user");
+
+    if (!user?.firstName && stored) {
+      const parsed = JSON.parse(stored);
+
+      if (parsed?.sessionToken) {
+        exchangeAndVerifyIdToken(); // validate server-side if sessionToken is present
+      } else {
+        // fallback manual restore if no sessionToken (dev/test scenarios)
+        queryClient.setQueryData(["auth"], {
+          user: {
+            firstName: parsed.firstName,
+            email: parsed.email,
+          },
+          sessionToken: "",
+        });
+      }
+    }
+  }, []);
+
+
+
   //GDPR BANNER-------------------------------------------------------------------
   const handleCreatePreferences = async () => {
     try {
@@ -637,17 +635,17 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
 
           {isOpen && (
             <div className="help-dropdown" ref={dropdownRef}>
-              <p className="helptext">help</p>
+              <p className="helptext">Help</p>
               <ul>
-            {helpItems.map((item, index) => (
-              <li key={index}>
-                <a href={item.href} target="_blank" rel="noopener noreferrer">
-                  <img src={item.icon} alt={item.label} style={{ marginRight: '8px', verticalAlign: 'middle' }} width="16" height="16" />
-                  {item.label}
-                </a>
-              </li>
-            ))}
-          </ul>
+                {helpItems.map((item, index) => (
+                  <li key={index}>
+                    <a href={item.href} target="_blank" rel="noopener noreferrer">
+                      <img src={item.icon} alt={item.label} style={{ marginRight: '8px', verticalAlign: 'middle' }} width="16" height="16" />
+                      {item.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
             </div>
           )}
         </div>
@@ -678,7 +676,7 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
 
         </div>
         <div className="component-width">
-          <div>
+          <div className="subscribe">
             <a className="link" href="#">
               You need a subscription to publish the production <i>&#x2197;</i>
             </a>
@@ -702,12 +700,20 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
           )}
 
           {activeTab === "Script" && (
-            <div>
-              <button className="publish-buttons" onClick={() => setFetchScripts(true)}>
-                Scan Project
-              </button>
-
-            </div>
+             <div>
+             <button
+               className="publish-buttons"
+               onClick={() => {
+                 if (user?.firstName) {
+                   setFetchScripts(true); // ✅ Allow scanning
+                 } else {
+                   alert("Please authenticate before scanning the project.");
+                 }
+               }}
+             >
+               Scan Project
+             </button>
+           </div>
           )}
         </div>
       </div>
@@ -721,12 +727,12 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
               <span className="spanbox">we are adding a banner on your project</span>
             </div>
             <div className="gap">
+
               {activeMode === "Simple" && (
                 <button
                   className="confirm-button"
                   onClick={async () => {
-                    const isBannerAlreadyAdded = localStorage.getItem("cookieBannerAdded") === "true";
-
+                    setIsLoading(true);
                     try {
                       const selectedElement = await webflow.getSelectedElement();
                       if (!selectedElement) {
@@ -739,32 +745,26 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                         webflow.notify({ type: "error", message: "Failed to create div." });
                         return;
                       }
-                      if ((newDiv as any).setDomId) {
-                        await (newDiv as any).setDomId("simple-consent-banner"); // Type assertion
-                      } else {
-                      }
 
-                      const timestamp = Date.now();
-                      const divStyleName = `consentbit-banner-div`;
-                      const paragraphStyleName = `consentbit-banner-text`;
-                      const buttonContainerStyleName = `consentbit-button-container`;
-                      const buttonStyleName = `consentbit-button-accept`;
-                      const DeclinebuttonStyleName = `consentbit-button-decline`;
-                      const headingStyleName = `consentbit-banner-heading`;
-                      const secondbackgorundstyle = `consentbit-second-background`
-                      const innerdivstyles = `consentbit-innerdiv`
+                      const styleNames = {
+                        divStyleName: "consentbit-banner-div",
+                        paragraphStyleName: "consentbit-banner-text",
+                        buttonContainerStyleName: "consentbit-button-container",
+                        buttonStyleName: "consentbit-button-accept",
+                        declineButtonStyleName: "consentbit-button-decline",
+                        headingStyleName: "consentbit-banner-heading",
+                        secondBackgroundStyleName: "consentbit-second-background",
+                        innerDivStyleName: "consentbit-innerdiv"
+                      };
 
-                      const divStyle = await webflow.createStyle(divStyleName);
-                      const paragraphStyle = await webflow.createStyle(paragraphStyleName);
-                      const buttonContainerStyle = await webflow.createStyle(buttonContainerStyleName);
-                      const buttonStyle = await webflow.createStyle(buttonStyleName);
-                      const declinebutton = await webflow.createStyle(DeclinebuttonStyleName)
-                      const headingStyle = await webflow.createStyle(headingStyleName);
-                      const secondivstyle = await webflow.createStyle(secondbackgorundstyle)
-                      const innerdivstyle = await webflow.createStyle(innerdivstyles)
+                      const styles = await Promise.all(
+                        Object.values(styleNames).map(async (name) => {
+                          return (await webflow.getStyleByName(name)) || (await webflow.createStyle(name));
+                        })
+                      );
 
-                      const collection = await webflow.getDefaultVariableCollection();
-                      const webflowBlue = await collection?.createColorVariable("Webflow Blue", "rgba(255, 255, 255, 1)");
+                      const [divStyle, paragraphStyle, buttonContainerStyle, buttonStyle, declineButtonStyle, headingStyle, secondBackgroundStyle, innerDivStyle] = styles;
+
 
                       const animationAttributeMap = {
                         "fade": "fade",
@@ -780,65 +780,67 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                       const divPropertyMap: Record<string, string> = {
                         "background-color": color,
                         "position": "fixed",
-                        "font-family": Font,
-                        "z-index": "9999",
+                        "z-index": "99999",
                         "padding-top": "20px",
                         "padding-right": "20px",
                         "padding-bottom": "20px",
                         "padding-left": "20px",
                         "border-radius": `${borderRadius}px`,
-                        "display": "flex",
+                        "display": "none",
                         "flex-direction": "column",
                         "align-items": "center",
                         "justify-content": "center",
                         "box-shadow": "2px 2px 20px rgba(0, 0, 0, 0.51)",
                       };
 
-                      if (window.innerWidth <= 768) { // Adjusting for mobile screens
+                      if (window.innerWidth <= 768) {
                         divPropertyMap["width"] = "100%";
                         divPropertyMap["height"] = "40%";
                       }
-
-                      divPropertyMap["bottom"] = "3%"; // Common top position
+                      divPropertyMap["bottom"] = "3%";
 
                       switch (selected) {
                         case "left":
                           divPropertyMap["left"] = "3%";
-                          delete divPropertyMap["right"]; // Or set to "auto"
+
+                          delete divPropertyMap["right"];
                           break;
 
                         case "center":
-                          divPropertyMap["left"] = "50%"; // As requested
-                          delete divPropertyMap["right"]; // Or set to "auto"
+                          divPropertyMap["left"] = "50%";
+
+                          delete divPropertyMap["right"];
+
                           divPropertyMap["transform"] = "translateX(-50%)";
                           break;
                         case "right":
-                        default: // Default to right
+                        default:
                           divPropertyMap["right"] = "5%";
-                          delete divPropertyMap["left"]; // Or set to "auto"
+
+                          delete divPropertyMap["left"];
                           break;
                       }
                       switch (style) {
                         case "bigstyle":
-                          divPropertyMap["max-width"] = "370px";
+                          divPropertyMap["width"] = "370px";
                           divPropertyMap["min-height"] = "284px";
                           break;
                         case "fullwidth":
-                          divPropertyMap["max-width"] = "100%";
+                          divPropertyMap["width"] = "100%";
                           divPropertyMap["min-height"] = "167px";
                           delete divPropertyMap["left"];
                           delete divPropertyMap["right"];
-                          divPropertyMap["bottom"] = "0px" // Or set to "auto"
+                          divPropertyMap["bottom"] = "0px"
                           break;
                         case "centeralign":
-                          divPropertyMap["max-width"] = "566px";
+                          divPropertyMap["width"] = "566px";
                           divPropertyMap["min-height"] = "167px";
 
                           break;
                         case "align":
                         case "alignstyle":
                         default:
-                          divPropertyMap["max-width"] = "438px";
+                          divPropertyMap["width"] = "438px";
                           divPropertyMap["min-height"] = "220px";
                           break;
                       }
@@ -853,7 +855,6 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                         "transform": "none"
                       };
                       const responsiveOptions = { breakpoint: "small" } as BreakpointAndPseudo;
-
 
                       const paragraphPropertyMap: Record<string, string> = {
                         "color": paraColor,
@@ -896,6 +897,14 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                         "min-width": "80px",
                       };
 
+                      const responsivebuttonPropertyMap: Record<string, string> = {
+                        "margin-bottom": "10px",
+                        "flex-direction": "column",
+                        "justify-content": "center",
+                        "text-align": "center"
+                      };
+                      const responsivebuttonOptions = { breakpoint: "small" } as BreakpointAndPseudo;
+
                       const declineButtonPropertyMap: Record<string, string> = {
                         "border-radius": `${buttonRadius}px`,
                         "cursor": "pointer",
@@ -904,6 +913,19 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                         "margin-left": "5px",
                         "margin-right": "5px",
                         "min-width": "80px",
+                      };
+
+                      const secondbackgroundPropertyMap: Record<string, string> = {
+                        "position": "absolute",
+                        "background-color": bgColors,
+                        "width": "35%",
+                        "right": "0px",
+                        "height": "100%",
+                        "z-index": "-3",
+                        "opacity": "30%",
+                        "bottom": "0px",
+                        "border-bottom-right-radius": `${borderRadius}px`,
+                        "border-top-right-radius": `${borderRadius}px`
                       };
 
 
@@ -922,20 +944,6 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                           break;
                       }
 
-                      const secondbackgroundPropertyMap: Record<string, string> = {
-                        "position": "absolute",
-                        "background-color": bgColors,
-                        "width": "35%",
-                        "right": "0px",
-                        "height": "100%",
-                        "z-index": "-3",
-                        "opacity": "30%",
-                        "bottom": "0px",
-                        "border-bottom-right-radius": `${borderRadius}px`,
-                        "border-top-right-radius": `${borderRadius}px`
-                      };
-
-
                       const innerdivPropertyMap: Record<string, string> = {
                         "max-width": "877px",
                         "margin-left": "auto",
@@ -943,141 +951,75 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                       };
 
 
+
                       await divStyle.setProperties(divPropertyMap);
                       await divStyle.setProperties(responsivePropertyMap, responsiveOptions);
                       await paragraphStyle.setProperties(paragraphPropertyMap);
                       await buttonContainerStyle.setProperties(buttonContainerPropertyMap);
                       await buttonStyle.setProperties(buttonPropertyMap);
-                      await declinebutton.setProperties(declineButtonPropertyMap)
+                      await declineButtonStyle.setProperties(declineButtonPropertyMap);
                       await headingStyle.setProperties(headingPropertyMap);
-                      await secondivstyle.setProperties(secondbackgroundPropertyMap)
-                      await innerdivstyle.setProperties(innerdivPropertyMap)
+                      await secondBackgroundStyle.setProperties(secondbackgroundPropertyMap);
+                      await innerDivStyle.setProperties(innerdivPropertyMap);
 
-                      if (newDiv.setStyles) {
-                        await newDiv.setStyles([divStyle]);
-                      }
-
+                      if (newDiv.setStyles) await newDiv.setStyles([divStyle]);
                       if (newDiv.setCustomAttribute) {
                         await newDiv.setCustomAttribute("data-animation", animationAttribute);
                         await newDiv.setCustomAttribute("scrollcontrol", toggleStates.disableScroll ? "true" : "false");
-
-                      } else {
-                        console.error("❌ setCustomAttribute method not available on newDiv element");
                       }
 
-                      try {
+                      const SecondDiv = style === "alignstyle" ? await selectedElement.before(webflow.elementPresets.DivBlock) : null;
+                      if (SecondDiv?.setStyles) await SecondDiv.setStyles([secondBackgroundStyle]);
 
-                        let SecondDiv;
-                        if (style === "alignstyle") {
-                          SecondDiv = await selectedElement.before(webflow.elementPresets.DivBlock);
-                          if (SecondDiv.setStyles) {
-                            await SecondDiv.setStyles([secondivstyle]);
-                          }
+                      const innerdiv = await selectedElement.before(webflow.elementPresets.DivBlock);
+                      await innerdiv.setStyles([innerDivStyle]);
+
+                      const tempHeading = await selectedElement.before(webflow.elementPresets.Heading);
+                      await tempHeading?.setStyles?.([headingStyle]);
+                      await tempHeading?.setTextContent?.(translations[language].heading);
+
+                      const tempParagraph = await selectedElement.before(webflow.elementPresets.Paragraph);
+                      await tempParagraph?.setStyles?.([paragraphStyle]);
+                      await tempParagraph?.setTextContent?.(translations[language].description);
+
+                      const buttonContainer = await selectedElement.before(webflow.elementPresets.DivBlock);
+                      await buttonContainer?.setStyles?.([buttonContainerStyle]);
+
+                      const acceptButton = await selectedElement.before(webflow.elementPresets.Button);
+                      await acceptButton?.setStyles?.([buttonStyle]);
+                      await acceptButton?.setTextContent?.(translations[language].accept);
+                      await (acceptButton as any)?.setDomId?.("simple-accept");
+
+                      const declineButton = await selectedElement.before(webflow.elementPresets.Button);
+                      await declineButton?.setStyles?.([declineButtonStyle]);
+                      await declineButton?.setTextContent?.(translations[language].reject);
+                      await (declineButton as any)?.setDomId?.("simple-reject");
+
+                      if (newDiv.append && innerdiv && tempHeading && tempParagraph && buttonContainer) {
+                        await newDiv.append(innerdiv);
+                        if (SecondDiv) await innerdiv.append(SecondDiv);
+                        await innerdiv.append(tempHeading);
+                        await innerdiv.append(tempParagraph);
+                        await innerdiv.append(buttonContainer);
+
+                        if (buttonContainer.append && acceptButton && declineButton) {
+                          await buttonContainer.append(acceptButton);
+                          await buttonContainer.append(declineButton);
                         }
-
-                        const innerdiv = await selectedElement.before(webflow.elementPresets.DivBlock);
-                        await innerdiv.setStyles([innerdivstyle]);
-
-                        const tempHeading = await selectedElement.before(webflow.elementPresets.Heading);
-                        if (!tempHeading) {
-                          throw new Error("Failed to create heading");
-                        }
-                        if (tempHeading.setStyles) {
-                          await tempHeading.setStyles([headingStyle]);
-                        }
-                        if (tempHeading.setTextContent) {
-                          await tempHeading.setTextContent(translations[language as keyof typeof translations].heading);
-                        } else {
-                          console.error("❌ setText method not available on heading element");
-                        }
-
-                        const tempParagraph = await selectedElement.before(webflow.elementPresets.Paragraph);
-                        if (!tempParagraph) {
-                          throw new Error("Failed to create paragraph");
-                        }
-
-                        if (tempParagraph.setStyles) {
-                          await tempParagraph.setStyles([paragraphStyle]);
-                        }
-
-                        if (tempParagraph.setTextContent) {
-                          await tempParagraph.setTextContent(translations[language as keyof typeof translations].description);
-                        } else {
-                          console.error("❌ setText method not available on paragraph element");
-                        }
-
-                        const buttonContainer = await selectedElement.before(webflow.elementPresets.DivBlock);
-                        if (!buttonContainer) {
-                          throw new Error("Failed to create button container");
-                        }
-                        await buttonContainer.setStyles([buttonContainerStyle]);
-
-                        const acceptButton = await selectedElement.before(webflow.elementPresets.Button);
-                        if (!acceptButton) {
-                          throw new Error("Failed to create accept button");
-                        }
-                        await acceptButton.setStyles([buttonStyle]);
-                        await acceptButton.setTextContent(translations[language as keyof typeof translations].accept);
-                        console.log("acceptButton:", acceptButton);
-
-                        if ((acceptButton as any).setDomId) {
-                          await (acceptButton as any).setDomId("simple-accept"); // Type assertion
-                        } else {
-                          console.error("❌ setDomId method not available on accept button element");
-                        }
-
-                        const declineButton = await selectedElement.before(webflow.elementPresets.Button);
-                        if (!declineButton) {
-                          throw new Error("Failed to create decline button");
-                        }
-                        await declineButton.setStyles([declinebutton]);
-                        await declineButton.setTextContent(translations[language as keyof typeof translations].reject);
-                        console.log("declineButton:", declineButton);
-
-
-                        if ((declineButton as any).setDomId) {
-                          await (declineButton as any).setDomId("simple-reject"); // Type assertion
-                          console.log("✅ Accept button ID set to #simple-accept");
-                        } else {
-                          console.error("❌ setDomId method not available on accept button element");
-                        }
-
-                        if (newDiv.append && innerdiv && tempHeading && tempParagraph && buttonContainer) {
-                          // Append elements inside innerDiv
-                          await newDiv.append(innerdiv);
-                          if (SecondDiv) await innerdiv.append(SecondDiv);
-                          await innerdiv.append(tempHeading);
-                          await innerdiv.append(tempParagraph);
-                          await innerdiv.append(buttonContainer);
-
-                          console.log("✅ Wrapped all elements inside innerDiv!");
-
-                          // Append buttons inside buttonContainer
-                          if (buttonContainer.append && acceptButton && declineButton) {
-                            await buttonContainer.append(acceptButton);
-                            await buttonContainer.append(declineButton);
-                          } else {
-                            console.error("❌ Failed to append buttons to the button container.");
-                          }
-
-                          // Append innerDiv inside newDiv
-                        } else {
-                          console.error("❌ Failed to append elements to the innerDiv or newDiv.");
-                        }
-
+                        setIsLoading(false);
 
                         console.log("🎉 Cookie consent banner successfully created!");
-                        if (!isBannerAlreadyAdded) {
-                          fetchAnalyticsBlockingsScripts()
-                          localStorage.setItem("cookieBannerAdded", "true");
-                        }
-                        setShowPopup(false)
-                        setIsBannerAdded(true);
-                        setShowSuccessPopup(true);
+                        fetchAnalyticsBlockingsScripts();
+                        localStorage.setItem("cookieBannerAdded", "true");
 
-                      } catch (error) {
-                        console.error("❌ Error creating cookie banner:", error);
-                        webflow.notify({ type: "error", message: "An error occurred while creating the cookie banner." });
+                        setShowPopup(false); // Hide the current popup
+
+                        // Delay success popup until after popup has closed
+                        setTimeout(() => {
+                          setIsBannerAdded(true);
+                          setShowSuccessPopup(true);
+                        }, 300); // Adjust delay to match your popup close animation
+
                       }
                     } catch (error) {
                       console.error("❌ Unexpected error:", error);
@@ -1086,8 +1028,7 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                   }}
                 >
                   Simple Confirm
-                </button>
-              )}
+                </button>)}
               {activeMode === "Advanced" && selectedOptions.includes("GDPR") && (
                 <button
                   className={`confirm-button ${isLoading ? "loading" : ""}`}
@@ -1121,31 +1062,29 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                         console.error("❌ setDomId method not available on accept button element");
                       }
 
-                      const timestamp = Date.now();
-                      const divStyleName = `consentbit-gdpr-banner-div`;
-                      const paragraphStyleName = `consentbit-banner-text`;
-                      const buttonContainerStyleName = `consentbit-banner-button-container`;
-                      const prefrenceButton = `consentbit-banner-button-preference`
-                      const buttonStyleName = `consentbit-banner-button-accept`;
-                      const DeclinebuttonStyleName = `consentbit-banner-button-decline`;
-                      const headingStyleName = `consentbit-banner-headings`;
-                      const secondbackgorundstyle = `consentbit-second-backgrounds`
-                      const innerdivstyles = `consentbit-innerdiv`
 
+                      const styleNames = {
+                        divStyleName: "consentbit-gdpr-banner-div",
+                        paragraphStyleName: "consentbit-gdpr-banner-text",
+                        buttonContainerStyleName: "consentbit-banner-button-container",
+                        prefrenceButtonStyleName: "consentbit-banner-button-preference", 
+                        declineButtonStyleName: "consentbit-banner-button-decline",
+                        buttonStyleName: "consentbit-banner-accept",
+                        headingStyleName: "consentbit-banner-headings",
+                        innerDivStyleName: "consentbit-innerdiv",
+                        secondBackgroundStyleName: "consentbit-banner-second-bg"
+                      };
 
-                      const divStyle = await webflow.createStyle(divStyleName);
-                      const paragraphStyle = await webflow.createStyle(paragraphStyleName);
-                      const buttonContainerStyle = await webflow.createStyle(buttonContainerStyleName);
-                      const buttonStyle = await webflow.createStyle(buttonStyleName);
-                      const declinebutton = await webflow.createStyle(DeclinebuttonStyleName)
-                      const prefrenceButtons = await webflow.createStyle(prefrenceButton)
-                      const headingStyle = await webflow.createStyle(headingStyleName);
-                      const secondivstyle = await webflow.createStyle(secondbackgorundstyle)
-                      const innerdivstyle = await webflow.createStyle(innerdivstyles)
+                      const styles = await Promise.all(
+                        Object.values(styleNames).map(async (name) => {
+                          return (await webflow.getStyleByName(name)) || (await webflow.createStyle(name));
+                        })
+                      );
 
-                      const collection = await webflow.getDefaultVariableCollection();
-                      const webflowBlue = await collection?.createColorVariable("Webflow Blue", "rgba(255, 255, 255, 1)");
-                      const webflowBlueValue = (webflowBlue as any)?.value || "rgba(255, 255, 255, 1)";
+                      const [
+                        divStyle, paragraphStyle, buttonContainerStyle, prefrenceButtonStyle, declineButtonStyle, buttonStyle, headingStyle, innerDivStyle, secondBackgroundStyle
+                      ] = styles;
+
 
                       const animationAttributeMap = {
                         "fade": "fade",
@@ -1334,17 +1273,17 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
 
                       await divStyle.setProperties(divPropertyMap);
                       await divStyle.setProperties(responsivePropertyMap, responsiveOptions);
-
                       await paragraphStyle.setProperties(paragraphPropertyMap);
                       await buttonContainerStyle.setProperties(buttonContainerPropertyMap);
                       await buttonContainerStyle.setProperties(responsivebuttonPropertyMap, responsivebuttonOptions);
-
                       await buttonStyle.setProperties(buttonPropertyMap);
-                      await declinebutton.setProperties(declineButtonPropertyMap)
-                      await prefrenceButtons.setProperties(declineButtonPropertyMap)
+                      await declineButtonStyle.setProperties(declineButtonPropertyMap);
+                      await prefrenceButtonStyle.setProperties(declineButtonPropertyMap); // ✅ now using the renamed var
                       await headingStyle.setProperties(headingPropertyMap);
-                      await secondivstyle.setProperties(secondbackgroundPropertyMap)
-                      await innerdivstyle.setProperties(innerdivPropertyMap)
+                      await secondBackgroundStyle.setProperties(secondbackgroundPropertyMap);
+                      await innerDivStyle.setProperties(innerdivPropertyMap);
+
+
                       if (newDiv.setStyles) {
                         await newDiv.setStyles([divStyle]);
                       }
@@ -1359,11 +1298,11 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                         if (style === "alignstyle") {
                           SecondDiv = await selectedElement.before(webflow.elementPresets.DivBlock);
                           if (SecondDiv.setStyles) {
-                            await SecondDiv.setStyles([secondivstyle]);
+                            await SecondDiv.setStyles([secondBackgroundStyle]);
                           }
                         }
                         const innerdiv = await selectedElement.before(webflow.elementPresets.DivBlock);
-                        await innerdiv.setStyles([innerdivstyle]);
+                        await innerdiv.setStyles([innerDivStyle]);
 
                         const tempHeading = await selectedElement.before(webflow.elementPresets.Heading);
                         if (!tempHeading) {
@@ -1403,7 +1342,7 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                         if (!prefrenceButton) {
                           throw new Error("Failed to create decline button");
                         }
-                        await prefrenceButton.setStyles([prefrenceButtons]);
+                        await prefrenceButton.setStyles([prefrenceButtonStyle]);
                         await prefrenceButton.setTextContent(translations[language as keyof typeof translations].preferences);
                         console.log("declineButton:", prefrenceButton);
 
@@ -1434,7 +1373,7 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                         if (!declineButton) {
                           throw new Error("Failed to create decline button");
                         }
-                        await declineButton.setStyles([declinebutton]);
+                        await declineButton.setStyles([declineButtonStyle]);
                         await declineButton.setTextContent(translations[language as keyof typeof translations].reject);
 
 
@@ -1466,19 +1405,32 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                         } else {
                           console.error("❌ Failed to append elements to the main div.");
                         }
+                        // handleCreatePreferences();
+                        // // if (!isBannerAlreadyAdded) {
+                        // // fetchAnalyticsBlockingsScripts()
+                        // //   localStorage.setItem("cookieBannerAdded", "true");
+                        // // }
 
-                        // ... existing code ...
-                        setIsLoading(false);
+                        // setTimeout(() => {
+                        //   setShowPopup(false);
+                        // }, 30000);
+                        // setIsBannerAdded(true);
+                        // setShowSuccessPopup(true); 
                         handleCreatePreferences();
-                        // if (!isBannerAlreadyAdded) {
-                        fetchAnalyticsBlockingsScripts()
-                        //   localStorage.setItem("cookieBannerAdded", "true");
-                        // }
+                        console.log("🎉 Cookie consent banner successfully created!");
+                        fetchAnalyticsBlockingsScripts();
+                        localStorage.setItem("cookieBannerAdded", "true");
 
+                        // setShowPopup(false); // Hide the current popup
+
+                        // Delay success popup until after popup has closed
                         setTimeout(() => {
-                          setShowPopup(false);
-                        }, 30000);
-                        setIsBannerAdded(true);
+                          setShowPopup(false); // Hide the current popup
+                          setIsBannerAdded(true);
+                          setShowSuccessPopup(true);
+                          setIsLoading(false);
+
+                        }, 30000); // Adjust delay to match your popup close animation
 
 
                       } catch (error) {
@@ -1531,20 +1483,46 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                       console.error("❌ setDomId method not available on accept button element");
                     }
 
-                    const timestamp = Date.now();
-                    const divStyleName = `consentbit-ccpa-banner-div`;
-                    const paragraphStyleName = `consentbit-ccpa-banner-text`;
-                    const buttonContainerStyleName = `consentbit-ccpa-button-container`;
-                    const buttonStyleName = `consentbit-ccpa--button-accept`;
-                    const headingStyleName = `consentbit-ccpa-banner-heading`;
-                    const linktextstyle = `consentbit-ccpa-linkblock`
+                    const styleNames = {
+                      divStyleName: "consentbit-ccpa-banner-div",
+                      paragraphStyleName: "consentbit-ccpa-banner-text",
+                      buttonContainerStyleName: "consentbit-ccpa-button-container",
 
-                    const divStyle = await webflow.createStyle(divStyleName);
-                    const paragraphStyle = await webflow.createStyle(paragraphStyleName);
-                    const buttonContainerStyle = await webflow.createStyle(buttonContainerStyleName);
-                    const Linktext = await webflow.createStyle(linktextstyle)
-                    const headingStyle = await webflow.createStyle(headingStyleName);
-                    console.log("✅ Created new styles:", divStyleName, paragraphStyleName, buttonContainerStyleName, buttonStyleName, headingStyleName);
+                      headingStyleName: "consentbit-ccpa-banner-heading",
+
+                      linktextstyle: "consentbit-ccpa-linkblock"
+                    };
+
+
+                    const styles = await Promise.all(
+                      Object.values(styleNames).map(async (name) => {
+                        return (await webflow.getStyleByName(name)) || (await webflow.createStyle(name));
+                      })
+                    );
+
+                    const [
+                      divStyle,
+                      paragraphStyle,
+                      buttonContainerStyle,
+                      headingStyle,
+                      Linktext
+                    ] = styles;
+
+
+                    // const timestamp = Date.now();
+                    // const divStyleName = `consentbit-ccpa-banner-div`;
+                    // const paragraphStyleName = `consentbit-ccpa-banner-text`;
+                    // const buttonContainerStyleName = `consentbit-ccpa-button-container`;
+                    // const buttonStyleName = `consentbit-ccpa--button-accept`;
+                    // const headingStyleName = `consentbit-ccpa-banner-heading`;
+                    // const linktextstyle = `consentbit-ccpa-linkblock`
+
+                    // const divStyle = await webflow.createStyle(divStyleName);
+                    // const paragraphStyle = await webflow.createStyle(paragraphStyleName);
+                    // const buttonContainerStyle = await webflow.createStyle(buttonContainerStyleName);
+                    // const Linktext = await webflow.createStyle(linktextstyle)
+                    // const headingStyle = await webflow.createStyle(headingStyleName);
+                    // console.log("✅ Created new styles:", divStyleName, paragraphStyleName, buttonContainerStyleName, buttonStyleName, headingStyleName);
 
                     const collection = await webflow.getDefaultVariableCollection();
                     const webflowBlue = await collection?.createColorVariable("Webflow Blue", "rgba(255, 255, 255, 1)");
@@ -1717,7 +1695,7 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
 
                     if (newDiv.setCustomAttribute) {
                       await newDiv.setCustomAttribute("data-animation", animationAttribute);
-                      console.log(`✅ Attribute "data-animation" set to "${animationAttribute}"!`);
+                      await newDiv.setCustomAttribute("data-cookie-banner", toggleStates.disableScroll ? "true" : "false");
                     } else {
                       console.error("❌ setCustomAttribute method not available on newDiv element");
                     }
@@ -1804,8 +1782,9 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                       }
                       setTimeout(() => {
                         setShowPopup(false);
-                      }, 40000);
+                      }, 30000);
                       setIsBannerAdded(true);
+                      setShowSuccessPopup(true);;
 
 
                     } catch (error) {
@@ -1821,15 +1800,7 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                 Confirm ccpa
               </button>)}
 
-
               <button className="cancel-btn" onClick={() => setShowPopup(false)}>Cancel</button>
-
-              {showSuccessPopup && (
-                <div className="success-popup">
-                  <p>🎉 Banner added successfully! Now publish your site to make it live.</p>
-                  <button onClick={() => setShowSuccessPopup(false)}>Close</button>
-                </div>
-              )}
 
 
             </div>
@@ -1838,6 +1809,12 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
         </div>
       )}
 
+      {showSuccessPopup && (
+        <div className="success-popup">
+          <p>Banner added successfully! Now publish your site to make it live.</p>
+          <button onClick={() => setShowSuccessPopup(false)}>Close</button>
+        </div>
+      )}
       {/* Tab Navigation */}
       <div className="tabs">
         {["General Settings", "Customization", "Script"].map((tab) => (
@@ -1884,7 +1861,6 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                 <div className="settings-group">
                   <div className="flex">
                     <label htmlFor="animation">Animation</label>
-                    {/* Tooltip Wrapper */}
                     <div className="tooltip-container">
                       <img src={questionmark} alt="info" className="tooltip-icon" />
                       <span className="tooltip-text">Optional animation for Component.</span>
@@ -1902,6 +1878,43 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                     <option value="slide-right">Slide Right</option>
                   </select>
                 </div>
+                {/* <div className="settings-group">
+      <div className="flex">
+        <label htmlFor="easing">Easing</label>
+        <div className="tooltip-container">
+          <img src={questionmark} alt="info" className="tooltip-icon" />
+          <span className="tooltip-text">Optional animation for easing.</span>
+        </div>
+      </div>
+
+      <div className="custom-dropdown-container">
+        <div
+          className="custom-dropdown-toggle"
+          onClick={toggleDropdown}
+          ref={buttonRefs}
+        >
+          {easing ? easing : "Select"}
+          <span className="arrow">{isOpen ? "▲" : "▼"}</span>
+        </div>
+
+        {isOpen && (
+          <div className="custom-dropdown-menu" ref={dropdownRefs}>
+            {easingOptions.map((option) => (
+              <div
+                key={option.value}
+                className="custom-dropdown-item"
+                onClick={() => {
+                  setEasing(option.value);
+                  setIsOpen(false);
+                }}
+              >
+                {option.label}
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div> */}
 
                 <div className="settings-group">
                   <div className="flex">
@@ -2071,24 +2084,24 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                   //   </div>
                   // </div>
                   <div className="settings-group border">
-  <div className="flex">
-    <label htmlFor="source">Source</label>
-    <div className="tooltip-container">
-      <img src={questionmark} alt="info" className="tooltip-icon" />
-      <span className="tooltip-text">Pages of your site</span>
-    </div>
-  </div>
-  <div className="setting-groups">
-    <select id="pages" onChange={handlePageChange}>
-      {/* <option value="">Select a page</option> */}
-      {pages.map((page) => (
-        <option key={page.id} value={page.id}>
-          {page.name}
-        </option>
-      ))}
-    </select>
-  </div>
-</div>
+                    <div className="flex">
+                      <label htmlFor="source">Source</label>
+                      <div className="tooltip-container">
+                        <img src={questionmark} alt="info" className="tooltip-icon" />
+                        <span className="tooltip-text">Pages of your site</span>
+                      </div>
+                    </div>
+                    <div className="setting-groups">
+                      <select id="pages" onChange={handlePageChange}>
+                        {/* <option value="">Select a page</option> */}
+                        {pages.map((page) => (
+                          <option key={page.id} value={page.id}>
+                            {page.name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
                 )}
 
                 {/* Disable Scroll - Advanced Mode Only */}
