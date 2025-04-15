@@ -80,7 +80,7 @@ const createCookieccpaPreferences = async (language: string = "English" ,  color
            })
          );
      
-         const [divStyle, paragraphStyle, formBlockStyle, prefrenceDiv, togglediv, buttonContainerStyle, prefrenceButtons,buttonStyle, declinebutton,headingStyle,checkbosstyle,changepre] = styles;
+         const [divStyle, paragraphStyle, formBlockStyle, prefrenceDiv, togglediv, buttonContainerStyle, prefrenceButtons,changepre,buttonStyle,declinebutton,checkbosstyle,headingStyle] = styles;
 
          
         // const preferenceDiv = `consebit-ccpa-preference-div-${timestamp}`;
@@ -228,7 +228,7 @@ const createCookieccpaPreferences = async (language: string = "English" ,  color
             "height": "55px",
             "width": "55px",
             "border-radius": "50%",
-            "background-image": "url('https://cdn.prod.website-files.com/6409f0703d2118edcd3ea560/67b8b29754766de084052c4b_88228154495.png')",
+            "background-image": "url('https://cdn.prod.website-files.com/63d5330e6841081487be0bd6/67ebf5ee639d12979361f2bc_consent.png')",
             "background-size": "cover",
             "box-shadow": "2px 2px 20px rgba(0, 0, 0, 0.51)",
             "position": "fixed",
@@ -389,6 +389,8 @@ const createCookieccpaPreferences = async (language: string = "English" ,  color
             }
 
             if ((checkboxField as any).setDomId) {
+                await checkboxField.setStyles([checkbosstyle]);
+
                 await (checkboxField as any).setDomId("do-not-share-checkbox"); // Type assertion
             } else {
                 console.error("ccpa banner id setteled");
@@ -445,16 +447,16 @@ const createCookieccpaPreferences = async (language: string = "English" ,  color
                 console.error("❌ setDomId method not available on accept button element");
             }
 
-            const declineButton = await selectedElement.before(webflow.elementPresets.Button);
-            if (!declineButton) {
+            const declineButtons = await selectedElement.before(webflow.elementPresets.Button);
+            if (!declineButtons) {
                 throw new Error("Failed to create decline button");
             }
-            await declineButton.setStyles([declinebutton]);
-            await declineButton.setTextContent(ccpaTranslations[language as keyof typeof ccpaTranslations].cancel);
-            console.log("declineButton:", declineButton);
+            await declineButtons.setStyles([declinebutton]);
+            await declineButtons.setTextContent(ccpaTranslations[language as keyof typeof ccpaTranslations].cancel);
+            console.log("declineButton:", declineButtons);
 
-            if ((declineButton as any).setDomId) {
-                await (declineButton as any).setDomId("close-consent-banner"); // Type assertion
+            if ((declineButtons as any).setDomId) {
+                await (declineButtons as any).setDomId("close-consent-banner"); // Type assertion
             } else {
                 console.error("❌ setDomId method not available on accept button element");
             }
@@ -483,9 +485,9 @@ const createCookieccpaPreferences = async (language: string = "English" ,  color
                     // await prefrenceContainerinner.append(prefeParagraph)
                 }
 
-                if (buttonContainer.append && acceptButton && declineButton) {
+                if (buttonContainer.append && acceptButton && declineButtons) {
                     await buttonContainer.append(acceptButton);
-                    await buttonContainer.append(declineButton);
+                    await buttonContainer.append(declineButtons);
                 } else {
                     console.error("❌ Failed to append buttons to the button container.");
                 }

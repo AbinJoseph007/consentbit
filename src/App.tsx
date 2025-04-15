@@ -114,6 +114,8 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
   // const [headColor, setHeadColor] = usePersistentState("headColor", "#483999");
   const [userlocaldata, setUserlocaldata] = useState<UserData | null>(null);
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
+  const [showAuthPopup, setShowAuthPopup] = useState(false); // New state for the popup
+
 
 
   const base_url = "https://cb-server.web-8fb.workers.dev"
@@ -686,37 +688,66 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
             <div>
               <div>
                 {/* {!isBannerAdded ? ( */}
-                <button className="publish-button" onClick={() => setShowPopup(true)}>
+                {/* <button className="publish-button" onClick={() => setShowPopup(true)}>
                   Add Your Banner
-                </button>
+                </button> */}
                 {/* ) : (
                   <button className="publish-buttons">
                     Update Your Banner
                   </button>
                 )} */}
+
+                <button
+                  className="publish-button"
+                  onClick={() => {
+                    if (user?.firstName) {
+                      setShowPopup(true)
+                    } else {
+                      setShowAuthPopup(true);
+                    }
+                  }}
+                >
+                  Add your Bnanner
+                </button>
               </div>
 
             </div>
           )}
 
           {activeTab === "Script" && (
-             <div>
-             <button
-               className="publish-buttons"
-               onClick={() => {
-                 if (user?.firstName) {
-                   setFetchScripts(true); // ✅ Allow scanning
-                 } else {
-                   alert("Please authenticate before scanning the project.");
-                 }
-               }}
-             >
-               Scan Project
-             </button>
-           </div>
+            <div>
+              <button
+                className="publish-buttons"
+                onClick={() => {
+                  if (user?.firstName) {
+                    setFetchScripts(true);
+                  } else {
+                    setShowAuthPopup(true);
+                  }
+                }}
+              >
+                Scan Project
+              </button>
+            </div>
           )}
         </div>
       </div>
+
+      {/* <div>
+<button className="publish-buttons" onClick={() => setFetchScripts(true)}>
+  Scan Project
+</button>
+
+</div> */}
+
+      {showAuthPopup && (
+        <div className="success-popup">
+          <div className="popup-content">
+            <h3>Authentication Required</h3>
+            <button onClick={() => setShowAuthPopup(false)}>Close</button>
+          </div>
+        </div>
+      )}
 
       {/* Popup Modal */}
       {showPopup && (
@@ -1067,7 +1098,7 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                         divStyleName: "consentbit-gdpr-banner-div",
                         paragraphStyleName: "consentbit-gdpr-banner-text",
                         buttonContainerStyleName: "consentbit-banner-button-container",
-                        prefrenceButtonStyleName: "consentbit-banner-button-preference", 
+                        prefrenceButtonStyleName: "consentbit-banner-button-preference",
                         declineButtonStyleName: "consentbit-banner-button-decline",
                         buttonStyleName: "consentbit-banner-accept",
                         headingStyleName: "consentbit-banner-headings",
@@ -1817,7 +1848,7 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
       )}
       {/* Tab Navigation */}
       <div className="tabs">
-        {["General Settings", "Customization", "Script"].map((tab) => (
+        {/* {["General Settings", "Customization", "Script"].map((tab) => (
           <button
             key={tab}
             className={activeTab === tab ? "active" : ""}
@@ -1830,7 +1861,30 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
           >
             {tab}
           </button>
-        ))}
+        ))} */}
+
+        {["General Settings", "Customization", "Script"].map((tab) => {
+          const isDisabled = tab === "Script" && activeMode !== "Advanced";
+
+          return (
+            <div key={tab} className="tab-button-wrapper">
+              <button
+                className={`tab-button ${activeTab === tab ? "active" : ""}`}
+                onClick={() => {
+                  if (!isDisabled) setActiveTab(tab);
+                }}
+                disabled={isDisabled}
+              >
+                {tab}
+              </button>
+              {/* Tooltip only shows if in Simple mode and this is Script */}
+              {isDisabled && (
+                <span className="tab-tooltip">Available only in Advanced mode</span>
+              )}
+            </div>
+          );
+        })}
+
       </div>
 
 

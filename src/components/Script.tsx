@@ -234,7 +234,7 @@ const Script: React.FC<{
                 </div>
             ) : scripts.length === 0 ? (
                 <div className="section">
-                    <p>No scripts found. Click "Scan Project" to analyze your scripts.</p>
+                    <p>Click "Scan Project" to analyze your scripts.</p>
                 </div>
             ) : (
                 scripts.map((script, index) => (
