@@ -183,6 +183,7 @@ interface WebflowElement {
   append?: (element: any) => Promise<WebflowElement | null>;
   before?: (preset: any) => Promise<WebflowElement | null>;
   setHtml?: (html: string) => Promise<void>;
+  
 }
 
 // Define a Webflow API interface
@@ -193,7 +194,6 @@ export interface WebflowAPI {
     shortName: string;
     url:string;
   }>;
-  
     getIdToken: () => Promise<string>;
 
   getSelectedElement: () => Promise<{
@@ -204,6 +204,7 @@ export interface WebflowAPI {
       append?: (child: any) => Promise<void>;
       setStyles?: (styles: WebflowStyle[]) => Promise<void>;
       getStyles?: () => Promise<Record<string, string>>;
+      setHeadingLevel?: (level: 1 | 2 | 3 | 4 | 5 | 6) => Promise<void>; // 🔥 Added this line
       applyStyle?: (style: WebflowStyle) => Promise<void>;
       setAttribute?: (name: string, value: string) => Promise<null>; // or similar      
       setCustomAttribute?: (name: string, value: string) => Promise<null>;
@@ -241,6 +242,7 @@ export interface WebflowAPI {
       setHtmlContent
       addComboClass
       removeComboClass
+      
     }>;
     append?: (child: any) => Promise<void>;
     setStyles?: (styles: WebflowStyle[]) => Promise<void>;

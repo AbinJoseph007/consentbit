@@ -1,20 +1,24 @@
 import React, { useEffect, useRef, useState } from "react";
 import iro from "@jaames/iro"; // Import iro.js
-const left = new URL("../assets/align-left.png", import.meta.url).href;
-const center = new URL("../assets/center.png", import.meta.url).href;
-const right = new URL("../assets/right.png", import.meta.url).href;
+const left = new URL("../assets/left unchecked.svg", import.meta.url).href;
+const center = new URL("../assets/center unchecked.svg", import.meta.url).href;
+const right = new URL("../assets/right checked.svg", import.meta.url).href;
 const justiflyleft = new URL("../assets/content-left.png", import.meta.url).href;
 const justiflycenter = new URL("../assets/content-center.png", import.meta.url).href;
 const justiflyright = new URL("../assets/content-right.png", import.meta.url).href;
-const checkdleft = new URL("../assets/Group 47.png", import.meta.url).href;
-const checkedcenter = new URL("../assets/Group 125.png", import.meta.url).href;
-const unchedcked = new URL("../assets/Group 126.png", import.meta.url).href;
-const normalchecked = new URL("../assets/normal.png", import.meta.url).href;
-const normalstyle = new URL("../assets/normal style.png", import.meta.url).href;
-const bigstyle = new URL("../assets/big style.png", import.meta.url).href;
-const centeralign = new URL("../assets/center style.png", import.meta.url).href;
-const fullwidth = new URL("../assets/full width.png", import.meta.url).href;
-const dots = new URL("../assets/dots.png", import.meta.url).href;
+const checkdleft = new URL("../assets/left checked.svg", import.meta.url).href;
+const checkedcenter = new URL("../assets/center checked.svg", import.meta.url).href;
+const unchedcked = new URL("../assets/right unchecked.svg", import.meta.url).href;
+const normalchecked = new URL("../assets/normal banner.svg", import.meta.url).href;
+const normalstyle = new URL("../assets/double banner.svg", import.meta.url).href;
+const bigstyle = new URL("../assets/big banner.svg", import.meta.url).href;
+const centeralign = new URL("../assets/center aligned.svg", import.meta.url).href;
+const fullwidth = new URL("../assets/full width banner.svg", import.meta.url).href;
+const dots = new URL("../assets/3 dots.svg", import.meta.url).href;
+const line = new URL("../assets/Vector 20.svg", import.meta.url).href;
+const questionmark = new URL("../assets/question.svg", import.meta.url).href;
+
+
 
 
 type Orientation = "left" | "center" | "right";
@@ -37,7 +41,7 @@ interface CustomizationProps {
   SetFont: (value: string) => void;
   selectedtext: "left" | "center" | "right";
   settextSelected: (value: "left" | "center" | "right") => void;
-  style: BannerStyle; 
+  style: BannerStyle;
   setStyle: React.Dispatch<React.SetStateAction<BannerStyle>>;
   borderRadius: number;
   setBorderRadius: (value: number) => void;
@@ -201,7 +205,7 @@ const Customization: React.FC<CustomizationProps> = ({
     switch (style) {
       case "bigstyle":
         return { width: "250px", minHeight: "151px" };
-        case "fullwidth":
+      case "fullwidth":
         return { width: "443px", dislay: "flex" };
       case "centeralign":
         return { width: "303px" };
@@ -272,9 +276,18 @@ const Customization: React.FC<CustomizationProps> = ({
       <div className="general">
         <div className="width-cust">
           <div className="cust">
-            <div>
+            {/* <div>
               <span className="font-blue">Orientation</span>
+            </div> */}
+            <div className="flex">
+              <span className="font-blue">Orientation</span>
+
+              <div className="tooltip-containers">
+                <img src={questionmark} alt="info" className="tooltip-icon" />
+                <span className="tooltip-text">This option disables the scroll of the page when banner is shown</span>
+              </div>
             </div>
+
             <div className="category-2 flex gap-4">
               {/* Left Image */}
               <img
@@ -298,8 +311,13 @@ const Customization: React.FC<CustomizationProps> = ({
             </div>
           </div>
           <div className="cust">
-            <div>
+            <div className="flex">
               <span className="font-blue">Styles</span>
+
+              <div className="tooltip-containers">
+                <img src={questionmark} alt="info" className="tooltip-icon" />
+                <span className="tooltip-text">This option disables the scroll of the page when banner is shown</span>
+              </div>
             </div>
             <div className="category-2">
               <img className="img-width cursor-pointer" src={normalchecked} alt="Align icon" style={{ opacity: style === "align" ? 1 : 0.4 }} onClick={() => setStyle(style === "align" ? "" : "align")} />
@@ -325,8 +343,15 @@ const Customization: React.FC<CustomizationProps> = ({
           </div>
 
           <div className="cust">
-            <div>
+            {/* <div className="font-blues">
               <span className="font-blue">Body</span>
+            </div> */}
+              <div className="flex">
+              <span className="font-blue">Body</span>
+              <div className="tooltip-containers">
+                <img src={questionmark} alt="info" className="tooltip-icon" />
+                <span className="tooltip-text">This option disables the scroll of the page when banner is shown</span>
+              </div>
             </div>
 
             <div className="settings-group">
@@ -377,15 +402,20 @@ const Customization: React.FC<CustomizationProps> = ({
             {/* Color Picker Section */}
 
           </div>
+          <div><img src={line} alt="" /></div>
 
           <div className="cust">
-            <div>
-              <span className="font-blue">colors</span>
+          <div className="flex">
+              <span className="font-blue">Colors</span>
+              <div className="tooltip-containers">
+                <img src={questionmark} alt="info" className="tooltip-icon" />
+                <span className="tooltip-text">This option disables the scroll of the page when banner is shown</span>
+              </div>
             </div>
             <div className="custom">
               <div>
                 <div>
-                  <span>background color</span>
+                  <span>Background color</span>
                   <div className="color-picker-dropdown" ref={dropdownRef}>
                     {/* Button to Open Color Picker */}
                     <button className="color-picker-button" onClick={() => setIsOpen(!isOpen)}>
@@ -403,9 +433,9 @@ const Customization: React.FC<CustomizationProps> = ({
                 </div>
 
                 <div>
-                  <span>Button color</span>
+                  <span>Button Color</span>
                   <div className="color-picker-dropdown" ref={btnDropdownRef}>
-                    <button className="color-picker-button" onClick={() => setBtnOpen(!btnOpen)}>                    
+                    <button className="color-picker-button" onClick={() => setBtnOpen(!btnOpen)}>
                       <span className="color-text">{btnColor}</span>
                       <div className="color-preview" style={{ backgroundColor: btnColor }}></div>
                       {/* <span className="dropdown-arrow">▼</span> */}
@@ -418,12 +448,12 @@ const Customization: React.FC<CustomizationProps> = ({
 
 
               <div>
-               
+
 
                 <div>
-                  <span>second Backgorund</span>
+                  <span>Second Backgorund</span>
                   <div className="color-picker-dropdown" ref={secondbgDropdownRef}>
-                    <button className="color-picker-button" onClick={() => setSecondbgopen(!secondbgOpen)}>                     
+                    <button className="color-picker-button" onClick={() => setSecondbgopen(!secondbgOpen)}>
                       <span className="color-text">{bgColors}</span>
                       <div className="color-preview" style={{ backgroundColor: bgColors }}></div>
                       {/* <span className="dropdown-arrow">▼</span> */}
@@ -432,7 +462,7 @@ const Customization: React.FC<CustomizationProps> = ({
                   </div>
                 </div>
 
-                
+
                 <div>
                   <span>Accept Button Color</span>
                   <div className="color-picker-dropdown" ref={secondbtnDropdownRef}>
@@ -448,10 +478,10 @@ const Customization: React.FC<CustomizationProps> = ({
 
 
               <div className="customs">
-              <div>
+                <div>
                   <span>Body Text Color</span>
                   <div className="color-picker-dropdown" ref={paraDropdownRef}>
-                    <button className="color-picker-button" onClick={() => setParaOpen(!paraOpen)}> 
+                    <button className="color-picker-button" onClick={() => setParaOpen(!paraOpen)}>
                       <span className="color-text">{paraColor}</span>
                       <div className="color-preview" style={{ backgroundColor: paraColor }}></div>
                       {/* <span className="dropdown-arrow">▼</span> */}
@@ -462,7 +492,7 @@ const Customization: React.FC<CustomizationProps> = ({
                 <div>
                   <span>Title Text Color</span>
                   <div className="color-picker-dropdown" ref={headDropdownRef}>
-                    <button className="color-picker-button" onClick={() => setHeadOpen(!headOpen)}>                     
+                    <button className="color-picker-button" onClick={() => setHeadOpen(!headOpen)}>
                       <span className="color-text">{headColor}</span>
                       <div className="color-preview" style={{ backgroundColor: headColor }}></div>
                       {/* <span className="dropdown-arrow">▼</span> */}
@@ -482,7 +512,7 @@ const Customization: React.FC<CustomizationProps> = ({
                   <span className="font-blue">Container</span>
                 </div>
                 <div>
-                  <span>Corner radius</span>
+                  <span>Corner Radius</span>
                   <div className="settings-groups width">
                     <input
                       type="number"
@@ -500,7 +530,7 @@ const Customization: React.FC<CustomizationProps> = ({
                   <span className="font-blue">Button</span>
                 </div>
                 <div>
-                  <span>Corner radius</span>
+                  <span>Corner Radius</span>
                   <div className="settings-groups width">
                     <input
                       type="number"
@@ -526,7 +556,7 @@ const Customization: React.FC<CustomizationProps> = ({
             <div className="topbar">
               <img src={dots} alt="" className="threedots" />
             </div>
-              {/* gdpr */}
+            {/* gdpr */}
             <div
               className={`cookie-banner ${animation} ${isActive ? "active" : ""}`}
               style={{
@@ -542,18 +572,18 @@ const Customization: React.FC<CustomizationProps> = ({
                 fontFamily: Font,
                 textAlign: selectedtext,
                 alignItems: style === "centeralign" ? "center" : undefined, // Change dynamically
-                fontWeight: weight, 
+                fontWeight: weight,
                 width: previewDimensions.width,
                 height: previewDimensions.minHeight,
                 borderRadius: `${borderRadius}px`,
                 backgroundColor: color,
               }}
             >
-              {style === "alignstyle" && <div className="secondclass" style={{ backgroundColor: bgColors , borderBottomRightRadius:`${borderRadius}px` , borderTopRightRadius:`${borderRadius}px` }}></div>}
+              {style === "alignstyle" && <div className="secondclass" style={{ backgroundColor: bgColors, borderBottomRightRadius: `${borderRadius}px`, borderTopRightRadius: `${borderRadius}px` }}></div>}
               <div className="space" style={{ color: headColor, fontWeight: weight, }}><h4>Cookie Setting</h4></div>
 
-              <div className="padding" style={{ color: paraColor , alignItems: style === "centeralign" ? "center" : undefined, }}>
-                <span  style={{ alignItems: style === "centeralign" ? "center" : undefined, }}>
+              <div className="padding" style={{ color: paraColor, alignItems: style === "centeralign" ? "center" : undefined, }}>
+                <span style={{ alignItems: style === "centeralign" ? "center" : undefined, }}>
                   {language === "English"
                     ? "We use cookies to provide you with the best possible experience. They also allow us to analyze user behavior in order to constantly improve the website for you."
                     : language === "Spanish"
@@ -562,7 +592,7 @@ const Customization: React.FC<CustomizationProps> = ({
                 </span>
 
               </div>
-              <div className="button-wrapp"  style={{ justifyContent:  style === "centeralign" ? "center" : undefined, }}>
+              <div className="button-wrapp" style={{ justifyContent: style === "centeralign" ? "center" : undefined, }}>
                 <button className="btn-preferences" style={{ borderRadius: `${buttonRadius}px`, backgroundColor: btnColor }} >Preferences</button>
                 <button className="btn-reject" style={{ borderRadius: `${buttonRadius}px`, backgroundColor: btnColor }} >Reject</button>
                 <button className="btn-accept" style={{ borderRadius: `${buttonRadius}px`, backgroundColor: secondcolor }} >Accept</button>

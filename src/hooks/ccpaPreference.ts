@@ -29,9 +29,9 @@ const ccpaTranslations = {
 type BreakpointAndPseudo = {
     breakpoint: string;
     pseudoClass: string;
-  };
+};
 
-const createCookieccpaPreferences = async (language: string = "English" ,  color: string = "#ffffff", btnColor: string = "#F1F1F1", headColor: string = "#483999", paraColor: string = "#1F1D40", secondcolor: string = "secondcolor" , buttonRadius: number, animation: string) => {
+const createCookieccpaPreferences = async (language: string = "English", color: string = "#ffffff", btnColor: string = "#F1F1F1", headColor: string = "#483999", paraColor: string = "#1F1D40", secondcolor: string = "secondcolor", buttonRadius: number, animation: string) => {
     try {
 
         const selectedElement = await webflow.getSelectedElement();
@@ -58,31 +58,31 @@ const createCookieccpaPreferences = async (language: string = "English" ,  color
 
 
         const styleNames = {
-            preferenceDiv : `consebit-ccpa-preference-div`,
-            paragraphStyleNames : `consebit-ccpa-prefrence-text`,
-            formfield : `consentbit-ccpa-formblock`,
-            preferenceblock : `consentbit-ccpa-prefrence-block`,
-            toggledivs : `consentbit-ccpa-prefrence-toggle`,
-            buttonContainerStyleName : `consebit-ccpa-prefrence-container`,
-            prefrenceButton : `consentbit-ccpa-button-preference`,
-            checkboxstyle:"consentbit-ccpa-checkbox",
-            buttonStyleName : `consebit-ccpa-prefrence-accept`,
-            DeclinebuttonStyleName : `consebit-ccpa-prefrence-decline`,
-            headingStyleName : `consebit-ccpa-prefrence-heading`,
-            checkboxContainerStyleName : `consentbit-toggle`,
-            changepreference : `consentbit-change-preference-${timestamp}`
-     
-         };
-     
-         const styles = await Promise.all(
-           Object.values(styleNames).map(async (name) => {
-             return (await webflow.getStyleByName(name)) || (await webflow.createStyle(name));
-           })
-         );
-     
-         const [divStyle, paragraphStyle, formBlockStyle, prefrenceDiv, togglediv, buttonContainerStyle, prefrenceButtons,changepre,buttonStyle,declinebutton,checkbosstyle,headingStyle] = styles;
+            preferenceDiv: `consentbit-ccpa-preference-div`,
+            paragraphStyleNames: `consentbit-ccpa-prefrence-text`,
+            formfield: `consentbit-ccpa-formblock`,
+            preferenceblock: `consentbit-ccpa-prefrence-block`,
+            toggledivs: `consentbit-ccpa-prefrence-toggle`,
+            buttonContainerStyleName: `consebit-ccpa-prefrence-container`,
+            prefrenceButton: `consentbit-ccpa-button-preference`,
+            checkboxstyle: "consentbit-change-preference",
+            buttonStyleName: `consebit-ccpa-prefrence-accept`,
+            DeclinebuttonStyleName: `consebit-ccpa-prefrence-decline`,
+            headingStyleName: `consebit-ccpa-prefrence-heading`,
+            checkboxContainerStyleName: `consentbit-toggle`,
+            changepreference: `consentbit-ccpa-checkbox${timestamp}`
 
-         
+        };
+
+        const styles = await Promise.all(
+            Object.values(styleNames).map(async (name) => {
+                return (await webflow.getStyleByName(name)) || (await webflow.createStyle(name));
+            })
+        );
+
+        const [divStyle, paragraphStyle, formBlockStyle, prefrenceDiv, togglediv, buttonContainerStyle, prefrenceButtons, changepre, buttonStyle, declinebutton, headingStyle, checkbosstyle] = styles;
+
+
         // const preferenceDiv = `consebit-ccpa-preference-div-${timestamp}`;
         // const paragraphStyleNames = `consebit-ccpa-prefrence-text-${timestamp}`;
         // const formfield = `consentbit-ccpa-formblock-${timestamp}`
@@ -122,7 +122,7 @@ const createCookieccpaPreferences = async (language: string = "English" ,  color
             "slide-right": "slide-right",
             "select": "select", // No attribute if "select"
         };
-      
+
         const animationAttribute = animationAttributeMap[animation] || "";
 
         const divPropertyMap: Record<string, string> = {
@@ -149,10 +149,10 @@ const createCookieccpaPreferences = async (language: string = "English" ,  color
         };
 
         const responsivePropertyMap: Record<string, string> = {
-            "max-width": "100%", 
-            "width":"100%"
-          };
-          const responsiveOptions = { breakpoint: "small" } as BreakpointAndPseudo;
+            "max-width": "100%",
+            "width": "100%"
+        };
+        const responsiveOptions = { breakpoint: "small" } as BreakpointAndPseudo;
 
         const paragraphPropertyMap: Record<string, string> = {
             "color": paraColor,
@@ -215,7 +215,7 @@ const createCookieccpaPreferences = async (language: string = "English" ,  color
 
 
         const headingPropertyMap: Record<string, string> = {
-            "color":headColor,
+            "color": headColor,
             "font-size": "20px",
             "font-weight": "500",
             "text-align": "left",
@@ -230,7 +230,7 @@ const createCookieccpaPreferences = async (language: string = "English" ,  color
             "border-radius": "50%",
             "background-image": "url('https://cdn.prod.website-files.com/63d5330e6841081487be0bd6/67ebf5ee639d12979361f2bc_consent.png')",
             "background-size": "cover",
-            "box-shadow": "2px 2px 20px rgba(0, 0, 0, 0.51)",
+            // "box-shadow": "2px 2px 20px rgba(0, 0, 0, 0.51)",
             "position": "fixed",
             "z-index": "999",
             "bottom": "3%",
@@ -288,6 +288,12 @@ const createCookieccpaPreferences = async (language: string = "English" ,  color
             if (!tempHeading) {
                 throw new Error("Failed to create heading");
             }
+            if (tempHeading.setHeadingLevel) {
+                await tempHeading.setHeadingLevel(4);
+                console.log("✅ Heading level set to H4!");
+              } else {
+                console.error("❌ setHeadingLevel method not available on heading element");
+              }
             if (tempHeading.setStyles) {
                 await tempHeading.setStyles([headingStyle]);
             }
@@ -409,13 +415,13 @@ const createCookieccpaPreferences = async (language: string = "English" ,  color
             for (const child of children) {
                 console.log("Child type:", child.type);
                 console.log("Child type:", child);
-      
-      
+
+
                 if (child.type.includes("FormCheckboxInput") && child.setCustomAttribute) {
-                  await child.setCustomAttribute("data-consent-id","do-not-share-checkbox");
-                  // await child.setStyles([checkboxContainerStyle]);
+                    await child.setCustomAttribute("data-consent-id", "do-not-share-checkbox");
+                    // await child.setStyles([checkboxContainerStyle]);
                 }
-              }
+            }
 
 
             //////////////////////
@@ -505,6 +511,7 @@ const createCookieccpaPreferences = async (language: string = "English" ,  color
             }
 
             if ((mainDivBlock as any).setDomId) {
+                await mainDivBlock.setCustomAttribute("scroll-control", "true");
                 await (mainDivBlock as any).setDomId("toggle-consent-btn"); // Type assertion
             } else {
                 console.error("ccpa banner id setteled");

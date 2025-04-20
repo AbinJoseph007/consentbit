@@ -200,4 +200,6 @@ export type ScriptType = {
   category?: "Essential" | "Personalization" | "Analytics" | "Marketing";
   isDismissed?: boolean;
   selectedCategories?: string[];
+  identifier?: string | null;
+  transitionState?: 'fade-in' | 'fade-out' | ''; // 👈 add this line
 };

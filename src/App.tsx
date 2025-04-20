@@ -3,10 +3,10 @@ import ReactDOM from "react-dom/client";
 import "./style/styless.css";
 import Customization from "./components/Customization";
 import Script from "./components/Script";
-const questionmark = new URL("./assets/questionmark.png", import.meta.url).href;
-const openeye = new URL("./assets/closedeye.png", import.meta.url).href;
-const eye = new URL("./assets/eye.png", import.meta.url).href;
-const dots = new URL("./assets/dots.png", import.meta.url).href;
+const questionmark = new URL("./assets/question.svg", import.meta.url).href;
+const openeye = new URL("./assets/closedeye.svg", import.meta.url).href;
+const eye = new URL("./assets/eye.svg", import.meta.url).href;
+const dots = new URL("./assets/3 dots.svg", import.meta.url).href;
 const book = new URL("./assets/book.png", import.meta.url).href;
 const users = new URL("./assets/user.png", import.meta.url).href;
 const watch = new URL("./assets/fi-rr-play (1).png", import.meta.url).href;
@@ -115,6 +115,7 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
   const [userlocaldata, setUserlocaldata] = useState<UserData | null>(null);
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
   const [showAuthPopup, setShowAuthPopup] = useState(false); // New state for the popup
+  const [buttonText, setButtonText] = useState("Scan Project");
 
 
 
@@ -715,20 +716,21 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
           )}
 
           {activeTab === "Script" && (
-            <div>
-              <button
-                className="publish-buttons"
-                onClick={() => {
-                  if (user?.firstName) {
-                    setFetchScripts(true);
-                  } else {
-                    setShowAuthPopup(true);
-                  }
-                }}
-              >
-                Scan Project
-              </button>
-            </div>
+           <div>
+           <button
+             className="publish-buttons"
+             onClick={() => {
+               if (user?.firstName) {
+                 setFetchScripts(true);
+                 setButtonText("Rescan Project");
+               } else {
+                 setShowAuthPopup(true);
+               }
+             }}
+           >
+             {buttonText}
+           </button>
+         </div>
           )}
         </div>
       </div>
@@ -1924,7 +1926,7 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                     id="animation"
                     value={animation}
                     onChange={(e) => setAnimation(e.target.value)}
-                  ><option >select</option>
+                  >
                     <option value="fade">Fade</option>
                     <option value="slide-up">Slide Up</option>
                     <option value="slide-down">Slide Down</option>
@@ -1964,7 +1966,7 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
               >
                 {option.label}
               </div>
-            ))}
+            ))}fv
           </div>
         )}
       </div>
@@ -1983,7 +1985,7 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                     value={easing}
                     onChange={(e) => setEasing(e.target.value.toLowerCase())}
                   >
-                    <option >select</option>
+                   
                     <option value="ease">Ease</option>
                     <option value="linear">Linear</option>
                     <option value="ease-in">Ease-in</option>
@@ -2052,7 +2054,7 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                   <div className="togglediv">
                     <label className="toggle-container">
                       <div className="flex">
-                        <span className="toggle-label">Use custom toggle button</span>
+                        <span className="toggle-label">Use custom Toggle Button</span>
 
                         <div className="tooltip-containers">
                           <img src={questionmark} alt="info" className="tooltip-icon" />
@@ -2077,7 +2079,7 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                 <div className="togglediv">
                   <label className="toggle-container">
                     <div className="flex">
-                      <span className="toggle-label">Reset interactions</span>
+                      <span className="toggle-label">Reset Interactions</span>
 
                       <div className="tooltip-containers">
                         <img src={questionmark} alt="info" className="tooltip-icons" />
@@ -2163,7 +2165,7 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                   <div className="togglediv">
                     <label className="toggle-container">
                       <div className="flex">
-                        <span className="toggle-label">Disable scroll</span>
+                        <span className="toggle-label">Disable Scroll</span>
 
                         <div className="tooltip-containers">
                           <img src={questionmark} alt="info" className="tooltip-icon" />

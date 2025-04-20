@@ -37,32 +37,36 @@
 // };
 
 // export default SettingsContainer;
-
 import React, { useState, useEffect } from "react";
 import "../style/styless.css";
 import { Script as ScriptType, ScriptCategory } from "../types/types";
 import { customCodeApi } from "../services/api";
 
 const copyimg = new URL("../assets/fi-rr-copy.png", import.meta.url).href;
-const questionmark = new URL("../assets/Group 20 (1).png", import.meta.url).href;
-const settings = new URL("../assets/setting-2.png", import.meta.url).href;
+const questionmark = new URL("../assets/blue question.svg", import.meta.url).href;
+const settings = new URL("../assets/setting-2.svg", import.meta.url).href;
 const ignored = new URL("../assets/fi-rr-shield-exclamation.png", import.meta.url).href;
-const tickmark = new URL("../assets/Group 52.png", import.meta.url).href;
-const edit = new URL("../assets/fi-rr-edit.png", import.meta.url).href;
+const tickmark = new URL("../assets/implement correctly.svg", import.meta.url).href;
+const edit = new URL("../assets/edit.svg", import.meta.url).href;
+import { useScriptContext } from "../context/ScriptContext"; 
 
 const Script: React.FC<{
     fetchScripts: boolean;
     setFetchScripts: React.Dispatch<React.SetStateAction<boolean>>;
 }> = ({ fetchScripts, setFetchScripts }) => {
-    const [scripts, setScripts] = useState<(ScriptType & { isSaved?: boolean })[]>([]);
+    // const [scripts, setScripts] = useState<(ScriptType & { isSaved?: boolean })[]>([]);
+    const { scripts, setScripts } = useScriptContext();
     const [isSaving, setIsSaving] = useState(false);
     const [saveStatus, setSaveStatus] = useState<{ success: boolean; message: string } | null>(null);
     const categories = ["Essential", "Personalization", "Analytics", "Marketing"];
     const userinfo = localStorage.getItem("wf_hybrid_user");
     const [showPopup, setShowPopup] = useState(false);
+    const [isLoading, setIsLoading] = useState(false); 
+
 
     useEffect(() => {
         if (fetchScripts) {
+            setIsLoading(true); 
             fetchScriptData();
             setFetchScripts(false);
         }
@@ -93,7 +97,7 @@ const Script: React.FC<{
                     category: script.category,
                     fullTag: script.fullTag
                 }));
-
+                setIsLoading(false); 
                 setScripts(formattedScripts);
             }
         } catch (error) {
@@ -108,6 +112,7 @@ const Script: React.FC<{
         try {
             setIsSaving(true);
             setSaveStatus(null);
+
 
             const tokenss = JSON.parse(userinfo || "{}");
             const tokewern = tokenss.sessionToken;
@@ -209,6 +214,7 @@ const Script: React.FC<{
         setScripts(prevScripts => {
             const newScripts = [...prevScripts];
             newScripts[scriptIndex].isDismissed = false;
+
             return newScripts;
         });
     };
@@ -221,7 +227,7 @@ const Script: React.FC<{
                 setShowPopup(false);
                 setTimeout(() => {
                     setSaveStatus(null);
-                }, 200); // match this with fade-out duration
+                }, 200);
             }, 2000);
 
             return () => clearTimeout(timer);
@@ -238,7 +244,7 @@ const Script: React.FC<{
                     </div>
                     {scripts.length > 0 && (
                         <button className="save-all-btn" onClick={handleSaveAll} disabled={isSaving}>
-                            {isSaving ? "Saving..." : "Save All Categories"}
+                            {isSaving ? "Saving..." : "Save Categories"}
                         </button>
                     )}
                 </div>
@@ -260,9 +266,14 @@ const Script: React.FC<{
                 <a href="#">Need help? See the docs <i>&#x2197;</i></a>
             </div>
 
-            {scripts.length === 0 ? (
+            {isLoading ? (
                 <div className="section">
-                    <p>No scripts found. Click "Scan Project" to analyze your scripts.</p>
+                    <p>Scanning project scripts... <span className="loader"></span></p>
+                    {/* You can replace the simple text loader with a more visual animation */}
+                </div>
+            ) : scripts.length === 0 ? (
+                <div className="section">
+                    <p>Click "Scan Project" to analyze your scripts.</p>
                 </div>
             ) : (
                 scripts.map((script, index) => (
@@ -290,15 +301,15 @@ const Script: React.FC<{
                             <>
                                 {script.isDismissed ? (
                                     <div className="dismissed-message">
-                                        <p>Script <span>{script.category || script.src || 'Unknown'}</span> is dismissed.</p>
+                                        <p><span>{script.category || script.src || 'Unknown'}</span>Script is dismissed.</p>
                                         <button className="activate-btn" onClick={() => handleActivate(index)}>Activate</button>
                                     </div>
                                 ) : (
                                     <>
                                         <div className="header">
                                             <div>
-                                                <span className="font-14">
-                                                    {script.category ? `${script.category.toUpperCase()} Script` : 'Unknown Script'}
+                                                <span className="font-12">
+                                                    {script.category ? `Update the ${script.category.toUpperCase()} Script` : 'Unknown Script'}
                                                 </span>
                                             </div>
                                             <div className="flex">
@@ -350,6 +361,7 @@ const Script: React.FC<{
 };
 
 export default Script;
+
 
 
 

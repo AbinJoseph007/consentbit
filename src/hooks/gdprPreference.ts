@@ -473,7 +473,7 @@ const createCookiePreferences = async (selectedPreferences: string[], language: 
           console.log("Child type:", child.type); // Debugging
 
           if (child.type.includes("Label") && child.setTextContent) {
-            await child.setTextContent(".");
+            await child.setTextContent("");
           }
         }
 
