@@ -17,6 +17,8 @@ const line = new URL("../assets/Line 6.svg", import.meta.url).href;
 const dismiss = new URL("../assets/Vector.svg", import.meta.url).href;
 const Active = new URL("../assets/active.svg", import.meta.url).href;
 const search = new URL("../assets/search.svg", import.meta.url).href;
+const uparrow = new URL("../assets/blue up arrow.svg", import.meta.url).href;
+const line2 = new URL("../assets/line.svg", import.meta.url).href;
 
 
 
@@ -32,7 +34,7 @@ const Script: React.FC<{
     const [showPopup, setShowPopup] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [showAuthPopup, setShowAuthPopup] = useState(false); // New state for the popup
-    
+
 
     const getScriptIdentifier = useCallback((script: { src?: string | null; fullTag?: string | null }) => {
         return script.src || script.fullTag?.replace(/\s*data-category\s*=\s*"[^"]*"/i, '') || null;
@@ -109,7 +111,7 @@ const Script: React.FC<{
                 console.error("Session token not found.");
                 return;
             }
-    
+
             const scriptsToSave: ScriptCategory[] = scripts
                 .filter(script => script.identifier !== null && (script.fullTag || "").includes("data-category="))
                 .map(script => ({
@@ -117,7 +119,7 @@ const Script: React.FC<{
                     content: script.fullTag || script.script || null,
                     categories: script.selectedCategories,
                 }));
-    
+
             if (scriptsToSave.length === 0) {
                 setSaveStatus({
                     success: false,
@@ -125,9 +127,9 @@ const Script: React.FC<{
                 });
                 return;
             }
-    
+
             const result = await customCodeApi.saveScriptCategorizations(tokens, scriptsToSave);
-    
+
             if (result.success) {
                 setSaveStatus({
                     success: true,
@@ -203,52 +205,52 @@ const Script: React.FC<{
     //     );
     // }, [setScripts]);
 
-// ... existing code ...
+    // ... existing code ...
 
-const handleToggle = useCallback((category: string, scriptIndex: number) => {
-    if (category === "Essential") {
-        return; // Do nothing if the category is "Essential"
-    }
+    const handleToggle = useCallback((category: string, scriptIndex: number) => {
+        if (category === "Essential") {
+            return; // Do nothing if the category is "Essential"
+        }
 
-    setScripts(prevScripts =>
-        prevScripts.map((script, index) => {
-            if (index === scriptIndex && script.identifier) {
-                let updatedCategories = script.selectedCategories.includes(category)
-                    ? script.selectedCategories.filter(c => c !== category)
-                    : [...script.selectedCategories, category];
+        setScripts(prevScripts =>
+            prevScripts.map((script, index) => {
+                if (index === scriptIndex && script.identifier) {
+                    let updatedCategories = script.selectedCategories.includes(category)
+                        ? script.selectedCategories.filter(c => c !== category)
+                        : [...script.selectedCategories, category];
 
-                // Always include "Essential" in the categories
-                if (!updatedCategories.includes("Essential")) {
-                    updatedCategories = ["Essential", ...updatedCategories];
+                    // Always include "Essential" in the categories
+                    if (!updatedCategories.includes("Essential")) {
+                        updatedCategories = ["Essential", ...updatedCategories];
+                    }
+
+                    let updatedTag = script.fullTag || '';
+                    const tagRegex = /<script\b([^>]*)>/i;
+                    const match = updatedTag.match(tagRegex);
+
+                    if (match) {
+                        let attrs = match[1];
+                        attrs = attrs.replace(/\s*data-category\s*=\s*"[^"]*"/i, '');
+                        const categoryAttr = updatedCategories.length > 0
+                            ? ` data-category="${updatedCategories.join(',')}"`
+                            : '';
+                        const newTag = `<script${attrs}${categoryAttr}>`;
+                        updatedTag = updatedTag.replace(tagRegex, newTag);
+                    }
+
+                    return {
+                        ...script,
+                        selectedCategories: updatedCategories,
+                        fullTag: updatedTag,
+                        script: updatedTag,
+                    };
                 }
+                return script;
+            })
+        );
+    }, [setScripts]);
 
-                let updatedTag = script.fullTag || '';
-                const tagRegex = /<script\b([^>]*)>/i;
-                const match = updatedTag.match(tagRegex);
-
-                if (match) {
-                    let attrs = match[1];
-                    attrs = attrs.replace(/\s*data-category\s*=\s*"[^"]*"/i, '');
-                    const categoryAttr = updatedCategories.length > 0
-                        ? ` data-category="${updatedCategories.join(',')}"`
-                        : '';
-                    const newTag = `<script${attrs}${categoryAttr}>`;
-                    updatedTag = updatedTag.replace(tagRegex, newTag);
-                }
-
-                return {
-                    ...script,
-                    selectedCategories: updatedCategories,
-                    fullTag: updatedTag,
-                    script: updatedTag,
-                };
-            }
-            return script;
-        })
-    );
-}, [setScripts]);
-
-// ... existing code ...
+    // ... existing code ...
     // const handleDismiss = useCallback((scriptIndex: number) => {
     //     setScripts(prevScripts =>
     //         prevScripts.map((script, index) =>
@@ -272,7 +274,7 @@ const handleToggle = useCallback((category: string, scriptIndex: number) => {
                 i === scriptIndex ? { ...s, transitionState: 'fade-out' } : s
             )
         );
-    
+
         // After animation, hide script
         setTimeout(() => {
             setScripts(prev =>
@@ -282,7 +284,7 @@ const handleToggle = useCallback((category: string, scriptIndex: number) => {
             );
         }, 300); // must match CSS transition time
     }, [setScripts]);
-    
+
     const handleActivate = useCallback((scriptIndex: number) => {
         // Instantly show script, then fade it in
         setScripts(prev =>
@@ -290,7 +292,7 @@ const handleToggle = useCallback((category: string, scriptIndex: number) => {
                 i === scriptIndex ? { ...s, isDismissed: false, transitionState: 'fade-in' } : s
             )
         );
-    
+
         setTimeout(() => {
             setScripts(prev =>
                 prev.map((s, i) =>
@@ -299,7 +301,7 @@ const handleToggle = useCallback((category: string, scriptIndex: number) => {
             );
         }, 300);
     }, [setScripts]);
-    
+
 
     useEffect(() => {
         if (saveStatus) {
@@ -319,18 +321,18 @@ const handleToggle = useCallback((category: string, scriptIndex: number) => {
             <div className="section back-color">
                 <div className="flexings">
                     <div>
-                    <img src={sheild} style={{ marginTop: '5px'}} alt="catogery image" />
+                        <img src={sheild} style={{ marginTop: '5px' }} alt="catogery image" />
                     </div>
                     <div>
                         <div className="header">
                             <div>
                                 <span>Update the scripts in your project that handle cookie creation</span>
                             </div>
-                            {scripts.length > 0 && (
+                            {/* {scripts.length > 0 && (
                                 <button className="save-all-btn" onClick={handleSaveAll} disabled={isSaving}>
                                     {isSaving ? "Saving..." : "Save Categories"}
                                 </button>
-                            )}
+                            )} */}
                         </div>
                         {saveStatus && (
                             <div className={`popup-overlays ${showPopup ? 'fade-in' : 'fade-out'}`}>
@@ -340,22 +342,35 @@ const handleToggle = useCallback((category: string, scriptIndex: number) => {
                             </div>
                         )}
                         <p>Check your project scripts for any that create cookies. Organize them, replace with our snippet, and follow our tutorial to streamline your workflow.</p>
-                        <a href="#">Need help? See the docs <i>&#x2197;</i></a>
+                        <a href="#">Need help? See the docs <i><img src={uparrow} alt="" /></i></a>
                     </div>
                 </div>
             </div>
 
+            {scripts.length > 0 && (
+                <div className="line">
+                    <img src={line2} alt="" />
+                </div>)}
+
+            <div className="save-btn-container">
+                {scripts.length > 0 && (
+                    <button className="save-all-btn" onClick={handleSaveAll} disabled={isSaving}>
+                        {isSaving ? "Saving..." : "Save Categories"}
+                    </button>
+                )}
+            </div>
+
             {isLoading ? (
                 <div className="pulse-overlays">
-                <PulseAnimation />
-            </div>
+                    <PulseAnimation />
+                </div>
             ) : scripts.length === 0 ? (
                 <div className="sections">
                     <img src={search} alt="" />
-                    <p>Click "Scan Project" to analyze your scripts.</p>
+                    <p>Click 'Scan' to analyze your project.</p>
                 </div>
             ) : (
-                
+
                 scripts
                     .filter(script => script.identifier !== null) // Only render scripts with a stable identifier
                     .map((script, index) => (
@@ -383,20 +398,32 @@ const handleToggle = useCallback((category: string, scriptIndex: number) => {
                                 <>
                                     {script.isDismissed ? (
                                         <div className="dismissed-message">
-                                            <p><span>{script.category || script.src || 'Unknown'}</span> Script is dismissed!</p>
-                                            <button className="dismiss-btn" onClick={() => handleActivate(index)}> <img src={Active} alt="activate icon" style={{ marginRight: '8px',width:"14px",height:"14px" }} />Activate</button>
+                                            <p>
+                                                <span>
+                                                    {script.category
+                                                        ? script.category.charAt(0).toUpperCase() + script.category.slice(1)
+                                                        : script.src
+                                                            ? script.src.charAt(0).toUpperCase() + script.src.slice(1)
+                                                            : 'Unknown'}
+                                                </span>{' '}
+                                                Script is Dismissed!
+                                            </p>
+
+                                            <button className="dismiss-btn" onClick={() => handleActivate(index)}> <img src={Active} alt="activate icon" style={{ marginRight: '8px', width: "14px", height: "14px" }} />Activate</button>
                                         </div>
                                     ) : (
                                         <>
                                             <div className="flexings">
-                                                 <div>
-                                                    <img src={explain} style={{ marginTop: '5px'}} alt="catogery image" />
-                                                 </div>
+                                                <div>
+                                                    <img src={explain} style={{ marginTop: '5px' }} alt="catogery image" />
+                                                </div>
                                                 <div className="width-100">
                                                     <div className="header">
                                                         <div>
                                                             <span className="text-[12px] font-bold">
-                                                                {script.category ? `Update the ${script.category} Script` : 'Unknown Script'}
+                                                                {script.category
+                                                                    ? `Update the ${script.category.charAt(0).toUpperCase() + script.category.slice(1)} Script`
+                                                                    : 'Unknown Script'}
                                                             </span>
                                                         </div>
                                                         <div className="flex">
@@ -411,21 +438,21 @@ const handleToggle = useCallback((category: string, scriptIndex: number) => {
                                                         <div className="category">
                                                             <span>Category:</span>
                                                             {categories.map((category) => (
-                                                                   <label key={category} className="toggle-switch">
-                                                                   <input
-                                                                       type="checkbox"
-                                                                       value={category}
-                                                                       checked={category === "Essential" || script.selectedCategories.includes(category)}
-                                                                       onChange={() => handleToggle(category, index)}
-                                                                       disabled={category === "Essential"} // Disable the checkbox if the category is "Essential"
-                                                                   />
-                                                                   <span className="slider"></span>
-                                                                   <span className="category-label">{category}</span>
-                                                                   <div className="tooltip-containers">
-                                                                       <img src={questionmark} alt="info" className="tooltip-icon" />
-                                                                       <span className="tooltip-text">Categorize this script based on its purpose.</span>
-                                                                   </div>
-                                                               </label>
+                                                                <label key={category} className="toggle-switch">
+                                                                    <input
+                                                                        type="checkbox"
+                                                                        value={category}
+                                                                        checked={category === "Essential" || script.selectedCategories.includes(category)}
+                                                                        onChange={() => handleToggle(category, index)}
+                                                                        disabled={category === "Essential"} // Disable the checkbox if the category is "Essential"
+                                                                    />
+                                                                    <span className="slider"></span>
+                                                                    <span className="category-label">{category}</span>
+                                                                    <div className="tooltip-containers">
+                                                                        <img src={questionmark} alt="info" className="tooltip-icon" />
+                                                                        <span className="tooltip-text">Categorize this script based on its purpose.</span>
+                                                                    </div>
+                                                                </label>
                                                             ))}
                                                         </div>
                                                         <div className="code-block">

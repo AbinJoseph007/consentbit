@@ -351,23 +351,23 @@ const Customization: React.FC<CustomizationProps> = ({
               </div>
             </div>
             <div className="category-2">
-              <img className="img-width cursor-pointer" src={normalchecked} alt="Align icon" style={{ opacity: style === "align" ? 1 : 0.4 }} onClick={() => setStyle(style === "align" ? "" : "align")} />
-              <img className="img-width cursor-pointer" src={normalstyle} alt="Align icon" style={{ opacity: style === "alignstyle" ? 1 : 0.4 }} onClick={() => setStyle(style === "alignstyle" ? "" : "alignstyle")} />
-              <img src={bigstyle} alt="Align icon" style={{ opacity: style === "bigstyle" ? 1 : 0.4 }} onClick={() => setStyle(style === "bigstyle" ? "" : "bigstyle")} />
+              <img className="img-width cursor-pointer" src={normalchecked} alt="Align icon" style={{ opacity: style === "align" ? 1 : 0.4 ,border: style === "align" ? "2px solid #8C79FF" : "2px solid #ffffff00", borderRadius: "6px"}} onClick={() => setStyle(style === "align" ? "" : "align")} />
+              <img className="img-width cursor-pointer" src={normalstyle} alt="Align icon" style={{ opacity: style === "alignstyle" ? 1 : 0.4,  border: style === "alignstyle" ? "2px solid #8C79FF" : "2px solid #ffffff00",borderRadius: "6px" }} onClick={() => setStyle(style === "alignstyle" ? "" : "alignstyle")} />
+              <img src={bigstyle} alt="Align icon" style={{ opacity: style === "bigstyle" ? 1 : 0.4,border: style === "bigstyle" ? "2px solid #8C79FF" : "2px solid #ffffff00",borderRadius: "6px" }} onClick={() => setStyle(style === "bigstyle" ? "" : "bigstyle")} />
             </div>
             <div className="category-2">
               <img
                 className="img-width cursor-pointer"
                 src={centeralign}
                 alt="Align icon"
-                style={{ opacity: style === "centeralign" ? 1 : 0.4 }}
+                style={{ opacity: style === "centeralign" ? 1 : 0.4 ,border: style === "centeralign" ? "2px solid #8C79FF" : "2px solid #ffffff00", borderRadius: "4px"}}
                 onClick={() => setStyle(style === "centeralign" ? "" : "centeralign")}
               />
               <img
                 className="img-width cursor-pointer"
                 src={fullwidth}
                 alt="Full Width icon"
-                style={{ opacity: style === "fullwidth" ? 1 : 0.4 }}
+                style={{ opacity: style === "fullwidth" ? 1 : 0.4 ,border: style === "fullwidth" ? "2px solid #8C79FF" :"2px solid #ffffff00", borderRadius: "4px" }}
                 onClick={() => setStyle(style === "fullwidth" ? "" : "fullwidth")}
               />
             </div>
@@ -547,7 +547,7 @@ const Customization: React.FC<CustomizationProps> = ({
 
               <div className="customs">
                 <div>
-                  <span>Secondry Button</span>
+                  <span>Background Colour</span>
                   <div className="color-picker-dropdown" ref={btnDropdownRef}>
                     <button className="color-picker-button" onClick={() => setBtnOpen(!btnOpen)}>
                       <span className="color-text">{btnColor}</span>
@@ -559,7 +559,7 @@ const Customization: React.FC<CustomizationProps> = ({
                 </div>
 
                 <div>
-                  <span>second button text</span>
+                  <span>Text Colour</span>
                   <div className="color-picker-dropdown" ref={secondbuttonDropdownRef}>
                     <button className="color-picker-button" onClick={() => setSecondbuttonTextOpen(!SecondbuttonTextOpen)}>
                       <span className="color-text">{secondbuttontext}</span>

@@ -1411,7 +1411,7 @@ flex-wrap: wrap;
     width:12px;
     height: 12px;
     border-radius:10.5px;
-    /* border: 1px solid #aaa; */
+    border: 0.3px solid #FFFFFF
   }
   
   .color-text {
@@ -2137,3 +2137,12 @@ margin-bottom: 20px;
     padding-bottom: 13px;
     border-top: 1px solid rgba(140, 121, 255, 0.29);
    }
+
+   .save-btn-container{
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 20px;
+    margin-top: 20px;
+   }
+ 

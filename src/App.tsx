@@ -562,7 +562,7 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
 
       console.log("✅ Selected Preferences:", selectedPreferences);
 
-      await createCookiePreferences(selectedPreferences, language, color, btnColor, headColor, paraColor, secondcolor, buttonRadius, animation, toggleStates.customToggle , primaryButtonText ,secondbuttontext
+      await createCookiePreferences(selectedPreferences, language, color, btnColor, headColor, paraColor, secondcolor, buttonRadius, animation, toggleStates.customToggle, primaryButtonText, secondbuttontext
       );
 
       console.log("✅ Cookie preferences created successfully!");
@@ -576,7 +576,7 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
   //createCookieccpaPreferences
   const handleCreatePreferencesccpa = async () => {
     try {
-      await createCookieccpaPreferences(language, color, btnColor, headColor, paraColor, secondcolor, buttonRadius, animation ,);
+      await createCookieccpaPreferences(language, color, btnColor, headColor, paraColor, secondcolor, buttonRadius, animation,);
       console.log("✅ Cookie preferences created successfully!");
     } catch (error) {
       console.error("❌ Error creating cookie preferences:", error);
@@ -1381,7 +1381,7 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                         "margin-left": "5px",
                         "margin-right": "5px",
                         "min-width": "80px",
-                        "color":primaryButtonText
+                        "color": primaryButtonText
                       };
 
                       const responsivebuttonPropertyMap: Record<string, string> = {
@@ -2271,9 +2271,9 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                   <div className="flex">
                     <button className="exportbutton">Export CSV</button>
                     <div className="tooltip-containers">
-                          <img src={questionmark} alt="info" className="tooltip-icon" />
-                          <span className="tooltip-text">Download consents in CSV format for easy analysis and sharing.</span>
-                        </div>
+                      <img src={questionmark} alt="info" className="tooltip-icon" />
+                      <span className="tooltip-text">Download consents in CSV format for easy analysis and sharing.</span>
+                    </div>
                   </div>
                 </div>
 
@@ -2477,7 +2477,7 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                       </span>
                     </div>
                     <div className="button-wrapp" style={{ justifyContent: style === "centeralign" ? "center" : undefined, }}>
-                      {activeMode === "Advanced" && (<button className="btn-preferences" style={{ borderRadius: `${buttonRadius}px`, backgroundColor: btnColor, color: secondbuttontext }} >Preferences</button>)}
+                      <button className="btn-preferences" style={{ borderRadius: `${buttonRadius}px`, backgroundColor: btnColor, color: secondbuttontext }} >Preferences</button>
                       <button className="btn-reject" style={{ borderRadius: `${buttonRadius}px`, backgroundColor: btnColor, color: secondbuttontext }} >Reject</button>
                       <button className="btn-accept" style={{ borderRadius: `${buttonRadius}px`, backgroundColor: secondcolor, color: primaryButtonText }} >Accept</button>
 
