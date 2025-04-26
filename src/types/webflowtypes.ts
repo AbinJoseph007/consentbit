@@ -184,6 +184,7 @@ interface WebflowElement {
   before?: (preset: any) => Promise<WebflowElement | null>;
   setHtml?: (html: string) => Promise<void>;
   
+  
 }
 
 // Define a Webflow API interface
@@ -210,6 +211,8 @@ export interface WebflowAPI {
       setCustomAttribute?: (name: string, value: string) => Promise<null>;
       setTextContent?: (text: string) => Promise<void>;
       getChildren?: () => Promise<any[]>;
+      setSettings(mode: string, value: string, options?: { openInNewTab?: boolean, subject?: string | null })
+      getAllElements?: () => Promise<any[]>; // ✅ Added getAllElements here
       createChild
       children
       findChild
@@ -294,6 +297,8 @@ export interface WebflowAPI {
   getStyleByName: (name: string) => Promise<WebflowStyle | null>;
   getAllStyles?: () => Promise<WebflowStyle[]>;
   removeStyle?: (styleId: string) => Promise<void>;
+  getAllElements?: () => Promise<any[]>; // ✅ Added here, directly on WebflowAPI
+
 
   getDefaultVariableCollection?: () => Promise<{
     createColorVariable: (name: string, value: string) => Promise<{ id: string; name: string; value: string }>;

@@ -85,7 +85,7 @@ type BreakpointAndPseudo = {
   pseudoClass: string;
 };
 
-const createCookiePreferences = async (selectedPreferences: string[], language: string = "English", color: string = "#ffffff", btnColor: string = "#F1F1F1", headColor: string = "#483999", paraColor: string = "#1F1D40", secondcolor: string = "secondcolor", buttonRadius: number, animation: string ,customToggle: boolean ) => {
+const createCookiePreferences = async (selectedPreferences: string[], language: string = "English", color: string = "#ffffff", btnColor: string = "#F1F1F1", headColor: string = "#483999", paraColor: string = "#1F1D40", secondcolor: string = "secondcolor", buttonRadius: number, animation: string ,customToggle: boolean , primaryButtonText :string = "#ffffff", secondbuttontext : string = "#4C4A66", ) => {
   try {
 
     const selectedElement = await webflow.getSelectedElement();
@@ -258,13 +258,14 @@ const createCookiePreferences = async (selectedPreferences: string[], language: 
       "margin-left": "5px",
       "margin-right": "5px",
       "min-width": "80px",
+      "color":primaryButtonText
     };
 
     const declineButtonPropertyMap: Record<string, string> = {
       "border-radius": `${buttonRadius}px`,
       "cursor": "pointer",
       "background-color": btnColor,
-      "color": "rgba(72, 57, 153, 1)",
+      "color": secondbuttontext,
       "margin-left": "5px",
       "margin-right": "5px",
       "min-width": "80px",

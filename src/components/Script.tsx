@@ -3,6 +3,7 @@ import "../style/styless.css";
 import { ScriptCategory } from "../types/types";
 import { customCodeApi } from "../services/api";
 import { useScriptContext } from "../context/ScriptContext";
+import PulseAnimation from './PulseAnimation';
 
 const copyimg = new URL("../assets/fi-rr-copy.png", import.meta.url).href;
 const questionmark = new URL("../assets/blue question.svg", import.meta.url).href;
@@ -15,6 +16,8 @@ const sheild = new URL("../assets/sheild.svg", import.meta.url).href;
 const line = new URL("../assets/Line 6.svg", import.meta.url).href;
 const dismiss = new URL("../assets/Vector.svg", import.meta.url).href;
 const Active = new URL("../assets/active.svg", import.meta.url).href;
+const search = new URL("../assets/search.svg", import.meta.url).href;
+
 
 
 const Script: React.FC<{
@@ -28,6 +31,8 @@ const Script: React.FC<{
     const userinfo = localStorage.getItem("wf_hybrid_user");
     const [showPopup, setShowPopup] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [showAuthPopup, setShowAuthPopup] = useState(false); // New state for the popup
+    
 
     const getScriptIdentifier = useCallback((script: { src?: string | null; fullTag?: string | null }) => {
         return script.src || script.fullTag?.replace(/\s*data-category\s*=\s*"[^"]*"/i, '') || null;
@@ -341,14 +346,16 @@ const handleToggle = useCallback((category: string, scriptIndex: number) => {
             </div>
 
             {isLoading ? (
-                <div className="section">
-                    <p>Scanning project scripts... <span className="loader"></span></p>
-                </div>
+                <div className="pulse-overlays">
+                <PulseAnimation />
+            </div>
             ) : scripts.length === 0 ? (
-                <div className="section">
+                <div className="sections">
+                    <img src={search} alt="" />
                     <p>Click "Scan Project" to analyze your scripts.</p>
                 </div>
             ) : (
+                
                 scripts
                     .filter(script => script.identifier !== null) // Only render scripts with a stable identifier
                     .map((script, index) => (
@@ -398,7 +405,7 @@ const handleToggle = useCallback((category: string, scriptIndex: number) => {
                                                         </div>
                                                         <button className="dismiss-btn" onClick={() => handleDismiss(index)}>  <img src={dismiss} alt="Dismiss icon" style={{ marginRight: '8px' }} />Dismiss</button>
                                                     </div>
-                                                    <p>Select a category for this script, remove the current script, and add the updated script to the Site or Page Settings:</p>
+                                                    <p>Select a category:</p>
                                                     <div><img src={line} alt="" /></div>
                                                     <div className="category-code-block">
                                                         <div className="category">

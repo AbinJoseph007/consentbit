@@ -11,6 +11,9 @@ const book = new URL("./assets/book.png", import.meta.url).href;
 const users = new URL("./assets/user.png", import.meta.url).href;
 const watch = new URL("./assets/fi-rr-play (1).png", import.meta.url).href;
 const doc = new URL("./assets/message.png", import.meta.url).href;
+const checkedcatogry = new URL("./assets/tick-square catogeries.svg", import.meta.url).href;
+const tickmark = new URL("./assets/tickmark.svg", import.meta.url).href;
+const logo = new URL("./assets/icon.svg", import.meta.url).href;
 import { customCodeApi } from "./services/api";
 import { useAuth } from "../src/hooks/userAuth";
 import webflow, { WebflowAPI } from './types/webflowtypes';
@@ -20,6 +23,8 @@ import createCookieccpaPreferences from "./hooks/ccpaPreference";
 import usePersistentState from './hooks/usePersistentState'; // Adjust the path as necessary
 import { Script as ScriptType } from "../src/types/types";
 import { useQueryClient } from "@tanstack/react-query";
+import PulseAnimation from "./components/PulseAnimation";
+
 
 
 type Orientation = "left" | "center" | "right";
@@ -78,11 +83,13 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
   // const [isLoading, setIsLoading] = useState(false);
   const [color, setColor] = useState("#ffffff");
   const [bgColor, setBgColor] = useState("#ffffff");
-  const [btnColor, setBtnColor] = useState("#F1F1F1");
-  const [paraColor, setParaColor] = useState("#1F1D40");
-  const [secondcolor, setSecondcolor] = useState("#483999");
+  const [btnColor, setBtnColor] = useState("#C9C9C9");
+  const [paraColor, setParaColor] = useState("#4C4A66");
+  const [secondcolor, setSecondcolor] = useState("#000000");
   const [bgColors, setBgColors] = useState("#798EFF");
-  const [headColor, setHeadColor] = useState("#483999");
+  const [headColor, setHeadColor] = useState("#000000");
+  const [secondbuttontext, setsecondbuttontext] = useState("#000000")
+  const [primaryButtonText, setPrimaryButtonText] = useState('#FFFFFF');
 
   const [activeTab, setActiveTab] = usePersistentState("activeTab", "General Settings");
   const [expires, setExpires] = usePersistentState("expires", "");
@@ -116,6 +123,8 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
   const [showAuthPopup, setShowAuthPopup] = useState(false); // New state for the popup
   const [buttonText, setButtonText] = useState("Scan Project");
+  const [showLoadingPopup, setShowLoadingPopup] = useState(false);
+
 
 
 
@@ -528,6 +537,17 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
   }, []);
 
 
+  useEffect(() => {
+    const data = localStorage.getItem('wf_hybrid_user')
+    if (data) {
+      localStorage.removeItem("wf_hybrid_user");
+      console.log("localstorage removed");
+    }
+    const onAuth = async () => {
+      await exchangeAndVerifyIdToken();
+    };
+    onAuth();
+  }, [])
 
   //GDPR BANNER-------------------------------------------------------------------
   const handleCreatePreferences = async () => {
@@ -542,7 +562,7 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
 
       console.log("✅ Selected Preferences:", selectedPreferences);
 
-      await createCookiePreferences(selectedPreferences, language, color, btnColor, headColor, paraColor, secondcolor, buttonRadius, animation, toggleStates.customToggle
+      await createCookiePreferences(selectedPreferences, language, color, btnColor, headColor, paraColor, secondcolor, buttonRadius, animation, toggleStates.customToggle , primaryButtonText ,secondbuttontext
       );
 
       console.log("✅ Cookie preferences created successfully!");
@@ -556,7 +576,7 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
   //createCookieccpaPreferences
   const handleCreatePreferencesccpa = async () => {
     try {
-      await createCookieccpaPreferences(language, color, btnColor, headColor, paraColor, secondcolor, buttonRadius, animation);
+      await createCookieccpaPreferences(language, color, btnColor, headColor, paraColor, secondcolor, buttonRadius, animation ,);
       console.log("✅ Cookie preferences created successfully!");
     } catch (error) {
       console.error("❌ Error creating cookie preferences:", error);
@@ -567,13 +587,13 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
   const previewDimensions = React.useMemo(() => {
     switch (style) {
       case "bigstyle":
-        return { width: "250px", height: "151px" };
+        return { width: "250px", minHeight: "151px" };
       case "fullwidth":
         return { width: "443px", dislay: "flex" };
       case "centeralign":
-        return { width: "303px", height: "103px" };
+        return { width: "303px" };
       default:
-        return { width: "65%" }; // Default
+        return { width: "318px" }; // Default
     }
   }, [style]);
 
@@ -702,13 +722,13 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                   className="publish-button"
                   onClick={() => {
                     if (user?.firstName) {
-                      setShowPopup(true)
+                      setShowPopup(true);
                     } else {
                       setShowAuthPopup(true);
                     }
                   }}
                 >
-                  Add your Bnanner
+                  {isBannerAdded ? "Publish your changes" : "Add your Banner"}
                 </button>
               </div>
 
@@ -716,21 +736,21 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
           )}
 
           {activeTab === "Script" && (
-           <div>
-           <button
-             className="publish-buttons"
-             onClick={() => {
-               if (user?.firstName) {
-                 setFetchScripts(true);
-                 setButtonText("Rescan Project");
-               } else {
-                 setShowAuthPopup(true);
-               }
-             }}
-           >
-             {buttonText}
-           </button>
-         </div>
+            <div>
+              <button
+                className="publish-buttons"
+                onClick={() => {
+                  if (user?.firstName) {
+                    setFetchScripts(true);
+                    setButtonText("Rescan Project");
+                  } else {
+                    setShowAuthPopup(true);
+                  }
+                }}
+              >
+                {buttonText}
+              </button>
+            </div>
           )}
         </div>
       </div>
@@ -743,30 +763,79 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
 </div> */}
 
       {showAuthPopup && (
-        <div className="success-popup">
-          <div className="popup-content">
-            <h3>Authentication Required</h3>
-            <button onClick={() => setShowAuthPopup(false)}>Close</button>
+        <div className="popup-overlay">
+          <div className="success-popup">
+            <div className="popup-content">
+              <h3>Authentication Required</h3>
+              <button onClick={() => setShowAuthPopup(false)}>Close</button>
+            </div>
           </div>
+
+          {/* <PulseAnimation /> */}
         </div>
       )}
 
       {/* Popup Modal */}
       {showPopup && (
-        <div className="popup-overlay">
+        <div className="popup-overlay1">
           <div className="popup-box">
             <div className="flex down">
-              <span className="spanbox">We are installing the script in your code...</span>
-              <span className="spanbox">we are adding a banner on your project</span>
+              {isBannerAdded ? (
+                <>
+                  <span className="spanbox">Hang tight! We’re updating your banner with the latest changes...</span>
+                  <span className="spanbox">Applying your fresh updates to the project now!</span>
+                </>
+              ) : (
+                <>
+                  <span className="spanbox">We are installing the script in your code...</span>
+                  <span className="spanbox">We are adding a banner on your project</span>
+                </>
+              )}
             </div>
+
             <div className="gap">
 
               {activeMode === "Simple" && (
                 <button
                   className="confirm-button"
                   onClick={async () => {
+                    setShowPopup(false); // close the first popup
+                    setShowLoadingPopup(true); // show loading popup
                     setIsLoading(true);
+
+                    // 👇 INSERT THIS SNIPPET HERE
                     try {
+                      // 🧹 Step 1: Check for existing banner and remove it if found
+                      const allElements = await webflow.getAllElements();
+
+                      const existingBanner = await (async () => {
+                        for (const el of allElements) {
+                          const domId = await el.getDomId?.();
+                          if (domId === "simple-banner") {
+                            return el; // Found the element with the DOM ID
+                          }
+                        }
+                        return null; // No element found
+                      })();
+
+                      // If an existing banner is found, remove it
+                      if (existingBanner) {
+                        try {
+                          // Remove all child elements first
+                          const children = await existingBanner.getChildren?.();
+                          if (children) {
+                            await Promise.all(children.map(child => child.remove())); // Remove all children
+                          }
+                          // Then remove the banner itself
+                          await existingBanner.remove();
+                          console.log("🧹 Existing GDPR banner removed.");
+                        } catch (err) {
+                          console.error("⚠️ Error during banner cleanup:", err);
+                          webflow.notify({ type: "error", message: "Failed to clean up old banner." });
+                        }
+                      }
+
+
                       const selectedElement = await webflow.getSelectedElement();
                       if (!selectedElement) {
                         webflow.notify({ type: "error", message: "No element selected in the Designer." });
@@ -787,7 +856,8 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                         declineButtonStyleName: "consentbit-button-decline",
                         headingStyleName: "consentbit-banner-heading",
                         secondBackgroundStyleName: "consentbit-second-background",
-                        innerDivStyleName: "consentbit-innerdiv"
+                        innerDivStyleName: "consentbit-innerdiv",
+                        privacypolicyName: "more-privacy"
                       };
 
                       const styles = await Promise.all(
@@ -796,7 +866,7 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                         })
                       );
 
-                      const [divStyle, paragraphStyle, buttonContainerStyle, buttonStyle, declineButtonStyle, headingStyle, secondBackgroundStyle, innerDivStyle] = styles;
+                      const [divStyle, paragraphStyle, buttonContainerStyle, buttonStyle, declineButtonStyle, headingStyle, secondBackgroundStyle, innerDivStyle, privacypolicy] = styles;
 
 
                       const animationAttributeMap = {
@@ -909,6 +979,10 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                           break;
                       }
 
+                      const privacypolicyPropertyMap: Record<string, string> = {
+                        "text-decoration": "none"
+                      }
+
                       const buttonContainerPropertyMap: Record<string, string> = {
                         "display": "flex",
                         "justify-content": "right",
@@ -988,6 +1062,7 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                       await divStyle.setProperties(divPropertyMap);
                       await divStyle.setProperties(responsivePropertyMap, responsiveOptions);
                       await paragraphStyle.setProperties(paragraphPropertyMap);
+                      await privacypolicy.setProperties(privacypolicyPropertyMap);
                       await buttonContainerStyle.setProperties(buttonContainerPropertyMap);
                       await buttonStyle.setProperties(buttonPropertyMap);
                       await declineButtonStyle.setProperties(declineButtonPropertyMap);
@@ -1015,6 +1090,16 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                       await tempParagraph?.setStyles?.([paragraphStyle]);
                       await tempParagraph?.setTextContent?.(translations[language].description);
 
+                      const privacy = await selectedElement.before(webflow.elementPresets.LinkBlock);
+                      console.log(privacy);
+                      await privacy?.setStyles?.([privacypolicy]);
+                      await privacy?.setTextContent?.("privacy policy");
+                      if (expires) {
+                        await privacy?.setSettings?.("url", expires, {
+                          openInNewTab: true
+                        });
+                      }
+
                       const buttonContainer = await selectedElement.before(webflow.elementPresets.DivBlock);
                       await buttonContainer?.setStyles?.([buttonContainerStyle]);
 
@@ -1034,6 +1119,10 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                         await innerdiv.append(tempHeading);
                         await innerdiv.append(tempParagraph);
                         await innerdiv.append(buttonContainer);
+
+                        if (tempParagraph.append && privacy) {
+                          await tempParagraph.append(privacy)
+                        }
 
                         if (buttonContainer.append && acceptButton && declineButton) {
                           await buttonContainer.append(acceptButton);
@@ -1066,9 +1155,53 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                 <button
                   className={`confirm-button ${isLoading ? "loading" : ""}`}
                   onClick={async () => {
+                    setShowPopup(false); // close the first popup
+                    setShowLoadingPopup(true); // show loading popup
                     setIsLoading(true);
                     // const isBannerAlreadyAdded = localStorage.getItem("cookieBannerAdded") === "true";
                     try {
+
+                      const allElements = await webflow.getAllElements();
+                      const idsToCheck = ["consent-banner", "main-banner", "toggle-consent-btn"];
+
+                      console.log("📦 Total elements fetched:", allElements.length);
+
+                      // Run domId checks in parallel
+                      const domIdPromises = allElements.map(async (el) => {
+                        const domId = await el.getDomId?.();
+                        return { el, domId };
+                      });
+
+                      const elementsWithDomIds = await Promise.all(domIdPromises);
+
+                      // Filter matching elements
+                      const matchingElements = elementsWithDomIds
+                        .filter(({ domId }) => domId && idsToCheck.includes(domId))
+                        .map(({ el, domId }) => el);
+
+                      console.log("✅ Matched elements:", matchingElements.length);
+
+                      // Remove matching elements and children
+                      await Promise.all(matchingElements.map(async (el) => {
+                        try {
+                          const domId = await el.getDomId?.();
+                          const children = await el.getChildren?.();
+
+                          if (children?.length) {
+                            await Promise.all(children.map(child => child.remove()));
+                            console.log(`🧽 Removed ${children.length} children from ${domId}`);
+                          }
+
+                          await el.remove();
+                          console.log(`🧹 Removed element with ID: ${domId}`);
+                        } catch (err) {
+                          console.error("⚠️ Error removing element:", err);
+                          webflow.notify({ type: "error", message: "Failed to remove a banner." });
+                        }
+                      }));
+
+
+
 
                       const selectedElement = await webflow.getSelectedElement();
                       if (!selectedElement) {
@@ -1248,6 +1381,7 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                         "margin-left": "5px",
                         "margin-right": "5px",
                         "min-width": "80px",
+                        "color":primaryButtonText
                       };
 
                       const responsivebuttonPropertyMap: Record<string, string> = {
@@ -1262,7 +1396,7 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                         "border-radius": `${buttonRadius}px`,
                         "cursor": "pointer",
                         "background-color": btnColor,
-                        "color": "rgba(72, 57, 153, 1)",
+                        "color": secondbuttontext,
                         "margin-left": "5px",
                         "margin-right": "5px",
                         "min-width": "80px",
@@ -1488,9 +1622,51 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
               {selectedOptions.includes("US State laws") && activeMode === "Advanced" && (<button
                 className="confirm-button"
                 onClick={async () => {
+                  setShowPopup(false); // close the first popup
+                  setShowLoadingPopup(true); // show loading popup
+                  setIsLoading(true);
                   const isBannerAlreadyAdded = localStorage.getItem("cookieBannerAdded") === "true";
-
                   try {
+
+                    const allElements = await webflow.getAllElements();
+                    const idsToCheck = ["initial-consent-banner", "main-consent-banner", "toggle-consent-btn"];
+
+                    console.log("📦 Total elements fetched:", allElements.length);
+
+                    // Run domId checks in parallel
+                    const domIdPromises = allElements.map(async (el) => {
+                      const domId = await el.getDomId?.();
+                      return { el, domId };
+                    });
+
+                    const elementsWithDomIds = await Promise.all(domIdPromises);
+
+                    // Filter matching elements
+                    const matchingElements = elementsWithDomIds
+                      .filter(({ domId }) => domId && idsToCheck.includes(domId))
+                      .map(({ el, domId }) => el);
+
+                    console.log("✅ Matched elements:", matchingElements.length);
+
+                    // Remove matching elements and children
+                    await Promise.all(matchingElements.map(async (el) => {
+                      try {
+                        const domId = await el.getDomId?.();
+                        const children = await el.getChildren?.();
+
+                        if (children?.length) {
+                          await Promise.all(children.map(child => child.remove()));
+                          console.log(`🧽 Removed ${children.length} children from ${domId}`);
+                        }
+
+                        await el.remove();
+                        console.log(`🧹 Removed element with ID: ${domId}`);
+                      } catch (err) {
+                        console.error("⚠️ Error removing element:", err);
+                        webflow.notify({ type: "error", message: "Failed to remove a banner." });
+                      }
+                    }));
+
                     console.log("🟢 Button clicked!");
 
                     const selectedElement = await webflow.getSelectedElement();
@@ -1814,11 +1990,12 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                         localStorage.setItem("cookieBannerAdded", "true");
                       }
                       setTimeout(() => {
-                        setShowPopup(false);
-                      }, 30000);
-                      setIsBannerAdded(true);
-                      setShowSuccessPopup(true);;
+                        setShowPopup(false); // Hide the current popup
+                        setIsBannerAdded(true);
+                        setShowSuccessPopup(true);
+                        setIsLoading(false);
 
+                      }, 20000); // Adjust delay to match your popup close animation
 
                     } catch (error) {
                       console.error("❌ Error creating cookie banner:", error);
@@ -1842,10 +2019,25 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
         </div>
       )}
 
+      {showLoadingPopup && isLoading && (
+        <div className="popup">
+          <div className="popup-loading-content">
+            <PulseAnimation />
+            <p className="popup-message">
+              Almost there… your cookie banner is in the oven. Nothing’s breaking, just baking!
+            </p>
+          </div>
+        </div>
+      )}
+
+
+
       {showSuccessPopup && (
-        <div className="success-popup">
-          <p>Banner added successfully! Now publish your site to make it live.</p>
-          <button onClick={() => setShowSuccessPopup(false)}>Close</button>
+        <div className="popup-overlay">
+          <div className="success-popup">
+            <p>To make the banner live, click the ‘Publish’ button in the top-right corner of the Webflow interface and publish your site.</p>
+            <button onClick={() => setShowSuccessPopup(false)}>Close</button>
+          </div>
         </div>
       )}
       {/* Tab Navigation */}
@@ -1919,7 +2111,7 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                     <label htmlFor="animation">Animation</label>
                     <div className="tooltip-container">
                       <img src={questionmark} alt="info" className="tooltip-icon" />
-                      <span className="tooltip-text">Optional animation for Component.</span>
+                      <span className="tooltip-text">Shows different types of animations to apply to the banner.</span>
                     </div>
                   </div>
                   <select
@@ -1977,7 +2169,7 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                     <label htmlFor="easing">Easing</label>
                     <div className="tooltip-container">
                       <img src={questionmark} alt="info" className="tooltip-icon" />
-                      <span className="tooltip-text">Optional animation for easing.</span>
+                      <span className="tooltip-text">Controls the smoothness  of the animation.</span>
                     </div>
                   </div>
                   <select
@@ -1985,7 +2177,7 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                     value={easing}
                     onChange={(e) => setEasing(e.target.value.toLowerCase())}
                   >
-                   
+
                     <option value="ease">Ease</option>
                     <option value="linear">Linear</option>
                     <option value="ease-in">Ease-in</option>
@@ -1999,7 +2191,8 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                     <label htmlFor="language">Languages</label>
                     <div className="tooltip-container">
                       <img src={questionmark} alt="info" className="tooltip-icon" />
-                      <span className="tooltip-text">Optional languages</span>
+                      <span className="tooltip-text">Indicates the language preference for the cookie
+                        banner.</span>
                     </div>
                   </div>
                   <select
@@ -2013,12 +2206,38 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                   </select>
                 </div>
 
+                <div className="compliance-container">
+                  <label className="compliance">
+                    <span className="compliance">Compliance</span>
+                    <span className="tooltip-container">
+                      <img src={questionmark} alt="info" className="tooltip-icon" />
+                      <span className="tooltip-text">Specifies the type of cookie compliance standard, like GDPR or CCPA.</span>
+                    </span>
+                  </label>
+
+                  <div className="checkbox-group">
+                    {["US State laws", "GDPR"].map((option) => ( //US State laws
+                      <label key={option} className="custom-checkboxs">
+                        <input
+                          type="checkbox"
+                          value={option}
+                          checked={selectedOptions.includes(option)}
+                          onChange={() => handleToggles(option)}
+                        />
+                        <span className="checkbox-box"></span>
+                        {option}
+                      </label>
+                    ))}
+                  </div>
+                </div>
+
                 {/* Cookie Settings - Visible only in Advanced Mode */}
                 <div className={`cookie-settings ${(activeMode === "Advanced" && selectedOptions.includes("GDPR")) ? "active" : ""}`}>
                   <h3 className="cookie-title">Categories</h3>
 
                   {/* Essentials - Always active */}
                   <div className="cookie-category">
+                    <img src={checkedcatogry} alt="" />
                     <span className="category-name">Essentials</span>
                     <span className="category-status">Always active</span>
                   </div>
@@ -2034,7 +2253,7 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                           checked={isChecked}
                           onChange={() => toggleCategory(category)}
                         />
-                        <span className="custom-checkbox"></span>
+                        <span className="custom-checkbox"> {isChecked && <img src={tickmark} alt="checked" className="tick-icon" />}</span>
                         <span className="category-name">
                           {category.charAt(0).toUpperCase() + category.slice(1)}
                         </span>
@@ -2046,6 +2265,16 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                       </label>
                     );
                   })}
+                </div>
+
+                <div className="export-csv">
+                  <div className="flex">
+                    <button className="exportbutton">Export CSV</button>
+                    <div className="tooltip-containers">
+                          <img src={questionmark} alt="info" className="tooltip-icon" />
+                          <span className="tooltip-text">Download consents in CSV format for easy analysis and sharing.</span>
+                        </div>
+                  </div>
                 </div>
 
 
@@ -2097,7 +2326,7 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                   </label>
                 </div>
 
-                <div className="togglediv">
+                {/* <div className="togglediv">
                   <label className="toggle-container">
                     <div className="flex">
                       <span className="toggle-label">Use Global Banner</span>
@@ -2116,29 +2345,10 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                     />
                     <div className={`toggle ${toggleStates.globalvariable ? "toggled" : ""}`}></div>
                   </label>
-                </div>
+                </div> */}
 
                 {/* Conditionally render the settings-group */}
-                {toggleStates.globalvariable && (
-                  // <div className="settings-group border">
-                  //   <div className="flex">
-                  //     <label htmlFor="source">Source</label>
-                  //     <div className="tooltip-container">
-                  //       <img src={questionmark} alt="info" className="tooltip-icon" />
-                  //       <span className="tooltip-text">Pages of your site</span>
-                  //     </div>
-                  //   </div>
-                  //   <div className="setting-groups">
-                  //     <select id="pages">
-                  //       {/* <option value="">Select a page</option> */}
-                  //       {pages.map((page) => (
-                  //         <option key={page.id} value={page.id}>
-                  //           {page.name}
-                  //         </option>
-                  //       ))}
-                  //     </select>
-                  //   </div>
-                  // </div>
+                {/* {toggleStates.globalvariable && (
                   <div className="settings-group border">
                     <div className="flex">
                       <label htmlFor="source">Source</label>
@@ -2149,7 +2359,6 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                     </div>
                     <div className="setting-groups">
                       <select id="pages" onChange={handlePageChange}>
-                        {/* <option value="">Select a page</option> */}
                         {pages.map((page) => (
                           <option key={page.id} value={page.id}>
                             {page.name}
@@ -2158,7 +2367,7 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                       </select>
                     </div>
                   </div>
-                )}
+                )} */}
 
                 {/* Disable Scroll - Advanced Mode Only */}
                 {activeMode === "Advanced" ? (
@@ -2193,13 +2402,13 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                 ) : null}
 
 
-                {activeMode === "Advanced" && (
-                  <div className="compliance-container">
+
+                {/* <div className="compliance-container">
                     <label className="compliance">
                       <span className="compliance">Compliance</span>
                       <span className="tooltip-container">
                         <img src={questionmark} alt="info" className="tooltip-icon" />
-                        <span className="tooltip-text">Choose a compliance option.</span>
+                        <span className="tooltip-text">Specifies the type of cookie compliance standard, like GDPR or CCPA.</span>
                       </span>
                     </label>
 
@@ -2217,8 +2426,8 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                         </label>
                       ))}
                     </div>
-                  </div>
-                )}
+                  </div> */}
+
 
 
               </div>
@@ -2229,15 +2438,18 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                   <div className="topbar">
                     <img src={dots} alt="" className="threedots" />
                   </div>
+                  <div className="consentbit-logo">
+                    <img src={logo} alt="" />
+                  </div>
                   <div
                     className={`cookie-banner ${animation} ${isActive ? "active" : ""}`}
                     style={{
                       transition: `transform 0.5s ${easing}, opacity 0.5s ${easing}`,
                       position: "absolute",
                       ...(style !== "fullwidth" && {
-                        bottom: "10px",
-                        left: selected === "left" ? "10px" : selected === "center" ? "50%" : "auto",
-                        right: selected === "right" ? "10px" : "auto",
+                        bottom: "16px",
+                        left: selected === "left" ? "16px" : selected === "center" ? "50%" : "auto",
+                        right: selected === "right" ? "16px" : "auto",
                         transform: selected === "center" ? "translateX(-50%)" : "none",
                       }),
                       transform: selected === "center" ? "translateX(-50%)" : "none",
@@ -2246,7 +2458,7 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                       alignItems: style === "centeralign" ? "center" : undefined, // Change dynamically
                       fontWeight: weight,
                       width: previewDimensions.width,
-                      height: previewDimensions.height,
+                      height: previewDimensions.minHeight,
                       borderRadius: `${borderRadius}px`,
                       backgroundColor: color,
                     }}
@@ -2265,9 +2477,9 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                       </span>
                     </div>
                     <div className="button-wrapp" style={{ justifyContent: style === "centeralign" ? "center" : undefined, }}>
-                      {activeMode === "Advanced" && (<button className="btn-preferences" style={{ borderRadius: `${buttonRadius}px`, backgroundColor: btnColor }} >Preferences</button>)}
-                      <button className="btn-reject" style={{ borderRadius: `${buttonRadius}px`, backgroundColor: btnColor }} >Reject</button>
-                      <button className="btn-accept" style={{ borderRadius: `${buttonRadius}px`, backgroundColor: secondcolor }} >Accept</button>
+                      {activeMode === "Advanced" && (<button className="btn-preferences" style={{ borderRadius: `${buttonRadius}px`, backgroundColor: btnColor, color: secondbuttontext }} >Preferences</button>)}
+                      <button className="btn-reject" style={{ borderRadius: `${buttonRadius}px`, backgroundColor: btnColor, color: secondbuttontext }} >Reject</button>
+                      <button className="btn-accept" style={{ borderRadius: `${buttonRadius}px`, backgroundColor: secondcolor, color: primaryButtonText }} >Accept</button>
 
 
                     </div>
@@ -2318,6 +2530,11 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
               setSecondcolor={setSecondcolor}
               bgColors={bgColors}
               setBgColors={setBgColors}
+              secondbuttontext={secondbuttontext}
+              setsecondbuttontext={setsecondbuttontext}
+              primaryButtonText={primaryButtonText}
+              setPrimaryButtonText={setPrimaryButtonText}
+
             />
           )}
 

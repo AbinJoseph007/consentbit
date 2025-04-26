@@ -42,6 +42,13 @@ h4{
     gap:10px;
     align-items: center
 }
+.flexs{
+  display: flex;
+  gap:10px;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
 /* the succesfull script divblock */
 .flexing {
   display: flex;
@@ -173,7 +180,13 @@ h4{
 }
 
 .font-blues{
-  margin-bottom: 12px;
+  /* margin-bottom: 12px; */
+  color:rgba(140, 121, 255, 1);
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 15.62px;
+  letter-spacing: -3%;
 }
 
 .flex-down{
@@ -542,11 +555,15 @@ border-radius: 5px;
     background-color: #221E3A;
 }
 
-.togglediv ,.cookie-settings{
+.togglediv{
     padding-top: 16px;
     padding-bottom:16px ;
     border-top: 1px solid rgba(36, 33, 55, 1); 
 
+}
+.cookie-settings{
+  padding-top: 20px;
+  padding-bottom:16px ;
 }
 
 /* .cookie-settings {
@@ -580,7 +597,8 @@ border-radius: 5px;
   transform: translateY(0);
   max-height: 1000px; /* Adjust as needed */
   overflow: visible;
-  padding: 3; /* Match padding in inactive state */
+  padding-top: 6px;
+  padding-bottom:16px ;
   margin: 0;  /* Match margin in inactive state */
 }
 
@@ -724,6 +742,19 @@ select option:checked {
     margin-bottom: 20px;
     background: rgba(29, 26, 49, 0.6);
   }
+  .sections{
+    border: 1px solid #3B3B4F;
+    padding: 20px;
+    border-radius: 8px;
+    display: flex;
+    margin-bottom: 20px;
+    height: 222px;
+    background: rgba(29, 26, 49, 0.6);
+    align-content: flex-end;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+  }
   .back-color{
     background:rgba(34, 30, 59, 1)
   }
@@ -817,11 +848,16 @@ select option:checked {
     padding-bottom: 20px;
     border-bottom: 1px solid rgba(36, 33, 55, 1); 
     color: rgba(255, 255, 255, 0.6);
+}
 
+.custs{
+  padding-top: 10px;
+  padding-bottom: 20px;
+  color: rgba(255, 255, 255, 0.6);
 }
 
 .custom{
-  padding-top: 10px;
+  padding-top: 16px;
   display: flex;
   
 flex-wrap: wrap;
@@ -835,7 +871,7 @@ flex-wrap: wrap;
 }
 .category-2{
     display: flex;
-    padding-top: 10px;
+    padding-top: 16px;
     gap: 10px;
 }
 .category-3 {
@@ -1044,7 +1080,7 @@ flex-wrap: wrap;
 
   /* popup */
 
-  .popup-overlay {
+  .popup-overlay1 {
     position: fixed;
     top: 0;
     left: 0;
@@ -1114,6 +1150,7 @@ flex-wrap: wrap;
     display: inline-block;
     width: 100%;
     box-shadow: #0A081B;
+    filter: drop-shadow(0px 2px 4px rgba(0, 0, 0, 0.2));
   }
   
   .tooltip-icon {
@@ -1126,17 +1163,20 @@ flex-wrap: wrap;
     visibility: hidden;
     background-color: rgba(34, 30, 59, 1);
     color: #fff;
-    text-align: center;
+    text-align: left;
     padding: 6px 10px;
+    line-height: 100px;
     border-radius: 4px;
     position: absolute;
     bottom: 125%; /* Position tooltip above icon */
     /* left: 50%; */
+    border-radius: 8px;
     transform: translateX(-50%);
-    font-size: 11.5px;
+    font-size: 10.5px;
     opacity: 0;
     transition: opacity 0.2s ease-in-out;
-    z-index: 10;
+    z-index: 99999999999;
+    line-height: 120%;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
   }
   
@@ -1158,8 +1198,9 @@ flex-wrap: wrap;
   .tooltip-container:hover .tooltip-text {
     visibility: visible;
     opacity: 1;
-    min-width: 100px;
+    min-width: 127px;
     box-shadow: #0A081B;
+    filter: drop-shadow(0px 2px 4px rgba(0, 0, 0, 0.2));
 
   }
 
@@ -1182,7 +1223,7 @@ flex-wrap: wrap;
   visibility: hidden;
   background-color: rgba(34, 30, 59, 1);
   color: #fff;
-  text-align: center;
+  text-align: left;
   padding: 6px 10px;
   border-radius: 4px;
   position: absolute;
@@ -1195,6 +1236,7 @@ flex-wrap: wrap;
   opacity: 0;
   transition: opacity 0.2s ease-in-out;
   z-index: 10;
+  line-height: 120%;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
 }
 
@@ -1202,7 +1244,7 @@ flex-wrap: wrap;
 .tooltip-containers:hover .tooltip-text {
   visibility: visible;
   opacity: 1;
-  min-width: 100px;
+  min-width: 127px;
   box-shadow: #0A081B;
 
 }
@@ -1301,10 +1343,13 @@ flex-wrap: wrap;
   }
   
   .cookie-category input:checked + .custom-checkbox::before {
-    content: "✔";
     color: rgba(140, 121, 255, 1);
     font-size: 12px;
-    
+  }
+
+  .custom-checkbox .tick-icon {
+    width: 10px;
+    height: 10px;
   }
   
   .category-icon {
@@ -1424,6 +1469,8 @@ color:  rgba(255, 255, 255, 0.6);;
   border-radius: 4px;
   padding: 7px 15px;
   transition: background 0.3s ease-in-out;
+  flex-direction: row;
+  align-items: flex-end
 }
 
 .dismiss-btn:hover, .activate-btn:hover {
@@ -1481,6 +1528,7 @@ color:  rgba(255, 255, 255, 0.6);;
 .compliance-container{
   border-top: 1px solid #242137;
   padding-top: 14px;
+  padding-bottom: 14px;
 }
 /* Checkbox Box */
 .checkbox-box {
@@ -1631,31 +1679,71 @@ color: rgba(255, 255, 255, 0.6);
   text-align: left;
 }
 
-.success-popup {
+/* .success-popup {
   position: fixed;
   top: 20px;
-  font-size: 12px;
+  font-size: 10px;
   right: 12px;
-  background: rgba(59, 51, 109, 1);
+  background: rgba(50, 44, 90, 0.6);
   color: white;
   padding: 9px 14px;
   border-radius: 10px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
   z-index: 99999;
   animation: fadeIn 0.3s ease-in-out;
-  width: 183px;
-  backdrop-filter: blur(30.7px); /* Add this line for background blur */
+  width: 198px;
+  backdrop-filter: blur(30.7px);
 }
 
 .success-popup button {
-  background: white;
-  color: rgba(59, 51, 109, 1);
-  margin-left: 10px;
+  background: rgba(38, 46, 132, 1);
+  color: white;
   padding: 6px 12px;
   border-radius: 6px;
   cursor: pointer;
   border: none;
+  width: 74px;
+} */
+
+.popup-overlay {
+  position: fixed;
+  top: 20%;
+  left: 0;
+  width: 100vw;
+  height: 97vh;
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(5px);
+  z-index: 99998;
 }
+
+.success-popup {
+  position: fixed;
+  top: 8px;
+  right: 24px;
+  font-weight: 400;
+  font-size: 10px;
+  background: rgba(50, 44, 90, 0.6);
+  color: white;
+  padding: 9px 14px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  z-index: 99999;
+  animation: fadeIn 0.3s ease-in-out;
+  width: 198px;
+  line-height: 157%;
+  backdrop-filter: blur(30.7px);
+}
+
+.success-popup button {
+  background: rgba(38, 46, 132, 1);
+  color: white;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  border: none;
+  width: 74px;
+}
+
 
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(20px); }
@@ -1758,6 +1846,7 @@ margin-bottom: 20px;
   opacity: 0;
   transition: opacity 0.3s ease-in-out;
   backdrop-filter: blur(30.7px); /* Add this line for background blur */
+  background: rgba(0, 0, 0, 0.3);
 }
 
 .popup-overlays.fade-in {
@@ -1844,3 +1933,207 @@ margin-bottom: 20px;
   visibility: visible;
   opacity: 1;
 }
+
+.consentbit-logo{
+  position: absolute;
+  bottom: 18px;
+  left:18px
+}
+.consentbit-logo img{
+  width: 24px;
+  height: 24px;
+}
+.pulse-wrapper {
+  height: 100vh;
+  background-color: #0b0a1a;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+.pulse-stage {
+  position: absolute;
+  width: 80px;
+  height: 80px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Initial circle */
+.stage-circle {
+  border-radius: 50%;
+  background-image: linear-gradient(to bottom right, #2d9cdb, #56ccf2);
+  animation: appear 0.2s ease-out forwards;
+}
+
+/* Morphing blob */
+.stage-blob {
+  width: 80px;
+  height: 80px;
+  animation: blobMorph 0.3s ease forwards;
+}
+
+/* Rotate effect */
+.rotate {
+  animation: rotateBlob 0.4s ease-in-out forwards;
+}
+
+/* Dots animation */
+.stage-dots {
+  width: 50px;
+  height: 50px;
+  animation: dotsFadeIn 0.3s ease forwards;
+}
+
+/* Shrink out dots only */
+.fade-out-dots {
+  animation: fadeOutDots 0.3s ease-in forwards;
+}
+
+/* Final logo centered */
+.consentbit-logos {
+  width: 40px;
+  height: 40px;
+  opacity: 0;
+  animation: fadeIn 0.3s ease forwards;
+}
+
+.consentbit-logos img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* Animations */
+@keyframes appear {
+  from {
+    transform: scale(0);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes blobMorph {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.1) rotate(20deg);
+    border-radius: 30% 70% 70% 30%;
+  }
+}
+
+@keyframes rotateBlob {
+  from {
+    transform: rotate(20deg);
+  }
+  to {
+    transform: rotate(-20deg);
+  }
+}
+
+@keyframes dotsFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes fadeOutDots {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.pulse-overlays {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  transition: opacity 0.3s ease-in-out;
+  backdrop-filter: blur(15.7px); /* Add this line for background blur */
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.popup {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  transition: opacity 0.3s ease-in-out;
+  backdrop-filter: blur(15.7px); /* Add this line for background blur */
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.popup-loading-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+
+
+.popup-message {
+    margin-top: 1rem;
+    font-size: 1rem;
+    position: absolute;
+    color: #fff;
+    max-width: 400px;
+    text-align: center;
+    bottom: 189px;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 400;
+    font-size: 14px;
+
+  }
+
+  .exportbutton {
+    background-color: transparent;
+    border: 1px solid #5a5dff; /* light bluish border */
+    color: #ffffff; /* white text */
+    padding: 8px 16px;
+    border-radius: 3px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;    
+  }
+  
+  /* .exportbutton:hover {
+    background-color: #5a5dff; 
+    color: #0a0a0a; 
+  }
+   */
+   .export-csv{
+    padding-top: 13px;
+    padding-bottom: 13px;
+    border-top: 1px solid rgba(140, 121, 255, 0.29);
+   }

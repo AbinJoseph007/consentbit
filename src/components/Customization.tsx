@@ -17,6 +17,8 @@ const fullwidth = new URL("../assets/full width banner.svg", import.meta.url).hr
 const dots = new URL("../assets/3 dots.svg", import.meta.url).href;
 const line = new URL("../assets/Vector 20.svg", import.meta.url).href;
 const questionmark = new URL("../assets/question.svg", import.meta.url).href;
+const logo = new URL("../assets/icon.svg", import.meta.url).href;
+
 
 
 
@@ -61,6 +63,10 @@ interface CustomizationProps {
   setSecondcolor: (value: string) => void;
   bgColors: string;
   setBgColors: (value: string) => void;
+  secondbuttontext: string;
+  setsecondbuttontext: (value: string) => void;
+  primaryButtonText: string
+  setPrimaryButtonText: (value: string) => void;
 
 }
 
@@ -100,10 +106,11 @@ const Customization: React.FC<CustomizationProps> = ({
   secondcolor,
   setSecondcolor,
   bgColors,
-  setBgColors
-
-
-
+  setBgColors,
+  secondbuttontext,
+  setsecondbuttontext,
+  primaryButtonText,
+  setPrimaryButtonText,
 }) => {
   // const [selected, setSelected] = useState("right");
   const [isActive, setIsActive] = useState(false);
@@ -113,12 +120,17 @@ const Customization: React.FC<CustomizationProps> = ({
   const pickerInstance = useRef<any>(null);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
 
+  // const [secondbuttontext, setsecondbuttontext] = useState("#4C4A66")
+  // const [primaryButtonText, setPrimaryButtonText] = useState('#FFFFFF'); // Initial color (black)
 
   const [btnOpen, setBtnOpen] = useState(false);
   const [headOpen, setHeadOpen] = useState(false);
   const [paraOpen, setParaOpen] = useState(false);
   const [secondbuttonOpen, setSecondButtonOpen] = useState(false);
   const [secondbgOpen, setSecondbgopen] = useState(false)
+  const [SecondbuttonTextOpen, setSecondbuttonTextOpen] = useState(false)
+  const [primaryButtonTextOpen, setPrimaryButtonTextOpen] = useState(false);
+
 
 
   const btnPickerRef = useRef<HTMLDivElement | null>(null);
@@ -126,6 +138,8 @@ const Customization: React.FC<CustomizationProps> = ({
   const paraPickerRef = useRef<HTMLDivElement | null>(null);
   const secondbtnPickerRef = useRef<HTMLDivElement | null>(null);
   const secondbgPickerRef = useRef<HTMLDivElement | null>(null);
+  const SecondbuttonTextPickerRef = useRef<HTMLDivElement | null>(null);
+  const primaryButtonTextPickerRef = useRef<HTMLDivElement>(null);
 
 
   const btnPickerInstance = useRef<any>(null);
@@ -133,6 +147,8 @@ const Customization: React.FC<CustomizationProps> = ({
   const paraPickerInstance = useRef<any>(null);
   const secondbtnPickerInstance = useRef<any>(null);
   const secondbgPickerInstance = useRef<any>(null);
+  const SecondbuttonTextInstance = useRef<any>(null);
+  const primaryButtonTextInstance = useRef<iro.ColorPicker | null>(null);
 
 
   const btnDropdownRef = useRef<HTMLDivElement | null>(null);
@@ -140,6 +156,8 @@ const Customization: React.FC<CustomizationProps> = ({
   const paraDropdownRef = useRef<HTMLDivElement | null>(null);
   const secondbtnDropdownRef = useRef<HTMLDivElement | null>(null);
   const secondbgDropdownRef = useRef<HTMLDivElement | null>(null);
+  const secondbuttonDropdownRef = useRef<HTMLDivElement | null>(null);
+  const primaryButtonTextDropdownRef = useRef<HTMLDivElement>(null);
 
 
   const handleBorderRadiusChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -210,7 +228,7 @@ const Customization: React.FC<CustomizationProps> = ({
       case "centeralign":
         return { width: "303px" };
       default:
-        return { width: "65%" }; // Default
+        return { width: "318px" }; // Default
     }
   }, [style]);
   // ---
@@ -238,6 +256,14 @@ const Customization: React.FC<CustomizationProps> = ({
       secondbgPickerInstance.current = iro.ColorPicker(secondbgPickerRef.current, { width: 100, color: bgColors, borderWidth: 2, borderColor: "#ccc" });
       secondbgPickerInstance.current.on("color:change", (newColor: any) => setBgColors(newColor.hexString));
     }
+    if (!SecondbuttonTextInstance.current && SecondbuttonTextPickerRef.current) {
+      SecondbuttonTextInstance.current = iro.ColorPicker(SecondbuttonTextPickerRef.current, { width: 100, color: secondbuttontext, borderWidth: 2, borderColor: "#ccc" });
+      SecondbuttonTextInstance.current.on("color:change", (newColor: any) => setsecondbuttontext(newColor.hexString));
+    }
+    if (!primaryButtonTextInstance.current && primaryButtonTextPickerRef.current) {
+      primaryButtonTextInstance.current = iro.ColorPicker(primaryButtonTextPickerRef.current, { width: 100, color: primaryButtonText, borderWidth: 2, borderColor: "#ccc" });
+      primaryButtonTextInstance.current.on("color:change", (newColor: any) => setPrimaryButtonText(newColor.hexString));
+    }
   }, []);
 
   useEffect(() => {
@@ -247,8 +273,11 @@ const Customization: React.FC<CustomizationProps> = ({
     if (paraOpen && paraPickerInstance.current) paraPickerInstance.current.color.set(paraColor);
     if (secondbuttonOpen && secondbtnPickerInstance.current) secondbtnPickerInstance.current.color.set(secondcolor);
     if (secondbgOpen && secondbgPickerInstance.current) secondbgPickerInstance.current.color.set(bgColors);
+    if (SecondbuttonTextOpen && SecondbuttonTextInstance.current) SecondbuttonTextInstance.current.color.set(secondbuttontext);
+    if (primaryButtonTextOpen && primaryButtonTextInstance.current) primaryButtonTextInstance.current.color.set(primaryButtonText);
 
-  }, [btnOpen, headOpen, paraOpen, secondbuttonOpen, secondbgOpen]);
+
+  }, [btnOpen, headOpen, paraOpen, secondbuttonOpen, secondbgOpen, SecondbuttonTextOpen, primaryButtonTextOpen]);
 
   useEffect(() => {
     // Handle click outside to close dropdowns
@@ -259,16 +288,18 @@ const Customization: React.FC<CustomizationProps> = ({
       if (paraOpen && paraDropdownRef.current && !paraDropdownRef.current.contains(event.target as Node) && paraPickerRef.current && !paraPickerRef.current.contains(event.target as Node)) setParaOpen(false);
       if (secondbuttonOpen && secondbtnDropdownRef.current && !secondbtnDropdownRef.current.contains(event.target as Node) && secondbtnPickerRef.current && !secondbtnPickerRef.current.contains(event.target as Node)) setSecondButtonOpen(false);
       if (secondbgOpen && secondbgDropdownRef.current && !secondbgDropdownRef.current.contains(event.target as Node) && secondbgPickerRef.current && !secondbgPickerRef.current.contains(event.target as Node)) setSecondbgopen(false);
+      if (SecondbuttonTextOpen && secondbuttonDropdownRef.current && !secondbuttonDropdownRef.current.contains(event.target as Node) && SecondbuttonTextPickerRef.current && !SecondbuttonTextPickerRef.current.contains(event.target as Node)) setSecondbuttonTextOpen(false);
+      if (primaryButtonTextOpen && primaryButtonTextDropdownRef.current && !primaryButtonTextDropdownRef.current.contains(event.target as Node) && primaryButtonTextPickerRef.current && !primaryButtonTextPickerRef.current.contains(event.target as Node)) setPrimaryButtonTextOpen(false);
     }
 
-    if (btnOpen || headOpen || paraOpen || secondbuttonOpen || secondbgOpen) {
+    if (btnOpen || headOpen || paraOpen || secondbuttonOpen || secondbgOpen || SecondbuttonTextOpen || primaryButtonTextOpen) {
       document.addEventListener("mousedown", handleClickOutside);
     } else {
       document.removeEventListener("mousedown", handleClickOutside);
     }
 
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [btnOpen, headOpen, paraOpen, secondbuttonOpen, secondbgOpen]);
+  }, [btnOpen, headOpen, paraOpen, secondbuttonOpen, secondbgOpen, SecondbuttonTextOpen, primaryButtonTextOpen]);
 
   return (
     <>
@@ -280,11 +311,11 @@ const Customization: React.FC<CustomizationProps> = ({
               <span className="font-blue">Orientation</span>
             </div> */}
             <div className="flex">
-              <span className="font-blue">Orientation</span>
+              <span className="font-blue">Cookie Banner Alignment</span>
 
               <div className="tooltip-containers">
                 <img src={questionmark} alt="info" className="tooltip-icon" />
-                <span className="tooltip-text">This option disables the scroll of the page when banner is shown</span>
+                <span className="tooltip-text">Adjust the cookie banner's alignment for optimal placement on your site.</span>
               </div>
             </div>
 
@@ -312,11 +343,11 @@ const Customization: React.FC<CustomizationProps> = ({
           </div>
           <div className="cust">
             <div className="flex">
-              <span className="font-blue">Styles</span>
+              <span className="font-blue">Cookie Banner Styles</span>
 
               <div className="tooltip-containers">
                 <img src={questionmark} alt="info" className="tooltip-icon" />
-                <span className="tooltip-text">This option disables the scroll of the page when banner is shown</span>
+                <span className="tooltip-text">Customize the appearance of the cookie banner to match your site's design.</span>
               </div>
             </div>
             <div className="category-2">
@@ -342,15 +373,15 @@ const Customization: React.FC<CustomizationProps> = ({
             </div>
           </div>
 
-          <div className="cust">
+          <div className="custs">
             {/* <div className="font-blues">
               <span className="font-blue">Body</span>
             </div> */}
-              <div className="flex">
-              <span className="font-blue">Body</span>
+            <div className="flexs">
+              <span className="font-blues">Typography</span>
               <div className="tooltip-containers">
                 <img src={questionmark} alt="info" className="tooltip-icon" />
-                <span className="tooltip-text">This option disables the scroll of the page when banner is shown</span>
+                <span className="tooltip-text">Customize font styles and sizes to enhance readability and design.</span>
               </div>
             </div>
 
@@ -405,17 +436,17 @@ const Customization: React.FC<CustomizationProps> = ({
           <div><img src={line} alt="" /></div>
 
           <div className="cust">
-          <div className="flex">
-              <span className="font-blue">Colors</span>
+            <div className="flex">
+              <span className="font-blue">Colours</span>
               <div className="tooltip-containers">
                 <img src={questionmark} alt="info" className="tooltip-icon" />
-                <span className="tooltip-text">This option disables the scroll of the page when banner is shown</span>
+                <span className="tooltip-text">"Customize the colors to match your site's branding and design.</span>
               </div>
             </div>
             <div className="custom">
-              <div>
+              <div className="customs">
                 <div>
-                  <span>Background color</span>
+                  <span>Banner Background </span>
                   <div className="color-picker-dropdown" ref={dropdownRef}>
                     {/* Button to Open Color Picker */}
                     <button className="color-picker-button" onClick={() => setIsOpen(!isOpen)}>
@@ -432,50 +463,20 @@ const Customization: React.FC<CustomizationProps> = ({
                   </div>
                 </div>
 
-                <div>
-                  <span>Button Color</span>
-                  <div className="color-picker-dropdown" ref={btnDropdownRef}>
-                    <button className="color-picker-button" onClick={() => setBtnOpen(!btnOpen)}>
-                      <span className="color-text">{btnColor}</span>
-                      <div className="color-preview" style={{ backgroundColor: btnColor }}></div>
-                      {/* <span className="dropdown-arrow">▼</span> */}
-                    </button>
-                    <div ref={btnPickerRef} className={`color-picker-container ${btnOpen ? "visible" : "hidden"}`}></div>
+                {style === "alignstyle" &&
+                  <div>
+                    <span>Second Backgorund</span>
+                    <div className="color-picker-dropdown" ref={secondbgDropdownRef}>
+                      <button className="color-picker-button" onClick={() => setSecondbgopen(!secondbgOpen)}>
+                        <span className="color-text">{bgColors}</span>
+                        <div className="color-preview" style={{ backgroundColor: bgColors }}></div>
+                        {/* <span className="dropdown-arrow">▼</span> */}
+                      </button>
+                      <div ref={secondbgPickerRef} className={`color-picker-container ${secondbgOpen ? "visible" : "hidden"}`}></div>
+                    </div>
                   </div>
-                </div>
+                }
               </div>
-
-
-
-              <div>
-
-
-                <div>
-                  <span>Second Backgorund</span>
-                  <div className="color-picker-dropdown" ref={secondbgDropdownRef}>
-                    <button className="color-picker-button" onClick={() => setSecondbgopen(!secondbgOpen)}>
-                      <span className="color-text">{bgColors}</span>
-                      <div className="color-preview" style={{ backgroundColor: bgColors }}></div>
-                      {/* <span className="dropdown-arrow">▼</span> */}
-                    </button>
-                    <div ref={secondbgPickerRef} className={`color-picker-container ${secondbgOpen ? "visible" : "hidden"}`}></div>
-                  </div>
-                </div>
-
-
-                <div>
-                  <span>Accept Button Color</span>
-                  <div className="color-picker-dropdown" ref={secondbtnDropdownRef}>
-                    <button className="color-picker-button" onClick={() => setSecondButtonOpen(!secondbuttonOpen)}>
-                      <span className="color-text">{secondcolor}</span>
-                      <div className="color-preview" style={{ backgroundColor: secondcolor }}></div>
-                      {/* <span className="dropdown-arrow">▼</span> */}
-                    </button>
-                    <div ref={secondbtnPickerRef} className={`color-picker-container ${secondbuttonOpen ? "visible" : "hidden"}`}></div>
-                  </div>
-                </div>
-              </div>
-
 
               <div className="customs">
                 <div>
@@ -501,18 +502,99 @@ const Customization: React.FC<CustomizationProps> = ({
                   </div>
                 </div>
               </div>
+
+              <div className="flex">
+                <span className="font-blue">Primary button </span>
+                <div className="tooltip-containers">
+                  <img src={questionmark} alt="info" className="tooltip-icon" />
+                  <span className="tooltip-text">"Customize the colors to match your site's branding and design.</span>
+                </div>
+              </div>
+              <div className="customs">
+
+                <div>
+                  <span>Background Colour</span>
+                  <div className="color-picker-dropdown" ref={secondbtnDropdownRef}>
+                    <button className="color-picker-button" onClick={() => setSecondButtonOpen(!secondbuttonOpen)}>
+                      <span className="color-text">{secondcolor}</span>
+                      <div className="color-preview" style={{ backgroundColor: secondcolor }}></div>
+                      {/* <span className="dropdown-arrow">▼</span> */}
+                    </button>
+                    <div ref={secondbtnPickerRef} className={`color-picker-container ${secondbuttonOpen ? "visible" : "hidden"}`}></div>
+                  </div>
+                </div>
+
+                <div>
+                  <span>Text Colour</span>
+                  <div className="color-picker-dropdown" ref={primaryButtonTextDropdownRef}>
+                    <button className="color-picker-button" onClick={() => setPrimaryButtonTextOpen(!primaryButtonTextOpen)}>
+                      <span className="color-text">{primaryButtonText}</span>
+                      <div className="color-preview" style={{ backgroundColor: primaryButtonText }}></div>
+                      {/* <span className="dropdown-arrow">▼</span> */}
+                    </button>
+                    <div ref={primaryButtonTextPickerRef} className={`color-picker-container ${primaryButtonTextOpen ? "visible" : "hidden"}`}></div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex">
+                <span className="font-blue">Secondary button</span>
+                <div className="tooltip-containers">
+                  <img src={questionmark} alt="info" className="tooltip-icon" />
+                  <span className="tooltip-text">"Customize the colors to match your site's branding and design.</span>
+                </div>
+              </div>
+
+              <div className="customs">
+                <div>
+                  <span>Secondry Button</span>
+                  <div className="color-picker-dropdown" ref={btnDropdownRef}>
+                    <button className="color-picker-button" onClick={() => setBtnOpen(!btnOpen)}>
+                      <span className="color-text">{btnColor}</span>
+                      <div className="color-preview" style={{ backgroundColor: btnColor }}></div>
+                      {/* <span className="dropdown-arrow">▼</span> */}
+                    </button>
+                    <div ref={btnPickerRef} className={`color-picker-container ${btnOpen ? "visible" : "hidden"}`}></div>
+                  </div>
+                </div>
+
+                <div>
+                  <span>second button text</span>
+                  <div className="color-picker-dropdown" ref={secondbuttonDropdownRef}>
+                    <button className="color-picker-button" onClick={() => setSecondbuttonTextOpen(!SecondbuttonTextOpen)}>
+                      <span className="color-text">{secondbuttontext}</span>
+                      <div className="color-preview" style={{ backgroundColor: secondbuttontext }}></div>
+                      {/* <span className="dropdown-arrow">▼</span> */}
+                    </button>
+                    {/* Make sure this ref matches the one used in the first useEffect */}
+                    <div ref={SecondbuttonTextPickerRef} className={`color-picker-container ${SecondbuttonTextOpen ? "visible" : "hidden"}`}></div>
+                  </div>
+                </div>
+              </div>
+
+
+
             </div>
 
           </div>
 
           <div className="cust">
+            <div className="flexs">
+              <span className="font-blue">Corner Radius</span>
+              <div className="tooltip-containers">
+                <img src={questionmark} alt="info" className="tooltip-icon" />
+                <span className="tooltip-text">Adjust the corner radius of buttons and containers in the cookie banner.</span>
+              </div>
+            </div>
             <div className="flexy">
+
               <div className="flex-down">
-                <div className="bottom">
-                  <span className="font-blue">Container</span>
-                </div>
+
+                {/* <div className="bottom">
+                  <span className="font-blue">Corner radius</span>
+                </div> */}
                 <div>
-                  <span>Corner Radius</span>
+                  <span>Container</span>
                   <div className="settings-groups width">
                     <input
                       type="number"
@@ -526,11 +608,11 @@ const Customization: React.FC<CustomizationProps> = ({
                 </div>
               </div>
               <div className="flex-down">
-                <div className="bottom">
+                {/* <div className="bottom">
                   <span className="font-blue">Button</span>
-                </div>
+                </div> */}
                 <div>
-                  <span>Corner Radius</span>
+                  <span>Button</span>
                   <div className="settings-groups width">
                     <input
                       type="number"
@@ -556,6 +638,9 @@ const Customization: React.FC<CustomizationProps> = ({
             <div className="topbar">
               <img src={dots} alt="" className="threedots" />
             </div>
+            <div className="consentbit-logo">
+              <img src={logo} alt="" />
+            </div>
             {/* gdpr */}
             <div
               className={`cookie-banner ${animation} ${isActive ? "active" : ""}`}
@@ -563,9 +648,9 @@ const Customization: React.FC<CustomizationProps> = ({
                 transition: `transform 0.5s ${easing}, opacity 0.5s ${easing}`,
                 position: "absolute",
                 ...(style !== "fullwidth" && {
-                  bottom: "10px",
-                  left: selected === "left" ? "10px" : selected === "center" ? "50%" : "auto",
-                  right: selected === "right" ? "10px" : "auto",
+                  bottom: "16px",
+                  left: selected === "left" ? "16px" : selected === "center" ? "50%" : "auto",
+                  right: selected === "right" ? "16px" : "auto",
                   transform: selected === "center" ? "translateX(-50%)" : "none",
                 }),
                 transform: selected === "center" ? "translateX(-50%)" : "none",
@@ -593,9 +678,9 @@ const Customization: React.FC<CustomizationProps> = ({
 
               </div>
               <div className="button-wrapp" style={{ justifyContent: style === "centeralign" ? "center" : undefined, }}>
-                <button className="btn-preferences" style={{ borderRadius: `${buttonRadius}px`, backgroundColor: btnColor }} >Preferences</button>
-                <button className="btn-reject" style={{ borderRadius: `${buttonRadius}px`, backgroundColor: btnColor }} >Reject</button>
-                <button className="btn-accept" style={{ borderRadius: `${buttonRadius}px`, backgroundColor: secondcolor }} >Accept</button>
+                <button className="btn-preferences" style={{ borderRadius: `${buttonRadius}px`, backgroundColor: btnColor, color: secondbuttontext }} >Preferences</button>
+                <button className="btn-reject" style={{ borderRadius: `${buttonRadius}px`, backgroundColor: btnColor, color: secondbuttontext }} >Reject</button>
+                <button className="btn-accept" style={{ borderRadius: `${buttonRadius}px`, backgroundColor: secondcolor, color: primaryButtonText }} >Accept</button>
               </div>
             </div>
 
