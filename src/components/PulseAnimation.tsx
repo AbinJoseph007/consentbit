@@ -18,7 +18,6 @@ const PulseAnimation: React.FC = () => {
         timeouts.push(timeout);
       });
 
-      // Restart the animation after the final stage and a pause
       const resetTimeout = setTimeout(() => {
         setStage(0);
         startSequence(); // Loop
