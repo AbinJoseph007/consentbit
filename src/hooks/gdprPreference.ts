@@ -122,7 +122,7 @@ const createCookiePreferences = async (selectedPreferences: string[], language: 
        DeclinebuttonStyleName : `consentbit-prefrence-decline`,
        headingStyleName : `consebit-prefrence-heading`,
        checkboxContainerStyleName : `consentbit-toggle`,
-       changepreference : `consentbit-change-preference-${timestamp}`
+       changepreference : `consentbit-change-preference`
 
     };
 
@@ -133,36 +133,6 @@ const createCookiePreferences = async (selectedPreferences: string[], language: 
     );
 
     const [divStyle, paragraphStyle, formBlockStyle, prefrenceDiv, togglediv, buttonContainerStyle,checkboxlabeltext, prefrenceButtons,buttonStyle, declinebutton,headingStyle,checkboxContainerStyle,changepre] = styles;
-
-
-
-    // const preferenceDiv = `consentbit-preference-div`;
-    // const paragraphStyleNames = `consentbit-prefrence-text`;
-    // const formfield = `consentbit-formblock`
-    // const preferenceblock = `consentbit-prefrence-block`
-    // const toggledivs = `consentbit-prefrence-toggle`
-    // const buttonContainerStyleName = `consentbit-prefrence-container`;
-    // const prefrenceButton = `consentbit-button-preference`
-    // const checkboxlabeltextstyle = `consentbit-checkbox-label`
-    // const buttonStyleName = `consebit-prefrence-accept`;
-    // const DeclinebuttonStyleName = `consentbit-prefrence-decline`;
-    // const headingStyleName = `consebit-prefrence-heading`;
-    // const checkboxContainerStyleName = `consentbit-toggle`;
-    // const changepreference = `consentbit-change-preference-${timestamp}`
-
-    // const divStyle = await webflow.createStyle(preferenceDiv);
-    // const paragraphStyle = await webflow.createStyle(paragraphStyleNames);
-    // const formBlockStyle = await webflow.createStyle(formfield)
-    // const prefrenceDiv = await webflow.createStyle(preferenceblock)
-    // const togglediv = await webflow.createStyle(toggledivs)
-    // const buttonContainerStyle = await webflow.createStyle(buttonContainerStyleName);
-    // const checkboxContainerStyle = await webflow.createStyle(checkboxContainerStyleName);
-    // const checkboxlabeltext = await webflow.createStyle(checkboxlabeltextstyle)
-    // const buttonStyle = await webflow.createStyle(buttonStyleName);
-    // const declinebutton = await webflow.createStyle(DeclinebuttonStyleName)
-    // const prefrenceButtons = await webflow.createStyle(prefrenceButton)
-    // const headingStyle = await webflow.createStyle(headingStyleName);
-    // const changepre = await webflow.createStyle(changepreference)
 
 
     const collection = await webflow.getDefaultVariableCollection();
@@ -533,7 +503,7 @@ const createCookiePreferences = async (selectedPreferences: string[], language: 
       await prefrenceContainerinner.setStyles([prefrenceDiv]);
 
       const mainDivBlocks = await selectedElement.before(webflow.elementPresets.DivBlock);
-      console.log("mainDivBlock:", mainDivBlocks);
+      
       await mainDivBlocks.setStyles([changepre])
 
       
@@ -557,7 +527,6 @@ const createCookiePreferences = async (selectedPreferences: string[], language: 
       }
       await acceptButton.setStyles([buttonStyle]);
       await acceptButton.setTextContent(translations[language as keyof typeof translations].acceptAll);
-      console.log("acceptButton:", acceptButton);
 
       if ((acceptButton as any).setDomId) {
         await (acceptButton as any).setDomId("save-preferences-btn"); // Type assertion
@@ -570,8 +539,7 @@ const createCookiePreferences = async (selectedPreferences: string[], language: 
       }
       await declineButton.setStyles([declinebutton]);
       await declineButton.setTextContent(translations[language as keyof typeof translations].reject);
-      console.log("declineButton:", declineButton);
-
+    
       if ((declineButton as any).setDomId) {
         await (declineButton as any).setDomId("cancel-btn"); // Type assertion
       } else {
@@ -606,28 +574,8 @@ const createCookiePreferences = async (selectedPreferences: string[], language: 
         console.error("❌ Failed to append elements to the main div.");
       }
 
-
-      // const mainDivBlocks = await selectedElement.before(webflow.elementPresets.DivBlock);
-      // console.log("mainDivBlock:", mainDivBlocks);
-      // await mainDivBlocks.setStyles([changepre])
-
-      // if (!mainDivBlocks) {
-      //     throw new Error("Failed to create main div block");
-      // }
-
-      // if ((mainDivBlocks as any).setDomId) {
-      //     await (mainDivBlocks as any).setDomId("toggle-consent-btn"); // Type assertion
-      //     console.log("✅ prefrence button ID set to #simple-accept");
-      // } else {
-      //     console.error("ccpa banner id setteled");
-      // }
-
-
       console.log("🎉 Cookie consent banner successfully created!");
 
-      
-
-      ////////////////////////////////////change prefrence
 
 
     } catch (error) {

@@ -14,13 +14,14 @@ const doc = new URL("./assets/message.png", import.meta.url).href;
 const checkedcatogry = new URL("./assets/tick-square catogeries.svg", import.meta.url).href;
 const tickmark = new URL("./assets/tickmark.svg", import.meta.url).href;
 const logo = new URL("./assets/icon.svg", import.meta.url).href;
+const rightarrow = new URL("./assets/up arrow.svg", import.meta.url).href;
 import { customCodeApi } from "./services/api";
 import { useAuth } from "../src/hooks/userAuth";
 import webflow, { WebflowAPI } from './types/webflowtypes';
 import { CodeApplication } from "./types/types";
 import createCookiePreferences from "./hooks/gdprPreference";
 import createCookieccpaPreferences from "./hooks/ccpaPreference";
-import usePersistentState from './hooks/usePersistentState'; // Adjust the path as necessary
+import usePersistentState from './hooks/usePersistentState'; 
 import { Script as ScriptType } from "../src/types/types";
 import { useQueryClient } from "@tanstack/react-query";
 import PulseAnimation from "./components/PulseAnimation";
@@ -48,39 +49,6 @@ type UserData = {
 };
 
 const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
-  // const [activeTab, setActiveTab] = useState("General Settings");
-  // const [expires, setExpires] = useState("");
-  // // const [animation, setAnimation] = useState("select");
-  // // const [easing, setEasing] = useState("select");
-  // const [size, setSize] = useState("16");
-  // const [isActive, setIsActive] = useState(false);
-  // const [Font, SetFont] = useState("")
-  // const [selectedtext, settextSelected] = useState("left");
-  // // const [style, setStyle] = useState("align")
-  // const [style, setStyle] = useState<BannerStyle>("align");
-  // // const [activeMode, setActiveMode] = useState("Simple");
-  // const [activeMode, setActiveMode] = useState(() => {
-  //   const savedMode = localStorage.getItem("activeMode");
-  //   return savedMode ? JSON.parse(savedMode) : "Simple";
-  // });
-  // const [selected, setSelected] = useState<Orientation>("right");
-  // const [selectedOption, setSelectedOption] = useState("US State laws");
-  // const [weight, setWeight] = useState("semibold");
-  // // const [language, setLanguage] = useState("English");
-  // const [showPopup, setShowPopup] = useState(false);
-  // // const [selectedOptions, setSelectedOptions] = useState(["GDPR"]);
-  // const [selectedOptions, setSelectedOptions] = useState(() => {
-  //   const savedOptions = localStorage.getItem("selectedOptions");
-  //   return savedOptions ? JSON.parse(savedOptions) : ["GDPR"];
-  // });
-  // const [siteInfo, setSiteInfo] = useState<{ siteId: string; siteName: string; shortName: string } | null>(null);
-  // const [accessToken, setAccessToken] = useState<string>('');
-  // const [pages, setPages] = useState([]);
-  // const [fetchScripts, setFetchScripts] = useState(false);
-  // const [borderRadius, setBorderRadius] = useState(16);
-  // // const [buttonRadius, setButtonRadius] = useState(2);
-  // const [buttonRadius, setButtonRadius] = useState<number>(2);
-  // const [isLoading, setIsLoading] = useState(false);
   const [color, setColor] = useState("#ffffff");
   const [bgColor, setBgColor] = useState("#ffffff");
   const [btnColor, setBtnColor] = useState("#C9C9C9");
@@ -90,7 +58,6 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
   const [headColor, setHeadColor] = useState("#000000");
   const [secondbuttontext, setsecondbuttontext] = useState("#000000")
   const [primaryButtonText, setPrimaryButtonText] = useState('#FFFFFF');
-
   const [activeTab, setActiveTab] = usePersistentState("activeTab", "General Settings");
   const [expires, setExpires] = usePersistentState("expires", "");
   const [size, setSize] = usePersistentState("size", "16");
@@ -108,17 +75,9 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
   const [accessToken, setAccessToken] = usePersistentState<string>("accessToken", '');
   const [pages, setPages] = usePersistentState("pages", []);
   const [fetchScripts, setFetchScripts] = usePersistentState("fetchScripts", false);
-
   const [borderRadius, setBorderRadius] = usePersistentState("borderRadius", 16);
   const [buttonRadius, setButtonRadius] = usePersistentState<number>("buttonRadius", 2);
   const [isLoading, setIsLoading] = usePersistentState("isLoading", false);
-  // const [color, setColor] = usePersistentState("color", "#ffffff");
-  // const [bgColor, setBgColor] = usePersistentState("bgColor", "#ffffff");
-  // const [btnColor, setBtnColor] = usePersistentState("btnColor", "#F1F1F1");
-  // const [paraColor, setParaColor] = usePersistentState("paraColor", "#1F1D40");
-  // const [secondcolor, setSecondcolor] = usePersistentState("secondcolor", "#483999");
-  // const [bgColors, setBgColors] = usePersistentState("bgColors", "#798EFF");
-  // const [headColor, setHeadColor] = usePersistentState("headColor", "#483999");
   const [userlocaldata, setUserlocaldata] = useState<UserData | null>(null);
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
   const [showAuthPopup, setShowAuthPopup] = useState(false); // New state for the popup
@@ -126,11 +85,8 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
   const [showLoadingPopup, setShowLoadingPopup] = useState(false);
 
 
-
-
   const base_url = "https://cb-server.web-8fb.workers.dev"
   const [isBannerAdded, setIsBannerAdded] = useState(false);
-
 
 
   const [toggleStates, setToggleStates] = usePersistentState('toggleStates', {
@@ -142,30 +98,12 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
   });
 
 
-  // const [toggleStates, setToggleStates] = useState(() => {
-  //   const savedToggles = localStorage.getItem("toggleStates");
-  //   return savedToggles
-  //     ? JSON.parse(savedToggles)
-  //     : {
-  //         customToggle: false,
-  //         resetInteractions: false,
-  //         disableScroll: false,
-  //         storeConsents: false,
-  //         globalvariable: false,
-  //       };
-  // });
-
-
   // Your default states
   const defaultState = {
     animation: "select",
     easing: "select",
     language: "English",
   };
-
-  // const [animation, setAnimation] = useState(defaultState.animation);
-  // const [easing, setEasing] = useState(defaultState.easing);
-  // const [language, setLanguage] = useState(defaultState.language);
 
   const [animation, setAnimation] = usePersistentState('animation', defaultState.animation);
   const [easing, setEasing] = usePersistentState('easing', defaultState.easing);
@@ -230,13 +168,6 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
   };
 
 
-  // const [cookiePreferences, setCookiePreferences] = useState(() => {
-  //   return {
-  //     marketing: true,
-  //     Preferences: true,
-  //     analytics: true,
-  //   };
-  // });
 
   const [cookiePreferences, setCookiePreferences] = useState(() => {
     // Get stored preferences from localStorage or use default values
@@ -254,21 +185,6 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
     localStorage.setItem("cookiePreferences", JSON.stringify(cookiePreferences));
   }, [cookiePreferences]);
 
-  // const handleToggle = (key) => {
-  //   setToggleStates((prev) => ({
-  //     ...prev,
-  //     [key]: !prev[key],
-  //   }));
-  // };
-
-
-  // const toggleCategory = (category) => {
-  //   setCookiePreferences((prev) => ({
-  //     ...prev,
-  //     [category]: !prev[category],
-  //   }));
-  // };
-
   const toggleCategory = (category) => {
     setCookiePreferences((prev) => {
       const updatedPreferences = {
@@ -284,18 +200,6 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
   };
 
 
-  // const handleToggles = (option) => {
-  //   setSelectedOptions((prev) =>
-  //     prev.includes(option) ? prev.filter((item) => item !== option) : [...prev, option]
-  //   );
-  // };
-
-  // const handleToggles = (option) => {
-
-  //   setSelectedOptions((prev) =>
-  //     prev.includes(option) ? prev.filter((item) => item !== option) : [...prev, option]
-  //   );
-  // };
 
   const handleToggles = (option) => {
     setSelectedOptions((prev) => {
@@ -318,14 +222,6 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
     setTimeout(() => setIsActive(true), 50);
   }, [animation]);
 
-  // useEffect(() => {
-  //   if (activeMode === "Simple" && activeTab === "Script") {
-  //     setActiveTab("Customization");
-  //   }
-
-  //   // Force re-render to make sure UI updates
-  //   setTimeout(() => setIsActive(true), 50);
-  // }, [activeMode]);
 
   useEffect(() => {
     // Save activeMode to localStorage whenever it changes
@@ -349,16 +245,16 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
         if (localstoragedata) {
           try {
             const parsed = JSON.parse(localstoragedata);
-            console.log("session details", parsed);
+         
             setUserlocaldata(parsed);
           } catch (error) {
             console.error("Invalid JSON in localStorage:", error);
           }
         }
 
-        console.log("Fetching pages...");
+      
         const pagesAndFolders = await webflow.getAllPagesAndFolders();
-        console.log("API Response:", pagesAndFolders);
+       
 
         if (Array.isArray(pagesAndFolders) && pagesAndFolders.length > 0) {
           // Filter only "Page" types
@@ -373,7 +269,7 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
           );
 
           setPages(pageDetails);
-          console.log("Pages set in state:", pageDetails);
+         
         } else {
           console.warn("No pages found.");
         }
@@ -390,9 +286,9 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
     const selectedPage = pages.find(page => page.id === pageId);
     if (selectedPage) {
       try {
-        console.log(`Switching to page: ${selectedPage.name}`);
+   
         await webflow.switchPage(selectedPage);
-        console.log("Page switch successful");
+      
       } catch (error) {
         console.error("Failed to switch page:", error);
       }
@@ -402,11 +298,10 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
   //main function for adding custom code to the head
   const fetchAnalyticsBlockingsScripts = async () => {
     try {
-      console.log('=== Component Debug ===');
-      console.log('Starting script registration process');
+    
 
       const userinfo = localStorage.getItem("wf_hybrid_user");
-      console.log('User info from localStorage:', userinfo ? 'Found' : 'Not found');
+    
 
       if (!userinfo) {
         console.error("No user info found");
@@ -414,32 +309,25 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
       }
 
       const tokenss = JSON.parse(userinfo);
-      console.log('Parsed user info:', {
-        hasSessionToken: !!tokenss.sessionToken,
-        tokenPreview: tokenss.sessionToken ? tokenss.sessionToken : 'No token'
-      });
+     
 
       const tokewern = tokenss.sessionToken;
       const siteIdinfo = await webflow.getSiteInfo();
       setSiteInfo(siteIdinfo);
-      console.log('Site ID:', siteIdinfo.siteId);
+    
 
       if (!tokewern) {
         console.error("No session token found");
         return;
       }
 
-      console.log('Calling API with:', { siteIdinfo, tokenPreview: tokewern });
+    
       const hostingScript = await customCodeApi.registerAnalyticsBlockingScript(tokewern);
       console.log('Hosting script response:', hostingScript);
 
       if (hostingScript) {
         try {
-          // Log the initial data we're working with
-          console.log("Hosting script data:", hostingScript);
-          console.log("Site ID:", siteIdinfo.siteId);
-          console.log("Token:", tokewern);
-
+         
           const scriptId = hostingScript.result.id;
           const version = hostingScript.result.version;
 
@@ -451,11 +339,10 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
             version: version
           };
 
-          // Log the params being sent
-          console.log("Applying script with params:", params);
+      
 
           const applyScriptResponse = await customCodeApi.applyScript(params, tokewern);
-          console.log("Script applied successfully:", applyScriptResponse);
+      
 
         }
         catch (error) {
@@ -522,7 +409,7 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
       const parsed = JSON.parse(stored);
 
       if (parsed?.sessionToken) {
-        exchangeAndVerifyIdToken(); // validate server-side if sessionToken is present
+        exchangeAndVerifyIdToken(); 
       } else {
         // fallback manual restore if no sessionToken (dev/test scenarios)
         queryClient.setQueryData(["auth"], {
@@ -560,12 +447,10 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
         selectedPreferences.push("essential");
       }
 
-      console.log("✅ Selected Preferences:", selectedPreferences);
-
       await createCookiePreferences(selectedPreferences, language, color, btnColor, headColor, paraColor, secondcolor, buttonRadius, animation, toggleStates.customToggle, primaryButtonText, secondbuttontext
       );
 
-      console.log("✅ Cookie preferences created successfully!");
+     
     } catch (error) {
       console.error("❌ Error creating cookie preferences:", error);
     }
@@ -577,7 +462,6 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
   const handleCreatePreferencesccpa = async () => {
     try {
       await createCookieccpaPreferences(language, color, btnColor, headColor, paraColor, secondcolor, buttonRadius, animation,);
-      console.log("✅ Cookie preferences created successfully!");
     } catch (error) {
       console.error("❌ Error creating cookie preferences:", error);
     }
@@ -631,24 +515,868 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
     };
   }, [isOpen]);
 
+  const ccpabanner = async () => {
+    setShowPopup(false); // close the first popup
+    setShowLoadingPopup(true); // show loading popup
+    setIsLoading(true);
+    const isBannerAlreadyAdded = localStorage.getItem("cookieBannerAdded") === "true";
+    try {
+
+      const allElements = await webflow.getAllElements();
+      const idsToCheck = ["initial-consent-banner", "main-consent-banner", "toggle-consent-btn"];
+
+      console.log("📦 Total elements fetched:", allElements.length);
+
+      // Run domId checks in parallel
+      const domIdPromises = allElements.map(async (el) => {
+        const domId = await el.getDomId?.();
+        return { el, domId };
+      });
+
+      const elementsWithDomIds = await Promise.all(domIdPromises);
+
+      // Filter matching elements
+      const matchingElements = elementsWithDomIds
+        .filter(({ domId }) => domId && idsToCheck.includes(domId))
+        .map(({ el, domId }) => el);
+
+      console.log("✅ Matched elements:", matchingElements.length);
+
+      // Remove matching elements and children
+      await Promise.all(matchingElements.map(async (el) => {
+        try {
+          const domId = await el.getDomId?.();
+          const children = await el.getChildren?.();
+
+          if (children?.length) {
+            await Promise.all(children.map(child => child.remove()));
+            console.log(`🧽 Removed ${children.length} children from ${domId}`);
+          }
+
+          await el.remove();
+          console.log(`🧹 Removed element with ID: ${domId}`);
+        } catch (err) {
+          console.error("⚠️ Error removing element:", err);
+          webflow.notify({ type: "error", message: "Failed to remove a banner." });
+        }
+      }));
+
+      console.log("🟢 Button clicked!");
+
+      const selectedElement = await webflow.getSelectedElement();
+      if (!selectedElement) {
+        console.error("❌ No element selected.");
+        webflow.notify({ type: "error", message: "No element selected in the Designer." });
+        return;
+      }
+      console.log("✅ Selected element:", selectedElement);
+
+      const newDiv = await selectedElement.before(webflow.elementPresets.DivBlock);
+      if (!newDiv) {
+        console.error("❌ Failed to create div.");
+        webflow.notify({ type: "error", message: "Failed to create div." });
+        return;
+      }
+      console.log("✅ New div created:", newDiv);
+
+      if ((newDiv as any).setDomId) {
+        await (newDiv as any).setDomId("initial-consent-banner"); // Type assertion
+        console.log("✅ prefrence button ID set to #simple-accept");
+      } else {
+        console.error("❌ setDomId method not available on accept button element");
+      }
+
+      const styleNames = {
+        divStyleName: "consentbit-ccpa-banner-div",
+        paragraphStyleName: "consentbit-ccpa-banner-text",
+        buttonContainerStyleName: "consentbit-ccpa-button-container",
+
+        headingStyleName: "consentbit-ccpa-banner-heading",
+
+        linktextstyle: "consentbit-ccpa-linkblock"
+      };
+
+
+      const styles = await Promise.all(
+        Object.values(styleNames).map(async (name) => {
+          return (await webflow.getStyleByName(name)) || (await webflow.createStyle(name));
+        })
+      );
+
+      const [
+        divStyle,
+        paragraphStyle,
+        buttonContainerStyle,
+        headingStyle,
+        Linktext
+      ] = styles;
+
+
+      // const timestamp = Date.now();
+      // const divStyleName = `consentbit-ccpa-banner-div`;
+      // const paragraphStyleName = `consentbit-ccpa-banner-text`;
+      // const buttonContainerStyleName = `consentbit-ccpa-button-container`;
+      // const buttonStyleName = `consentbit-ccpa--button-accept`;
+      // const headingStyleName = `consentbit-ccpa-banner-heading`;
+      // const linktextstyle = `consentbit-ccpa-linkblock`
+
+      // const divStyle = await webflow.createStyle(divStyleName);
+      // const paragraphStyle = await webflow.createStyle(paragraphStyleName);
+      // const buttonContainerStyle = await webflow.createStyle(buttonContainerStyleName);
+      // const Linktext = await webflow.createStyle(linktextstyle)
+      // const headingStyle = await webflow.createStyle(headingStyleName);
+      // console.log("✅ Created new styles:", divStyleName, paragraphStyleName, buttonContainerStyleName, buttonStyleName, headingStyleName);
+
+      const collection = await webflow.getDefaultVariableCollection();
+      const webflowBlue = await collection?.createColorVariable("Webflow Blue", "rgba(255, 255, 255, 1)");
+      const webflowBlueValue = (webflowBlue as any)?.value || "rgba(255, 255, 255, 1)";
+
+      const animationAttributeMap = {
+        "fade": "fade",
+        "slide-up": "slide-up",
+        "slide-down": "slide-down",
+        "slide-left": "slide-left",
+        "slide-right": "slide-right",
+        "select": "select", // No attribute if "select"
+      };
+
+      const animationAttribute = animationAttributeMap[animation] || "";
+
+      const divPropertyMap: Record<string, string> = {
+        "background-color": color,
+        // "height": "220px",
+        // "width": "438px",
+        "position": "fixed",
+        "z-index": "99999",
+        "padding-top": "20px",
+        "padding-right": "20px",
+        "padding-bottom": "20px",
+        "padding-left": "20px",
+        // "top": "65%", // Remove static position
+        // "right": "5%", // Remove static position
+        "border-radius": `${borderRadius}px`,
+        "display": "none",
+        "flex-direction": "column",
+        "align-items": "center",
+        "justify-content": "center",
+        "box-shadow": "2px 2px 20px rgba(0, 0, 0, 0.51)",
+      };
+
+      if (window.innerWidth <= 768) {
+        divPropertyMap["width"] = "100%";
+        divPropertyMap["height"] = "40%";
+      }
+
+      divPropertyMap["bottom"] = "3%";
+
+      switch (selected) {
+        case "left":
+          divPropertyMap["left"] = "3%";
+
+          delete divPropertyMap["right"];
+          break;
+
+        case "center":
+          divPropertyMap["left"] = "50%";
+
+          delete divPropertyMap["right"];
+
+          divPropertyMap["transform"] = "translateX(-50%)";
+          break;
+        case "right":
+        default:
+          divPropertyMap["right"] = "5%";
+
+          delete divPropertyMap["left"];
+          break;
+      }
+      switch (style) {
+        case "bigstyle":
+          divPropertyMap["width"] = "370px";
+          divPropertyMap["min-height"] = "284px";
+          break;
+        case "fullwidth":
+          divPropertyMap["width"] = "100%";
+          divPropertyMap["min-height"] = "167px";
+          delete divPropertyMap["left"];
+          delete divPropertyMap["right"];
+          divPropertyMap["bottom"] = "0px"
+          break;
+        case "centeralign":
+          divPropertyMap["width"] = "566px";
+          divPropertyMap["min-height"] = "167px";
+
+          break;
+        case "align":
+        case "alignstyle":
+        default:
+          divPropertyMap["width"] = "438px";
+          divPropertyMap["min-height"] = "220px";
+          break;
+      }
+      const responsivePropertyMap: Record<string, string> = {
+        "max-width": "100%", // Full width
+        "bottom": "0",
+        "left": "0",
+        "right": "0",
+        "top": "auto", // Reset top to auto
+        "transform": "none" // Reset transform to none
+      };
+      const responsiveOptions = { breakpoint: "small" } as BreakpointAndPseudo;
+
+      const paragraphPropertyMap: Record<string, string> = {
+        "color": "rgba(25, 25, 25, 1)",
+        "font-size": "16px",
+        "font-weight": "400",
+        "line-height": "1.5",
+        "text-align": "left",
+        "margin-top": "0",
+        "margin-right": "0",
+        "margin-bottom": "10px",
+        "margin-left": "0",
+        "max-width": "400px",
+        "display": "block",
+        "width": "100%",
+      };
+      switch (style) {
+        case "centeralign":
+          paragraphPropertyMap["text-align"] = "center";
+          break;
+      }
+
+      const buttonContainerPropertyMap: Record<string, string> = {
+        "display": "flex",
+        "justify-content": "left",
+        "margin-top": "10px",
+        "width": "100%",
+      };
+      switch (style) {
+        case "centeralign":
+          buttonContainerPropertyMap["justify-content"] = "center";
+          break;
+      }
+
+      const declineButtonPropertyMap: Record<string, string> = {
+        "border-radius": "48px",
+        "cursor": "pointer",
+        "background-color": "rgba(241, 241, 241, 1)",
+        "color": "rgba(72, 57, 153, 1)",
+        "margin-left": "5px",
+        "margin-right": "5px",
+        "min-width": "80px",
+      };
+
+
+      const headingPropertyMap: Record<string, string> = {
+        "color": "rgba(72, 57, 153, 1)",
+        "font-size": "20px",
+        "font-weight": `${weight}`,
+        "text-align": `${selectedtext}`,
+        "margin-top": "0",
+        "margin-bottom": "10px",
+        "width": "100%",
+      };
+      switch (style) {
+        case "centeralign":
+          headingPropertyMap["text-align"] = "center";
+          break;
+      }
+
+
+      await divStyle.setProperties(divPropertyMap);
+      await divStyle.setProperties(responsivePropertyMap, responsiveOptions);
+      await paragraphStyle.setProperties(paragraphPropertyMap);
+      await buttonContainerStyle.setProperties(buttonContainerPropertyMap);
+      await Linktext.setProperties(declineButtonPropertyMap);
+      await headingStyle.setProperties(headingPropertyMap);
+      console.log("✅ Style properties set for all elements");
+
+      if (newDiv.setStyles) {
+        await newDiv.setStyles([divStyle]);
+        console.log("✅ Div styles applied successfully!");
+      }
+
+      if (newDiv.setCustomAttribute) {
+        await newDiv.setCustomAttribute("data-animation", animationAttribute);
+        await newDiv.setCustomAttribute("data-cookie-banner", toggleStates.disableScroll ? "true" : "false");
+      } else {
+        console.error("❌ setCustomAttribute method not available on newDiv element");
+      }
+
+
+      try {
+        const tempHeading = await selectedElement.before(webflow.elementPresets.Heading);
+        if (!tempHeading) {
+          throw new Error("Failed to create heading");
+        }
+        if (tempHeading.setStyles) {
+          await tempHeading.setStyles([headingStyle]);
+          console.log("✅ Heading styles applied!");
+        }
+        if (tempHeading.setTextContent) {
+          await tempHeading.setTextContent(translations[language as keyof typeof translations].ccpa.heading);
+          console.log("✅ Heading text set via setText!");
+        } else {
+          console.error("❌ setText method not available on heading element");
+        }
+
+        const tempParagraph = await selectedElement.before(webflow.elementPresets.Paragraph);
+        if (!tempParagraph) {
+          throw new Error("Failed to create paragraph");
+        }
+
+        if (tempParagraph.setStyles) {
+          await tempParagraph.setStyles([paragraphStyle]);
+          console.log("✅ Paragraph styles applied!");
+        }
+
+        if (tempParagraph.setTextContent) {
+          await tempParagraph.setTextContent(translations[language as keyof typeof translations].ccpa.description);
+        } else {
+          console.error("❌ setText method not available on paragraph element");
+        }
+
+        const buttonContainer = await selectedElement.before(webflow.elementPresets.DivBlock);
+        if (!buttonContainer) {
+          throw new Error("Failed to create button container");
+        }
+        await buttonContainer.setStyles([buttonContainerStyle]);
+
+        const prefrenceButton = await selectedElement.before(webflow.elementPresets.LinkBlock);
+        if (!prefrenceButton) {
+          throw new Error("Failed to create decline button");
+        }
+        await prefrenceButton.setStyles([Linktext])
+        await prefrenceButton.setTextContent(translations[language as keyof typeof translations].ccpa.doNotShare);
+        console.log("declineButton:", prefrenceButton);
+
+
+        if ((prefrenceButton as any).setDomId) {
+          await (prefrenceButton as any).setDomId("do-not-share-link"); // Type assertion
+          console.log("✅ Accept button ID set to #simple-accept");
+        } else {
+          console.error("❌ setDomId method not available on accept button element");
+        }
+
+
+
+        if (newDiv.append && tempHeading && tempParagraph && buttonContainer) {
+          await newDiv.append(tempHeading);
+          await newDiv.append(tempParagraph);
+          await newDiv.append(buttonContainer);
+          console.log("✅ Appended heading, paragraph, and button container to div!");
+
+          if (buttonContainer.append && prefrenceButton) {
+
+            await buttonContainer.append(prefrenceButton)
+            console.log("✅ Appended accept and decline buttons to button container!");
+          } else {
+            console.error("❌ Failed to append buttons to the button container.");
+          }
+        } else {
+          console.error("❌ Failed to append elements to the main div.");
+        }
+
+        console.log("🎉 Cookie consent banner successfully created!");
+        handleCreatePreferencesccpa()
+        if (!isBannerAlreadyAdded) {
+          fetchAnalyticsBlockingsScripts()
+          localStorage.setItem("cookieBannerAdded", "true");
+        }
+        setTimeout(() => {
+          setShowPopup(false); // Hide the current popup
+          setIsBannerAdded(true);
+          setShowSuccessPopup(true);
+          setIsLoading(false);
+
+        }, 20000); // Adjust delay to match your popup close animation
+
+      } catch (error) {
+        console.error("❌ Error creating cookie banner:", error);
+        webflow.notify({ type: "error", message: "An error occurred while creating the cookie banner." });
+      }
+    } catch (error) {
+      console.error("❌ Unexpected error:", error);
+      webflow.notify({ type: "error", message: "Unexpected error occurred." });
+    }
+  }
+
+  const gdpr = async () => {
+    setShowPopup(false); // close the first popup
+    setShowLoadingPopup(true); // show loading popup
+    setIsLoading(true);
+    // const isBannerAlreadyAdded = localStorage.getItem("cookieBannerAdded") === "true";
+    try {
+
+      const allElements = await webflow.getAllElements();
+      const idsToCheck = ["consent-banner", "main-banner", "toggle-consent-btn"];
+
+      console.log("📦 Total elements fetched:", allElements.length);
+
+      // Run domId checks in parallel
+      const domIdPromises = allElements.map(async (el) => {
+        const domId = await el.getDomId?.();
+        return { el, domId };
+      });
+
+      const elementsWithDomIds = await Promise.all(domIdPromises);
+
+      // Filter matching elements
+      const matchingElements = elementsWithDomIds
+        .filter(({ domId }) => domId && idsToCheck.includes(domId))
+        .map(({ el, domId }) => el);
+
+      console.log("✅ Matched elements:", matchingElements.length);
+
+      // Remove matching elements and children
+      await Promise.all(matchingElements.map(async (el) => {
+        try {
+          const domId = await el.getDomId?.();
+          const children = await el.getChildren?.();
+
+          if (children?.length) {
+            await Promise.all(children.map(child => child.remove()));
+            console.log(`🧽 Removed ${children.length} children from ${domId}`);
+          }
+
+          await el.remove();
+          console.log(`🧹 Removed element with ID: ${domId}`);
+        } catch (err) {
+          console.error("⚠️ Error removing element:", err);
+          webflow.notify({ type: "error", message: "Failed to remove a banner." });
+        }
+      }));
+
+
+
+
+      const selectedElement = await webflow.getSelectedElement();
+      if (!selectedElement) {
+        console.error("❌ No element selected.");
+        webflow.notify({ type: "error", message: "No element selected in the Designer." });
+        setIsLoading(false); // Reset loading state
+        return;
+      }
+
+
+      const newDiv = await selectedElement.before(webflow.elementPresets.DivBlock);
+      console.log("the main div", newDiv);
+
+      if (!newDiv) {
+        webflow.notify({ type: "error", message: "Failed to create div." });
+        return;
+      }
+
+
+      if ((newDiv as any).setDomId) {
+        await (newDiv as any).setDomId("consent-banner"); // Type assertion
+
+      } else {
+        console.error("❌ setDomId method not available on accept button element");
+      }
+
+
+      const styleNames = {
+        divStyleName: "consentbit-gdpr-banner-div",
+        paragraphStyleName: "consentbit-gdpr-banner-text",
+        buttonContainerStyleName: "consentbit-banner-button-container",
+        prefrenceButtonStyleName: "consentbit-banner-button-preference",
+        declineButtonStyleName: "consentbit-banner-button-decline",
+        buttonStyleName: "consentbit-banner-accept",
+        headingStyleName: "consentbit-banner-headings",
+        innerDivStyleName: "consentbit-innerdiv",
+        secondBackgroundStyleName: "consentbit-banner-second-bg"
+      };
+
+      const styles = await Promise.all(
+        Object.values(styleNames).map(async (name) => {
+          return (await webflow.getStyleByName(name)) || (await webflow.createStyle(name));
+        })
+      );
+
+      const [
+        divStyle, paragraphStyle, buttonContainerStyle, prefrenceButtonStyle, declineButtonStyle, buttonStyle, headingStyle, innerDivStyle, secondBackgroundStyle
+      ] = styles;
+
+
+      const animationAttributeMap = {
+        "fade": "fade",
+        "slide-up": "slide-up",
+        "slide-down": "slide-down",
+        "slide-left": "slide-left",
+        "slide-right": "slide-right",
+        "select": "select", // No attribute if "select"
+      };
+
+      const animationAttribute = animationAttributeMap[animation] || "";
+
+      const divPropertyMap: Record<string, string> = {
+        "background-color": color,
+        "position": "fixed",
+        "z-index": "99999",
+        "padding-top": "20px",
+        "padding-right": "20px",
+        "padding-bottom": "20px",
+        "padding-left": "20px",
+        "border-radius": `${borderRadius}px`,
+        "display": "none",
+        "flex-direction": "column",
+        "align-items": "center",
+        "justify-content": "center",
+        "box-shadow": "2px 2px 20px rgba(0, 0, 0, 0.51)",
+      };
+
+      if (window.innerWidth <= 768) {
+        divPropertyMap["width"] = "100%";
+        divPropertyMap["height"] = "40%";
+      }
+      divPropertyMap["bottom"] = "3%";
+
+      switch (selected) {
+        case "left":
+          divPropertyMap["left"] = "3%";
+
+          delete divPropertyMap["right"];
+          break;
+
+        case "center":
+          divPropertyMap["left"] = "50%";
+
+          delete divPropertyMap["right"];
+
+          divPropertyMap["transform"] = "translateX(-50%)";
+          break;
+        case "right":
+        default:
+          divPropertyMap["right"] = "5%";
+
+          delete divPropertyMap["left"];
+          break;
+      }
+      switch (style) {
+        case "bigstyle":
+          divPropertyMap["width"] = "370px";
+          divPropertyMap["min-height"] = "284px";
+          break;
+        case "fullwidth":
+          divPropertyMap["width"] = "100%";
+          divPropertyMap["min-height"] = "167px";
+          delete divPropertyMap["left"];
+          delete divPropertyMap["right"];
+          divPropertyMap["bottom"] = "0px"
+          break;
+        case "centeralign":
+          divPropertyMap["width"] = "566px";
+          divPropertyMap["min-height"] = "167px";
+
+          break;
+        case "align":
+        case "alignstyle":
+        default:
+          divPropertyMap["width"] = "438px";
+          divPropertyMap["min-height"] = "220px";
+          break;
+      }
+
+      const responsivePropertyMap: Record<string, string> = {
+        "max-width": "100%",
+        "width": "100%",
+        "bottom": "0",
+        "left": "0",
+        "right": "0",
+        "top": "auto",
+        "transform": "none"
+      };
+      const responsiveOptions = { breakpoint: "small" } as BreakpointAndPseudo;
+
+      const paragraphPropertyMap: Record<string, string> = {
+        "color": paraColor,
+        "font-size": "16px",
+        "font-weight": `${weight}`,
+        "line-height": "1.5",
+        "text-align": `${selectedtext}`,
+        "margin-top": "0",
+        "margin-right": "0",
+        "margin-bottom": "10px",
+        "margin-left": "0",
+        // "max-width": "400px",
+        "display": "block",
+        "width": "100%",
+      };
+      switch (style) {
+        case "centeralign":
+          paragraphPropertyMap["text-align"] = "center";
+          break;
+      }
+
+      const buttonContainerPropertyMap: Record<string, string> = {
+        "display": "flex",
+        "justify-content": "right",
+        "margin-top": "10px",
+        "width": "100%",
+      };
+      switch (style) {
+        case "centeralign":
+          buttonContainerPropertyMap["justify-content"] = "center";
+          break;
+      }
+
+      const buttonPropertyMap: Record<string, string> = {
+        "border-radius": `${buttonRadius}px`,
+        "cursor": "pointer",
+        "background-color": secondcolor,
+        "margin-left": "5px",
+        "margin-right": "5px",
+        "min-width": "80px",
+        "color": primaryButtonText
+      };
+
+      const responsivebuttonPropertyMap: Record<string, string> = {
+        "margin-bottom": "10px",
+        "flex-direction": "column",
+        "justify-content": "center",
+        "text-align": "center"
+      };
+      const responsivebuttonOptions = { breakpoint: "small" } as BreakpointAndPseudo;
+
+      const declineButtonPropertyMap: Record<string, string> = {
+        "border-radius": `${buttonRadius}px`,
+        "cursor": "pointer",
+        "background-color": btnColor,
+        "color": secondbuttontext,
+        "margin-left": "5px",
+        "margin-right": "5px",
+        "min-width": "80px",
+      };
+
+      const secondbackgroundPropertyMap: Record<string, string> = {
+        "position": "absolute",
+        "background-color": bgColors,
+        "width": "35%",
+        "right": "0px",
+        "height": "100%",
+        "z-index": "-3",
+        "opacity": "30%",
+        "bottom": "0px",
+        "border-bottom-right-radius": `${borderRadius}px`,
+        "border-top-right-radius": `${borderRadius}px`
+      };
+
+
+      const headingPropertyMap: Record<string, string> = {
+        "color": headColor,
+        "font-size": "20px",
+        "font-weight": `${weight}`,
+        "text-align": `${selectedtext}`,
+        "margin-top": "0",
+        "margin-bottom": "10px",
+        "width": "100%",
+      };
+      switch (style) {
+        case "centeralign":
+          headingPropertyMap["text-align"] = "center";
+          break;
+      }
+
+      const innerdivPropertyMap: Record<string, string> = {
+        "max-width": "877px",
+        "margin-left": "auto",
+        "margin-right": "auto",
+      };
+
+
+      await divStyle.setProperties(divPropertyMap);
+      await divStyle.setProperties(responsivePropertyMap, responsiveOptions);
+      await paragraphStyle.setProperties(paragraphPropertyMap);
+      await buttonContainerStyle.setProperties(buttonContainerPropertyMap);
+      await buttonContainerStyle.setProperties(responsivebuttonPropertyMap, responsivebuttonOptions);
+      await buttonStyle.setProperties(buttonPropertyMap);
+      await declineButtonStyle.setProperties(declineButtonPropertyMap);
+      await prefrenceButtonStyle.setProperties(declineButtonPropertyMap); // ✅ now using the renamed var
+      await headingStyle.setProperties(headingPropertyMap);
+      await secondBackgroundStyle.setProperties(secondbackgroundPropertyMap);
+      await innerDivStyle.setProperties(innerdivPropertyMap);
+
+
+      if (newDiv.setStyles) {
+        await newDiv.setStyles([divStyle]);
+      }
+      if (newDiv.setCustomAttribute) {
+        await newDiv.setCustomAttribute("data-animation", animationAttribute);
+        await newDiv.setCustomAttribute("data-cookie-banner", toggleStates.disableScroll ? "true" : "false");
+      } else {
+        console.error("❌ setCustomAttribute method not available on newDiv element");
+      }
+      try {
+        let SecondDiv;
+        if (style === "alignstyle") {
+          SecondDiv = await selectedElement.before(webflow.elementPresets.DivBlock);
+          if (SecondDiv.setStyles) {
+            await SecondDiv.setStyles([secondBackgroundStyle]);
+          }
+        }
+        const innerdiv = await selectedElement.before(webflow.elementPresets.DivBlock);
+        await innerdiv.setStyles([innerDivStyle]);
+
+        const tempHeading = await selectedElement.before(webflow.elementPresets.Heading);
+        if (!tempHeading) {
+          throw new Error("Failed to create heading");
+        }
+        if (tempHeading.setStyles) {
+          await tempHeading.setStyles([headingStyle]);
+        }
+        if (tempHeading.setTextContent) {
+          await tempHeading.setTextContent(translations[language as keyof typeof translations].heading);
+        } else {
+          console.error("❌ setText method not available on heading element");
+        }
+        const tempParagraph = await selectedElement.before(webflow.elementPresets.Paragraph);
+        if (!tempParagraph) {
+          throw new Error("Failed to create paragraph");
+        }
+        if (tempParagraph.setStyles) {
+          await tempParagraph.setStyles([paragraphStyle]);
+
+        }
+
+        if (tempParagraph.setTextContent) {
+          await tempParagraph.setTextContent(translations[language as keyof typeof translations].description);
+
+        } else {
+          console.error("❌ setText method not available on paragraph element");
+        }
+
+        const buttonContainer = await selectedElement.before(webflow.elementPresets.DivBlock);
+        if (!buttonContainer) {
+          throw new Error("Failed to create button container");
+        }
+        await buttonContainer.setStyles([buttonContainerStyle]);
+
+        const prefrenceButton = await selectedElement.before(webflow.elementPresets.Button);
+        if (!prefrenceButton) {
+          throw new Error("Failed to create decline button");
+        }
+        await prefrenceButton.setStyles([prefrenceButtonStyle]);
+        await prefrenceButton.setTextContent(translations[language as keyof typeof translations].preferences);
+        console.log("declineButton:", prefrenceButton);
+
+
+        if ((prefrenceButton as any).setDomId) {
+          await (prefrenceButton as any).setDomId("preferences-btn"); // Type assertion
+
+        } else {
+          console.error("❌ setDomId method not available on accept button element");
+        }
+
+        const acceptButton = await selectedElement.before(webflow.elementPresets.Button);
+        if (!acceptButton) {
+          throw new Error("Failed to create accept button");
+        }
+        await acceptButton.setStyles([buttonStyle]);
+        await acceptButton.setTextContent(translations[language as keyof typeof translations].accept);
+
+
+        if ((acceptButton as any).setDomId) {
+          await (acceptButton as any).setDomId("accept-btn"); // Type assertion
+
+        } else {
+          console.error("❌ setDomId method not available on accept button element");
+        }
+
+        const declineButton = await selectedElement.before(webflow.elementPresets.Button);
+        if (!declineButton) {
+          throw new Error("Failed to create decline button");
+        }
+        await declineButton.setStyles([declineButtonStyle]);
+        await declineButton.setTextContent(translations[language as keyof typeof translations].reject);
+
+
+        if ((declineButton as any).setDomId) {
+          await (declineButton as any).setDomId("decline-btn"); // Type assertion
+
+        } else {
+          console.error("❌ setDomId method not available on accept button element");
+        }
+
+
+
+        if (newDiv.append && innerdiv && tempHeading && tempParagraph && buttonContainer) {
+          // Append elements inside innerDiv
+          await newDiv.append(innerdiv);
+          if (SecondDiv) await innerdiv.append(SecondDiv);
+          await innerdiv.append(tempHeading);
+          await innerdiv.append(tempParagraph);
+          await innerdiv.append(buttonContainer);
+
+          if (buttonContainer.append && acceptButton && declineButton && prefrenceButton) {
+            await buttonContainer.append(acceptButton);
+            await buttonContainer.append(declineButton);
+            await buttonContainer.append(prefrenceButton)
+
+          } else {
+            console.error("❌ Failed to append buttons to the button container.");
+          }
+        } else {
+          console.error("❌ Failed to append elements to the main div.");
+        }
+        // handleCreatePreferences();
+        // // if (!isBannerAlreadyAdded) {
+        // // fetchAnalyticsBlockingsScripts()
+        // //   localStorage.setItem("cookieBannerAdded", "true");
+        // // }
+
+        // setTimeout(() => {
+        //   setShowPopup(false);
+        // }, 30000);
+        // setIsBannerAdded(true);
+        // setShowSuccessPopup(true); 
+        handleCreatePreferences();
+        console.log("🎉 Cookie consent banner successfully created!");
+        fetchAnalyticsBlockingsScripts();
+        localStorage.setItem("cookieBannerAdded", "true");
+
+        // setShowPopup(false); // Hide the current popup
+
+        // Delay success popup until after popup has closed
+        setTimeout(() => {
+          setShowPopup(false); // Hide the current popup
+          setIsBannerAdded(true);
+          setShowSuccessPopup(true);
+          setIsLoading(false);
+
+        }, 30000); // Adjust delay to match your popup close animation
+
+
+      } catch (error) {
+
+        webflow.notify({ type: "error", message: "An error occurred while creating the cookie banner." });
+
+      }
+    } catch (error) {
+      console.error("❌ Unexpected error:", error);
+      webflow.notify({ type: "error", message: "Unexpected error occurred." });
+      setIsLoading(false);
+    }
+  }
+
+  const handleBothBanners = async () => {
+    await gdpr();
+    await ccpabanner();
+  };
+
   return (
     <div className="app">
       {/* Top Navigation */}
       <div className="navbar">
         <div>
           {user?.firstName ? (
-            <p>Hello, {user.firstName}!</p>
+            <p className="hello">Hello, {user.firstName}!</p>
           ) : (
             <button className="publish-buttons" onClick={openAuthScreen}>
               Authenticate
             </button>
           )}
         </div>
-
-        {/* <div className="need-help">
-          <img src={questionmark} alt="" />
-          <h5>Need help?</h5>
-        </div> */}
 
         <div className="help-dropdown-container">
           <div className="need-help" onClick={toggleOpen} ref={buttonRef}>
@@ -701,23 +1429,13 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
         <div className="component-width">
           <div className="subscribe">
             <a className="link" href="#">
-              You need a subscription to publish the production <i>&#x2197;</i>
+              You need a subscription to publish the production <i><img src={rightarrow} alt="" /></i>
             </a>
           </div>
 
           {activeTab !== "Script" && (
             <div>
               <div>
-                {/* {!isBannerAdded ? ( */}
-                {/* <button className="publish-button" onClick={() => setShowPopup(true)}>
-                  Add Your Banner
-                </button> */}
-                {/* ) : (
-                  <button className="publish-buttons">
-                    Update Your Banner
-                  </button>
-                )} */}
-
                 <button
                   className="publish-button"
                   onClick={() => {
@@ -755,13 +1473,6 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
         </div>
       </div>
 
-      {/* <div>
-<button className="publish-buttons" onClick={() => setFetchScripts(true)}>
-  Scan Project
-</button>
-
-</div> */}
-
       {showAuthPopup && (
         <div className="popup-overlay">
           <div className="success-popup">
@@ -779,6 +1490,7 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
       {showPopup && (
         <div className="popup-overlay1">
           <div className="popup-box">
+            {/* <div>Are you sure you want to add a cookie banner to your website?</div> */}
             <div className="flex down">
               {isBannerAdded ? (
                 <>
@@ -795,7 +1507,7 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
 
             <div className="gap">
 
-              {activeMode === "Simple" && (
+              {/* {activeMode === "Simple" && (
                 <button
                   className="confirm-button"
                   onClick={async () => {
@@ -1150,865 +1862,33 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                   }}
                 >
                   Simple Confirm
-                </button>)}
-              {activeMode === "Advanced" && selectedOptions.includes("GDPR") && (
-                <button
-                  className={`confirm-button ${isLoading ? "loading" : ""}`}
-                  onClick={async () => {
-                    setShowPopup(false); // close the first popup
-                    setShowLoadingPopup(true); // show loading popup
-                    setIsLoading(true);
-                    // const isBannerAlreadyAdded = localStorage.getItem("cookieBannerAdded") === "true";
-                    try {
-
-                      const allElements = await webflow.getAllElements();
-                      const idsToCheck = ["consent-banner", "main-banner", "toggle-consent-btn"];
-
-                      console.log("📦 Total elements fetched:", allElements.length);
-
-                      // Run domId checks in parallel
-                      const domIdPromises = allElements.map(async (el) => {
-                        const domId = await el.getDomId?.();
-                        return { el, domId };
-                      });
-
-                      const elementsWithDomIds = await Promise.all(domIdPromises);
-
-                      // Filter matching elements
-                      const matchingElements = elementsWithDomIds
-                        .filter(({ domId }) => domId && idsToCheck.includes(domId))
-                        .map(({ el, domId }) => el);
-
-                      console.log("✅ Matched elements:", matchingElements.length);
-
-                      // Remove matching elements and children
-                      await Promise.all(matchingElements.map(async (el) => {
-                        try {
-                          const domId = await el.getDomId?.();
-                          const children = await el.getChildren?.();
-
-                          if (children?.length) {
-                            await Promise.all(children.map(child => child.remove()));
-                            console.log(`🧽 Removed ${children.length} children from ${domId}`);
-                          }
-
-                          await el.remove();
-                          console.log(`🧹 Removed element with ID: ${domId}`);
-                        } catch (err) {
-                          console.error("⚠️ Error removing element:", err);
-                          webflow.notify({ type: "error", message: "Failed to remove a banner." });
-                        }
-                      }));
-
-
-
-
-                      const selectedElement = await webflow.getSelectedElement();
-                      if (!selectedElement) {
-                        console.error("❌ No element selected.");
-                        webflow.notify({ type: "error", message: "No element selected in the Designer." });
-                        setIsLoading(false); // Reset loading state
-                        return;
-                      }
-
-
-                      const newDiv = await selectedElement.before(webflow.elementPresets.DivBlock);
-                      console.log("the main div", newDiv);
-
-                      if (!newDiv) {
-                        webflow.notify({ type: "error", message: "Failed to create div." });
-                        return;
-                      }
-
-
-                      if ((newDiv as any).setDomId) {
-                        await (newDiv as any).setDomId("consent-banner"); // Type assertion
-
-                      } else {
-                        console.error("❌ setDomId method not available on accept button element");
-                      }
-
-
-                      const styleNames = {
-                        divStyleName: "consentbit-gdpr-banner-div",
-                        paragraphStyleName: "consentbit-gdpr-banner-text",
-                        buttonContainerStyleName: "consentbit-banner-button-container",
-                        prefrenceButtonStyleName: "consentbit-banner-button-preference",
-                        declineButtonStyleName: "consentbit-banner-button-decline",
-                        buttonStyleName: "consentbit-banner-accept",
-                        headingStyleName: "consentbit-banner-headings",
-                        innerDivStyleName: "consentbit-innerdiv",
-                        secondBackgroundStyleName: "consentbit-banner-second-bg"
-                      };
-
-                      const styles = await Promise.all(
-                        Object.values(styleNames).map(async (name) => {
-                          return (await webflow.getStyleByName(name)) || (await webflow.createStyle(name));
-                        })
-                      );
-
-                      const [
-                        divStyle, paragraphStyle, buttonContainerStyle, prefrenceButtonStyle, declineButtonStyle, buttonStyle, headingStyle, innerDivStyle, secondBackgroundStyle
-                      ] = styles;
-
-
-                      const animationAttributeMap = {
-                        "fade": "fade",
-                        "slide-up": "slide-up",
-                        "slide-down": "slide-down",
-                        "slide-left": "slide-left",
-                        "slide-right": "slide-right",
-                        "select": "select", // No attribute if "select"
-                      };
-
-                      const animationAttribute = animationAttributeMap[animation] || "";
-
-                      const divPropertyMap: Record<string, string> = {
-                        "background-color": color,
-                        "position": "fixed",
-                        "z-index": "99999",
-                        "padding-top": "20px",
-                        "padding-right": "20px",
-                        "padding-bottom": "20px",
-                        "padding-left": "20px",
-                        "border-radius": `${borderRadius}px`,
-                        "display": "none",
-                        "flex-direction": "column",
-                        "align-items": "center",
-                        "justify-content": "center",
-                        "box-shadow": "2px 2px 20px rgba(0, 0, 0, 0.51)",
-                      };
-
-                      if (window.innerWidth <= 768) {
-                        divPropertyMap["width"] = "100%";
-                        divPropertyMap["height"] = "40%";
-                      }
-                      divPropertyMap["bottom"] = "3%";
-
-                      switch (selected) {
-                        case "left":
-                          divPropertyMap["left"] = "3%";
-
-                          delete divPropertyMap["right"];
-                          break;
-
-                        case "center":
-                          divPropertyMap["left"] = "50%";
-
-                          delete divPropertyMap["right"];
-
-                          divPropertyMap["transform"] = "translateX(-50%)";
-                          break;
-                        case "right":
-                        default:
-                          divPropertyMap["right"] = "5%";
-
-                          delete divPropertyMap["left"];
-                          break;
-                      }
-                      switch (style) {
-                        case "bigstyle":
-                          divPropertyMap["width"] = "370px";
-                          divPropertyMap["min-height"] = "284px";
-                          break;
-                        case "fullwidth":
-                          divPropertyMap["width"] = "100%";
-                          divPropertyMap["min-height"] = "167px";
-                          delete divPropertyMap["left"];
-                          delete divPropertyMap["right"];
-                          divPropertyMap["bottom"] = "0px"
-                          break;
-                        case "centeralign":
-                          divPropertyMap["width"] = "566px";
-                          divPropertyMap["min-height"] = "167px";
-
-                          break;
-                        case "align":
-                        case "alignstyle":
-                        default:
-                          divPropertyMap["width"] = "438px";
-                          divPropertyMap["min-height"] = "220px";
-                          break;
-                      }
-
-                      const responsivePropertyMap: Record<string, string> = {
-                        "max-width": "100%",
-                        "width": "100%",
-                        "bottom": "0",
-                        "left": "0",
-                        "right": "0",
-                        "top": "auto",
-                        "transform": "none"
-                      };
-                      const responsiveOptions = { breakpoint: "small" } as BreakpointAndPseudo;
-
-                      const paragraphPropertyMap: Record<string, string> = {
-                        "color": paraColor,
-                        "font-size": "16px",
-                        "font-weight": `${weight}`,
-                        "line-height": "1.5",
-                        "text-align": `${selectedtext}`,
-                        "margin-top": "0",
-                        "margin-right": "0",
-                        "margin-bottom": "10px",
-                        "margin-left": "0",
-                        // "max-width": "400px",
-                        "display": "block",
-                        "width": "100%",
-                      };
-                      switch (style) {
-                        case "centeralign":
-                          paragraphPropertyMap["text-align"] = "center";
-                          break;
-                      }
-
-                      const buttonContainerPropertyMap: Record<string, string> = {
-                        "display": "flex",
-                        "justify-content": "right",
-                        "margin-top": "10px",
-                        "width": "100%",
-                      };
-                      switch (style) {
-                        case "centeralign":
-                          buttonContainerPropertyMap["justify-content"] = "center";
-                          break;
-                      }
-
-                      const buttonPropertyMap: Record<string, string> = {
-                        "border-radius": `${buttonRadius}px`,
-                        "cursor": "pointer",
-                        "background-color": secondcolor,
-                        "margin-left": "5px",
-                        "margin-right": "5px",
-                        "min-width": "80px",
-                        "color": primaryButtonText
-                      };
-
-                      const responsivebuttonPropertyMap: Record<string, string> = {
-                        "margin-bottom": "10px",
-                        "flex-direction": "column",
-                        "justify-content": "center",
-                        "text-align": "center"
-                      };
-                      const responsivebuttonOptions = { breakpoint: "small" } as BreakpointAndPseudo;
-
-                      const declineButtonPropertyMap: Record<string, string> = {
-                        "border-radius": `${buttonRadius}px`,
-                        "cursor": "pointer",
-                        "background-color": btnColor,
-                        "color": secondbuttontext,
-                        "margin-left": "5px",
-                        "margin-right": "5px",
-                        "min-width": "80px",
-                      };
-
-                      const secondbackgroundPropertyMap: Record<string, string> = {
-                        "position": "absolute",
-                        "background-color": bgColors,
-                        "width": "35%",
-                        "right": "0px",
-                        "height": "100%",
-                        "z-index": "-3",
-                        "opacity": "30%",
-                        "bottom": "0px",
-                        "border-bottom-right-radius": `${borderRadius}px`,
-                        "border-top-right-radius": `${borderRadius}px`
-                      };
-
-
-                      const headingPropertyMap: Record<string, string> = {
-                        "color": headColor,
-                        "font-size": "20px",
-                        "font-weight": `${weight}`,
-                        "text-align": `${selectedtext}`,
-                        "margin-top": "0",
-                        "margin-bottom": "10px",
-                        "width": "100%",
-                      };
-                      switch (style) {
-                        case "centeralign":
-                          headingPropertyMap["text-align"] = "center";
-                          break;
-                      }
-
-                      const innerdivPropertyMap: Record<string, string> = {
-                        "max-width": "877px",
-                        "margin-left": "auto",
-                        "margin-right": "auto",
-                      };
-
-
-                      await divStyle.setProperties(divPropertyMap);
-                      await divStyle.setProperties(responsivePropertyMap, responsiveOptions);
-                      await paragraphStyle.setProperties(paragraphPropertyMap);
-                      await buttonContainerStyle.setProperties(buttonContainerPropertyMap);
-                      await buttonContainerStyle.setProperties(responsivebuttonPropertyMap, responsivebuttonOptions);
-                      await buttonStyle.setProperties(buttonPropertyMap);
-                      await declineButtonStyle.setProperties(declineButtonPropertyMap);
-                      await prefrenceButtonStyle.setProperties(declineButtonPropertyMap); // ✅ now using the renamed var
-                      await headingStyle.setProperties(headingPropertyMap);
-                      await secondBackgroundStyle.setProperties(secondbackgroundPropertyMap);
-                      await innerDivStyle.setProperties(innerdivPropertyMap);
-
-
-                      if (newDiv.setStyles) {
-                        await newDiv.setStyles([divStyle]);
-                      }
-                      if (newDiv.setCustomAttribute) {
-                        await newDiv.setCustomAttribute("data-animation", animationAttribute);
-                        await newDiv.setCustomAttribute("data-cookie-banner", toggleStates.disableScroll ? "true" : "false");
-                      } else {
-                        console.error("❌ setCustomAttribute method not available on newDiv element");
-                      }
-                      try {
-                        let SecondDiv;
-                        if (style === "alignstyle") {
-                          SecondDiv = await selectedElement.before(webflow.elementPresets.DivBlock);
-                          if (SecondDiv.setStyles) {
-                            await SecondDiv.setStyles([secondBackgroundStyle]);
-                          }
-                        }
-                        const innerdiv = await selectedElement.before(webflow.elementPresets.DivBlock);
-                        await innerdiv.setStyles([innerDivStyle]);
-
-                        const tempHeading = await selectedElement.before(webflow.elementPresets.Heading);
-                        if (!tempHeading) {
-                          throw new Error("Failed to create heading");
-                        }
-                        if (tempHeading.setStyles) {
-                          await tempHeading.setStyles([headingStyle]);
-                        }
-                        if (tempHeading.setTextContent) {
-                          await tempHeading.setTextContent(translations[language as keyof typeof translations].heading);
-                        } else {
-                          console.error("❌ setText method not available on heading element");
-                        }
-                        const tempParagraph = await selectedElement.before(webflow.elementPresets.Paragraph);
-                        if (!tempParagraph) {
-                          throw new Error("Failed to create paragraph");
-                        }
-                        if (tempParagraph.setStyles) {
-                          await tempParagraph.setStyles([paragraphStyle]);
-
-                        }
-
-                        if (tempParagraph.setTextContent) {
-                          await tempParagraph.setTextContent(translations[language as keyof typeof translations].description);
-
-                        } else {
-                          console.error("❌ setText method not available on paragraph element");
-                        }
-
-                        const buttonContainer = await selectedElement.before(webflow.elementPresets.DivBlock);
-                        if (!buttonContainer) {
-                          throw new Error("Failed to create button container");
-                        }
-                        await buttonContainer.setStyles([buttonContainerStyle]);
-
-                        const prefrenceButton = await selectedElement.before(webflow.elementPresets.Button);
-                        if (!prefrenceButton) {
-                          throw new Error("Failed to create decline button");
-                        }
-                        await prefrenceButton.setStyles([prefrenceButtonStyle]);
-                        await prefrenceButton.setTextContent(translations[language as keyof typeof translations].preferences);
-                        console.log("declineButton:", prefrenceButton);
-
-
-                        if ((prefrenceButton as any).setDomId) {
-                          await (prefrenceButton as any).setDomId("preferences-btn"); // Type assertion
-
-                        } else {
-                          console.error("❌ setDomId method not available on accept button element");
-                        }
-
-                        const acceptButton = await selectedElement.before(webflow.elementPresets.Button);
-                        if (!acceptButton) {
-                          throw new Error("Failed to create accept button");
-                        }
-                        await acceptButton.setStyles([buttonStyle]);
-                        await acceptButton.setTextContent(translations[language as keyof typeof translations].accept);
-
-
-                        if ((acceptButton as any).setDomId) {
-                          await (acceptButton as any).setDomId("accept-btn"); // Type assertion
-
-                        } else {
-                          console.error("❌ setDomId method not available on accept button element");
-                        }
-
-                        const declineButton = await selectedElement.before(webflow.elementPresets.Button);
-                        if (!declineButton) {
-                          throw new Error("Failed to create decline button");
-                        }
-                        await declineButton.setStyles([declineButtonStyle]);
-                        await declineButton.setTextContent(translations[language as keyof typeof translations].reject);
-
-
-                        if ((declineButton as any).setDomId) {
-                          await (declineButton as any).setDomId("decline-btn"); // Type assertion
-
-                        } else {
-                          console.error("❌ setDomId method not available on accept button element");
-                        }
-
-
-
-                        if (newDiv.append && innerdiv && tempHeading && tempParagraph && buttonContainer) {
-                          // Append elements inside innerDiv
-                          await newDiv.append(innerdiv);
-                          if (SecondDiv) await innerdiv.append(SecondDiv);
-                          await innerdiv.append(tempHeading);
-                          await innerdiv.append(tempParagraph);
-                          await innerdiv.append(buttonContainer);
-
-                          if (buttonContainer.append && acceptButton && declineButton && prefrenceButton) {
-                            await buttonContainer.append(acceptButton);
-                            await buttonContainer.append(declineButton);
-                            await buttonContainer.append(prefrenceButton)
-
-                          } else {
-                            console.error("❌ Failed to append buttons to the button container.");
-                          }
-                        } else {
-                          console.error("❌ Failed to append elements to the main div.");
-                        }
-                        // handleCreatePreferences();
-                        // // if (!isBannerAlreadyAdded) {
-                        // // fetchAnalyticsBlockingsScripts()
-                        // //   localStorage.setItem("cookieBannerAdded", "true");
-                        // // }
-
-                        // setTimeout(() => {
-                        //   setShowPopup(false);
-                        // }, 30000);
-                        // setIsBannerAdded(true);
-                        // setShowSuccessPopup(true); 
-                        handleCreatePreferences();
-                        console.log("🎉 Cookie consent banner successfully created!");
-                        fetchAnalyticsBlockingsScripts();
-                        localStorage.setItem("cookieBannerAdded", "true");
-
-                        // setShowPopup(false); // Hide the current popup
-
-                        // Delay success popup until after popup has closed
-                        setTimeout(() => {
-                          setShowPopup(false); // Hide the current popup
-                          setIsBannerAdded(true);
-                          setShowSuccessPopup(true);
-                          setIsLoading(false);
-
-                        }, 30000); // Adjust delay to match your popup close animation
-
-
-                      } catch (error) {
-
-                        webflow.notify({ type: "error", message: "An error occurred while creating the cookie banner." });
-
-                      }
-                    } catch (error) {
-                      console.error("❌ Unexpected error:", error);
-                      webflow.notify({ type: "error", message: "Unexpected error occurred." });
-                      setIsLoading(false);
-                    }
-                  }}
+                </button>)} */}
+
+              { selectedOptions.includes("GDPR") && selectedOptions.includes("US State laws") ?
+                (<button
+                  className="confirm-button"
+                  onClick={handleBothBanners}
                 >
-                  {isLoading ? (
-                    <span>wait...</span>
-                  ) : (
-                    "Confirm"
-                  )}
-                </button>
-              )}
-              {selectedOptions.includes("US State laws") && activeMode === "Advanced" && (<button
-                className="confirm-button"
-                onClick={async () => {
-                  setShowPopup(false); // close the first popup
-                  setShowLoadingPopup(true); // show loading popup
-                  setIsLoading(true);
-                  const isBannerAlreadyAdded = localStorage.getItem("cookieBannerAdded") === "true";
-                  try {
+                  Confirm Both
+                </button>) : selectedOptions.includes("GDPR") ?
+                  (<button
+                    className={`confirm-button ${isLoading ? "loading" : ""}`}
+                    onClick={gdpr}
+                  >
+                    {isLoading ? (
+                      <span>wait...</span>
+                    ) : (
+                      "Confirm"
+                    )}
+                  </button>) :selectedOptions.includes("US State laws") ?
+                    (<button
+                      className="confirm-button"
+                      onClick={ccpabanner}
+                    >
+                      Confirm
+                    </button>) : <div> Nothing Selected</div>
 
-                    const allElements = await webflow.getAllElements();
-                    const idsToCheck = ["initial-consent-banner", "main-consent-banner", "toggle-consent-btn"];
-
-                    console.log("📦 Total elements fetched:", allElements.length);
-
-                    // Run domId checks in parallel
-                    const domIdPromises = allElements.map(async (el) => {
-                      const domId = await el.getDomId?.();
-                      return { el, domId };
-                    });
-
-                    const elementsWithDomIds = await Promise.all(domIdPromises);
-
-                    // Filter matching elements
-                    const matchingElements = elementsWithDomIds
-                      .filter(({ domId }) => domId && idsToCheck.includes(domId))
-                      .map(({ el, domId }) => el);
-
-                    console.log("✅ Matched elements:", matchingElements.length);
-
-                    // Remove matching elements and children
-                    await Promise.all(matchingElements.map(async (el) => {
-                      try {
-                        const domId = await el.getDomId?.();
-                        const children = await el.getChildren?.();
-
-                        if (children?.length) {
-                          await Promise.all(children.map(child => child.remove()));
-                          console.log(`🧽 Removed ${children.length} children from ${domId}`);
-                        }
-
-                        await el.remove();
-                        console.log(`🧹 Removed element with ID: ${domId}`);
-                      } catch (err) {
-                        console.error("⚠️ Error removing element:", err);
-                        webflow.notify({ type: "error", message: "Failed to remove a banner." });
-                      }
-                    }));
-
-                    console.log("🟢 Button clicked!");
-
-                    const selectedElement = await webflow.getSelectedElement();
-                    if (!selectedElement) {
-                      console.error("❌ No element selected.");
-                      webflow.notify({ type: "error", message: "No element selected in the Designer." });
-                      return;
-                    }
-                    console.log("✅ Selected element:", selectedElement);
-
-                    const newDiv = await selectedElement.before(webflow.elementPresets.DivBlock);
-                    if (!newDiv) {
-                      console.error("❌ Failed to create div.");
-                      webflow.notify({ type: "error", message: "Failed to create div." });
-                      return;
-                    }
-                    console.log("✅ New div created:", newDiv);
-
-                    if ((newDiv as any).setDomId) {
-                      await (newDiv as any).setDomId("initial-consent-banner"); // Type assertion
-                      console.log("✅ prefrence button ID set to #simple-accept");
-                    } else {
-                      console.error("❌ setDomId method not available on accept button element");
-                    }
-
-                    const styleNames = {
-                      divStyleName: "consentbit-ccpa-banner-div",
-                      paragraphStyleName: "consentbit-ccpa-banner-text",
-                      buttonContainerStyleName: "consentbit-ccpa-button-container",
-
-                      headingStyleName: "consentbit-ccpa-banner-heading",
-
-                      linktextstyle: "consentbit-ccpa-linkblock"
-                    };
-
-
-                    const styles = await Promise.all(
-                      Object.values(styleNames).map(async (name) => {
-                        return (await webflow.getStyleByName(name)) || (await webflow.createStyle(name));
-                      })
-                    );
-
-                    const [
-                      divStyle,
-                      paragraphStyle,
-                      buttonContainerStyle,
-                      headingStyle,
-                      Linktext
-                    ] = styles;
-
-
-                    // const timestamp = Date.now();
-                    // const divStyleName = `consentbit-ccpa-banner-div`;
-                    // const paragraphStyleName = `consentbit-ccpa-banner-text`;
-                    // const buttonContainerStyleName = `consentbit-ccpa-button-container`;
-                    // const buttonStyleName = `consentbit-ccpa--button-accept`;
-                    // const headingStyleName = `consentbit-ccpa-banner-heading`;
-                    // const linktextstyle = `consentbit-ccpa-linkblock`
-
-                    // const divStyle = await webflow.createStyle(divStyleName);
-                    // const paragraphStyle = await webflow.createStyle(paragraphStyleName);
-                    // const buttonContainerStyle = await webflow.createStyle(buttonContainerStyleName);
-                    // const Linktext = await webflow.createStyle(linktextstyle)
-                    // const headingStyle = await webflow.createStyle(headingStyleName);
-                    // console.log("✅ Created new styles:", divStyleName, paragraphStyleName, buttonContainerStyleName, buttonStyleName, headingStyleName);
-
-                    const collection = await webflow.getDefaultVariableCollection();
-                    const webflowBlue = await collection?.createColorVariable("Webflow Blue", "rgba(255, 255, 255, 1)");
-                    const webflowBlueValue = (webflowBlue as any)?.value || "rgba(255, 255, 255, 1)";
-
-                    const animationAttributeMap = {
-                      "fade": "fade",
-                      "slide-up": "slide-up",
-                      "slide-down": "slide-down",
-                      "slide-left": "slide-left",
-                      "slide-right": "slide-right",
-                      "select": "select", // No attribute if "select"
-                    };
-
-                    const animationAttribute = animationAttributeMap[animation] || "";
-
-                    const divPropertyMap: Record<string, string> = {
-                      "background-color": color,
-                      // "height": "220px",
-                      // "width": "438px",
-                      "position": "fixed",
-                      "z-index": "99999",
-                      "padding-top": "20px",
-                      "padding-right": "20px",
-                      "padding-bottom": "20px",
-                      "padding-left": "20px",
-                      // "top": "65%", // Remove static position
-                      // "right": "5%", // Remove static position
-                      "border-radius": `${borderRadius}px`,
-                      "display": "none",
-                      "flex-direction": "column",
-                      "align-items": "center",
-                      "justify-content": "center",
-                      "box-shadow": "2px 2px 20px rgba(0, 0, 0, 0.51)",
-                    };
-
-                    if (window.innerWidth <= 768) {
-                      divPropertyMap["width"] = "100%";
-                      divPropertyMap["height"] = "40%";
-                    }
-
-                    divPropertyMap["bottom"] = "3%";
-
-                    switch (selected) {
-                      case "left":
-                        divPropertyMap["left"] = "3%";
-
-                        delete divPropertyMap["right"];
-                        break;
-
-                      case "center":
-                        divPropertyMap["left"] = "50%";
-
-                        delete divPropertyMap["right"];
-
-                        divPropertyMap["transform"] = "translateX(-50%)";
-                        break;
-                      case "right":
-                      default:
-                        divPropertyMap["right"] = "5%";
-
-                        delete divPropertyMap["left"];
-                        break;
-                    }
-                    switch (style) {
-                      case "bigstyle":
-                        divPropertyMap["width"] = "370px";
-                        divPropertyMap["min-height"] = "284px";
-                        break;
-                      case "fullwidth":
-                        divPropertyMap["width"] = "100%";
-                        divPropertyMap["min-height"] = "167px";
-                        delete divPropertyMap["left"];
-                        delete divPropertyMap["right"];
-                        divPropertyMap["bottom"] = "0px"
-                        break;
-                      case "centeralign":
-                        divPropertyMap["width"] = "566px";
-                        divPropertyMap["min-height"] = "167px";
-
-                        break;
-                      case "align":
-                      case "alignstyle":
-                      default:
-                        divPropertyMap["width"] = "438px";
-                        divPropertyMap["min-height"] = "220px";
-                        break;
-                    }
-                    const responsivePropertyMap: Record<string, string> = {
-                      "max-width": "100%", // Full width
-                      "bottom": "0",
-                      "left": "0",
-                      "right": "0",
-                      "top": "auto", // Reset top to auto
-                      "transform": "none" // Reset transform to none
-                    };
-                    const responsiveOptions = { breakpoint: "small" } as BreakpointAndPseudo;
-
-                    const paragraphPropertyMap: Record<string, string> = {
-                      "color": "rgba(25, 25, 25, 1)",
-                      "font-size": "16px",
-                      "font-weight": "400",
-                      "line-height": "1.5",
-                      "text-align": "left",
-                      "margin-top": "0",
-                      "margin-right": "0",
-                      "margin-bottom": "10px",
-                      "margin-left": "0",
-                      "max-width": "400px",
-                      "display": "block",
-                      "width": "100%",
-                    };
-                    switch (style) {
-                      case "centeralign":
-                        paragraphPropertyMap["text-align"] = "center";
-                        break;
-                    }
-
-                    const buttonContainerPropertyMap: Record<string, string> = {
-                      "display": "flex",
-                      "justify-content": "left",
-                      "margin-top": "10px",
-                      "width": "100%",
-                    };
-                    switch (style) {
-                      case "centeralign":
-                        buttonContainerPropertyMap["justify-content"] = "center";
-                        break;
-                    }
-
-                    const declineButtonPropertyMap: Record<string, string> = {
-                      "border-radius": "48px",
-                      "cursor": "pointer",
-                      "background-color": "rgba(241, 241, 241, 1)",
-                      "color": "rgba(72, 57, 153, 1)",
-                      "margin-left": "5px",
-                      "margin-right": "5px",
-                      "min-width": "80px",
-                    };
-
-
-                    const headingPropertyMap: Record<string, string> = {
-                      "color": "rgba(72, 57, 153, 1)",
-                      "font-size": "20px",
-                      "font-weight": `${weight}`,
-                      "text-align": `${selectedtext}`,
-                      "margin-top": "0",
-                      "margin-bottom": "10px",
-                      "width": "100%",
-                    };
-                    switch (style) {
-                      case "centeralign":
-                        headingPropertyMap["text-align"] = "center";
-                        break;
-                    }
-
-
-                    await divStyle.setProperties(divPropertyMap);
-                    await divStyle.setProperties(responsivePropertyMap, responsiveOptions);
-                    await paragraphStyle.setProperties(paragraphPropertyMap);
-                    await buttonContainerStyle.setProperties(buttonContainerPropertyMap);
-                    await Linktext.setProperties(declineButtonPropertyMap);
-                    await headingStyle.setProperties(headingPropertyMap);
-                    console.log("✅ Style properties set for all elements");
-
-                    if (newDiv.setStyles) {
-                      await newDiv.setStyles([divStyle]);
-                      console.log("✅ Div styles applied successfully!");
-                    }
-
-                    if (newDiv.setCustomAttribute) {
-                      await newDiv.setCustomAttribute("data-animation", animationAttribute);
-                      await newDiv.setCustomAttribute("data-cookie-banner", toggleStates.disableScroll ? "true" : "false");
-                    } else {
-                      console.error("❌ setCustomAttribute method not available on newDiv element");
-                    }
-
-
-                    try {
-                      const tempHeading = await selectedElement.before(webflow.elementPresets.Heading);
-                      if (!tempHeading) {
-                        throw new Error("Failed to create heading");
-                      }
-                      if (tempHeading.setStyles) {
-                        await tempHeading.setStyles([headingStyle]);
-                        console.log("✅ Heading styles applied!");
-                      }
-                      if (tempHeading.setTextContent) {
-                        await tempHeading.setTextContent(translations[language as keyof typeof translations].ccpa.heading);
-                        console.log("✅ Heading text set via setText!");
-                      } else {
-                        console.error("❌ setText method not available on heading element");
-                      }
-
-                      const tempParagraph = await selectedElement.before(webflow.elementPresets.Paragraph);
-                      if (!tempParagraph) {
-                        throw new Error("Failed to create paragraph");
-                      }
-
-                      if (tempParagraph.setStyles) {
-                        await tempParagraph.setStyles([paragraphStyle]);
-                        console.log("✅ Paragraph styles applied!");
-                      }
-
-                      if (tempParagraph.setTextContent) {
-                        await tempParagraph.setTextContent(translations[language as keyof typeof translations].ccpa.description);
-                      } else {
-                        console.error("❌ setText method not available on paragraph element");
-                      }
-
-                      const buttonContainer = await selectedElement.before(webflow.elementPresets.DivBlock);
-                      if (!buttonContainer) {
-                        throw new Error("Failed to create button container");
-                      }
-                      await buttonContainer.setStyles([buttonContainerStyle]);
-
-                      const prefrenceButton = await selectedElement.before(webflow.elementPresets.LinkBlock);
-                      if (!prefrenceButton) {
-                        throw new Error("Failed to create decline button");
-                      }
-                      await prefrenceButton.setStyles([Linktext])
-                      await prefrenceButton.setTextContent(translations[language as keyof typeof translations].ccpa.doNotShare);
-                      console.log("declineButton:", prefrenceButton);
-
-
-                      if ((prefrenceButton as any).setDomId) {
-                        await (prefrenceButton as any).setDomId("do-not-share-link"); // Type assertion
-                        console.log("✅ Accept button ID set to #simple-accept");
-                      } else {
-                        console.error("❌ setDomId method not available on accept button element");
-                      }
-
-
-
-                      if (newDiv.append && tempHeading && tempParagraph && buttonContainer) {
-                        await newDiv.append(tempHeading);
-                        await newDiv.append(tempParagraph);
-                        await newDiv.append(buttonContainer);
-                        console.log("✅ Appended heading, paragraph, and button container to div!");
-
-                        if (buttonContainer.append && prefrenceButton) {
-
-                          await buttonContainer.append(prefrenceButton)
-                          console.log("✅ Appended accept and decline buttons to button container!");
-                        } else {
-                          console.error("❌ Failed to append buttons to the button container.");
-                        }
-                      } else {
-                        console.error("❌ Failed to append elements to the main div.");
-                      }
-
-                      console.log("🎉 Cookie consent banner successfully created!");
-                      handleCreatePreferencesccpa()
-                      if (!isBannerAlreadyAdded) {
-                        fetchAnalyticsBlockingsScripts()
-                        localStorage.setItem("cookieBannerAdded", "true");
-                      }
-                      setTimeout(() => {
-                        setShowPopup(false); // Hide the current popup
-                        setIsBannerAdded(true);
-                        setShowSuccessPopup(true);
-                        setIsLoading(false);
-
-                      }, 20000); // Adjust delay to match your popup close animation
-
-                    } catch (error) {
-                      console.error("❌ Error creating cookie banner:", error);
-                      webflow.notify({ type: "error", message: "An error occurred while creating the cookie banner." });
-                    }
-                  } catch (error) {
-                    console.error("❌ Unexpected error:", error);
-                    webflow.notify({ type: "error", message: "Unexpected error occurred." });
-                  }
-                }}
-              >
-                Confirm ccpa
-              </button>)}
+              }
 
               <button className="cancel-btn" onClick={() => setShowPopup(false)}>Cancel</button>
 
@@ -2042,20 +1922,6 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
       )}
       {/* Tab Navigation */}
       <div className="tabs">
-        {/* {["General Settings", "Customization", "Script"].map((tab) => (
-          <button
-            key={tab}
-            className={activeTab === tab ? "active" : ""}
-            onClick={() => {
-              if (activeMode === "Advanced" || tab !== "Script") {
-                setActiveTab(tab);
-              }
-            }}
-            disabled={tab === "Script" && activeMode !== "Advanced"}
-          >
-            {tab}
-          </button>
-        ))} */}
 
         {["General Settings", "Customization", "Script"].map((tab) => {
           const isDisabled = tab === "Script" && activeMode !== "Advanced";
@@ -2126,43 +1992,6 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                     <option value="slide-right">Slide Right</option>
                   </select>
                 </div>
-                {/* <div className="settings-group">
-      <div className="flex">
-        <label htmlFor="easing">Easing</label>
-        <div className="tooltip-container">
-          <img src={questionmark} alt="info" className="tooltip-icon" />
-          <span className="tooltip-text">Optional animation for easing.</span>
-        </div>
-      </div>
-
-      <div className="custom-dropdown-container">
-        <div
-          className="custom-dropdown-toggle"
-          onClick={toggleDropdown}
-          ref={buttonRefs}
-        >
-          {easing ? easing : "Select"}
-          <span className="arrow">{isOpen ? "▲" : "▼"}</span>
-        </div>
-
-        {isOpen && (
-          <div className="custom-dropdown-menu" ref={dropdownRefs}>
-            {easingOptions.map((option) => (
-              <div
-                key={option.value}
-                className="custom-dropdown-item"
-                onClick={() => {
-                  setEasing(option.value);
-                  setIsOpen(false);
-                }}
-              >
-                {option.label}
-              </div>
-            ))}fv
-          </div>
-        )}
-      </div>
-    </div> */}
 
                 <div className="settings-group">
                   <div className="flex">
@@ -2326,49 +2155,6 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                   </label>
                 </div>
 
-                {/* <div className="togglediv">
-                  <label className="toggle-container">
-                    <div className="flex">
-                      <span className="toggle-label">Use Global Banner</span>
-
-                      <div className="tooltip-containers">
-                        <img src={questionmark} alt="info" className="tooltip-icons" />
-                        <span className="tooltip-text">this will set the Banner Globally</span>
-                      </div>
-                    </div>
-
-                    <input
-                      type="checkbox"
-                      className="toggle-checkbox"
-                      checked={toggleStates.globalvariable}
-                      onChange={() => handleToggle("globalvariable")}
-                    />
-                    <div className={`toggle ${toggleStates.globalvariable ? "toggled" : ""}`}></div>
-                  </label>
-                </div> */}
-
-                {/* Conditionally render the settings-group */}
-                {/* {toggleStates.globalvariable && (
-                  <div className="settings-group border">
-                    <div className="flex">
-                      <label htmlFor="source">Source</label>
-                      <div className="tooltip-container">
-                        <img src={questionmark} alt="info" className="tooltip-icon" />
-                        <span className="tooltip-text">Pages of your site</span>
-                      </div>
-                    </div>
-                    <div className="setting-groups">
-                      <select id="pages" onChange={handlePageChange}>
-                        {pages.map((page) => (
-                          <option key={page.id} value={page.id}>
-                            {page.name}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                  </div>
-                )} */}
-
                 {/* Disable Scroll - Advanced Mode Only */}
                 {activeMode === "Advanced" ? (
                   <div className="togglediv">
@@ -2389,10 +2175,6 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                         onChange={() => {
                           handleToggle("disableScroll");
 
-                          // Optionally call the scroll function only when enabling
-                          // if (!toggleStates.disableScroll) {
-                          //   ApplyScrollcontroll();
-                          // }
                         }}
                       />
 
@@ -2400,34 +2182,6 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                     </label>
                   </div>
                 ) : null}
-
-
-
-                {/* <div className="compliance-container">
-                    <label className="compliance">
-                      <span className="compliance">Compliance</span>
-                      <span className="tooltip-container">
-                        <img src={questionmark} alt="info" className="tooltip-icon" />
-                        <span className="tooltip-text">Specifies the type of cookie compliance standard, like GDPR or CCPA.</span>
-                      </span>
-                    </label>
-
-                    <div className="checkbox-group">
-                      {["US State laws", "GDPR"].map((option) => ( //US State laws
-                        <label key={option} className="custom-checkboxs">
-                          <input
-                            type="checkbox"
-                            value={option}
-                            checked={selectedOptions.includes(option)}
-                            onChange={() => handleToggles(option)}
-                          />
-                          <span className="checkbox-box"></span>
-                          {option}
-                        </label>
-                      ))}
-                    </div>
-                  </div> */}
-
 
 
               </div>
@@ -2448,7 +2202,7 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                       position: "absolute",
                       ...(style !== "fullwidth" && {
                         bottom: "16px",
-                        left: selected === "left" ? "16px" : selected === "center" ? "50%" : "auto",
+                        left: selected === "left" ? "16px" : selected === "center" ? "17%" : "auto",
                         right: selected === "right" ? "16px" : "auto",
                         transform: selected === "center" ? "translateX(-50%)" : "none",
                       }),
@@ -2544,9 +2298,6 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
     </div>
   );
 };
-
-// const root = ReactDOM.createRoot(document.getElementById("root") as HTMLElement);
-// root.render(<App />);
 
 export default App;
 

@@ -18,6 +18,9 @@ const dots = new URL("../assets/3 dots.svg", import.meta.url).href;
 const line = new URL("../assets/Vector 20.svg", import.meta.url).href;
 const questionmark = new URL("../assets/question.svg", import.meta.url).href;
 const logo = new URL("../assets/icon.svg", import.meta.url).href;
+const checkedcenteralign = new URL("../assets/center alignemnt checked.svg", import.meta.url).href;
+const checkedleft = new URL("../assets/left checkd alignment.svg", import.meta.url).href;
+const checkedright = new URL("../assets/right checkd alignemnt.svg", import.meta.url).href;
 
 
 
@@ -420,12 +423,34 @@ const Customization: React.FC<CustomizationProps> = ({
 
             <div>
               <div className="flex">
-                <span>Alignment</span>
+                {/* <span>Alignment</span>
                 <div className="category-3">
                   <img src={justiflyleft} alt="Left Align" style={{ opacity: selectedtext === "left" ? 1 : 0.4 }} onClick={() => settextSelected("left")} />
                   <img src={justiflycenter} alt="Center Align" style={{ opacity: selectedtext === "center" ? 1 : 0.4 }} onClick={() => settextSelected("center")} />
                   <img src={justiflyright} alt="Right Align" style={{ opacity: selectedtext === "right" ? 1 : 0.4 }} onClick={() => settextSelected("right")} />
-                </div>
+                </div> */}
+                <span>Alignment</span>
+<div className="category-3 flex gap-4">
+  <img
+    src={selectedtext === "left" ? checkedleft : justiflyleft}
+    alt="Left Align"
+    onClick={() => settextSelected("left")}
+    className="cursor-pointer"
+  />
+  <img
+    src={selectedtext === "center" ? checkedcenteralign : justiflycenter}
+    alt="Center Align"
+    onClick={() => settextSelected("center")}
+    className="cursor-pointer"
+  />
+  <img
+    src={selectedtext === "right" ? checkedright : justiflyright}
+    alt="Right Align"
+    onClick={() => settextSelected("right")}
+    className="cursor-pointer"
+  />
+</div>
+
               </div>
 
             </div>
@@ -463,7 +488,7 @@ const Customization: React.FC<CustomizationProps> = ({
                   </div>
                 </div>
 
-                {style === "alignstyle" &&
+               
                   <div>
                     <span>Second Backgorund</span>
                     <div className="color-picker-dropdown" ref={secondbgDropdownRef}>
@@ -475,7 +500,7 @@ const Customization: React.FC<CustomizationProps> = ({
                       <div ref={secondbgPickerRef} className={`color-picker-container ${secondbgOpen ? "visible" : "hidden"}`}></div>
                     </div>
                   </div>
-                }
+                
               </div>
 
               <div className="customs">
@@ -649,7 +674,7 @@ const Customization: React.FC<CustomizationProps> = ({
                 position: "absolute",
                 ...(style !== "fullwidth" && {
                   bottom: "16px",
-                  left: selected === "left" ? "16px" : selected === "center" ? "50%" : "auto",
+                  left: selected === "left" ? "16px" : selected === "center" ? "14%" : "auto",
                   right: selected === "right" ? "16px" : "auto",
                   transform: selected === "center" ? "translateX(-50%)" : "none",
                 }),

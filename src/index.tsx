@@ -5,8 +5,6 @@ import App from "./App";
 import { ScriptProvider } from "./context/ScriptContext"; // adjust path as needed
 
 
-// const queryClient = new QueryClient(); // Create a new QueryClient instance
-
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {

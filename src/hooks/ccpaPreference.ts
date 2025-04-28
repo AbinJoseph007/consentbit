@@ -83,33 +83,7 @@ const createCookieccpaPreferences = async (language: string = "English", color: 
         const [divStyle, paragraphStyle, formBlockStyle, prefrenceDiv, togglediv, buttonContainerStyle, prefrenceButtons, changepre, buttonStyle, declinebutton, headingStyle, checkbosstyle] = styles;
 
 
-        // const preferenceDiv = `consebit-ccpa-preference-div-${timestamp}`;
-        // const paragraphStyleNames = `consebit-ccpa-prefrence-text-${timestamp}`;
-        // const formfield = `consentbit-ccpa-formblock-${timestamp}`
-        // const preferenceblock = `consentbit-ccpa-prefrence-block-${timestamp}`
-        // const toggledivs = `consentbit-ccpa-prefrence-toggle-${timestamp}`
-        // const buttonContainerStyleName = `consebit-ccpa-prefrence-container-${timestamp}`;
-        // const prefrenceButton = `consentbit-ccpa-button-preference-${timestamp}`
-        // const checkboxstyle = `consentbit-ccpa-checkbox-${timestamp}`
-        // const buttonStyleName = `consebit-ccpa-prefrence-accept${timestamp}`;
-        // const DeclinebuttonStyleName = `consebit-ccpa-prefrence-decline${timestamp}`;
-        // const headingStyleName = `consebit-ccpa-prefrence-heading-${timestamp}`;
-        // const changepreference = `consentbit-change-preference-${timestamp}`
-
-        // const divStyle = await webflow.createStyle(preferenceDiv);
-        // const paragraphStyle = await webflow.createStyle(paragraphStyleNames);
-        // const formBlockStyle = await webflow.createStyle(formfield)
-        // const prefrenceDiv = await webflow.createStyle(preferenceblock)
-        // const togglediv = await webflow.createStyle(toggledivs)
-        // const buttonContainerStyle = await webflow.createStyle(buttonContainerStyleName);
-        // const buttonStyle = await webflow.createStyle(buttonStyleName);
-        // const changepre = await webflow.createStyle(changepreference)
-        // const declinebutton = await webflow.createStyle(DeclinebuttonStyleName)
-        // const prefrenceButtons = await webflow.createStyle(prefrenceButton)
-        // const checkbosstyle = await webflow.createStyle(checkboxstyle)
-        // const headingStyle = await webflow.createStyle(headingStyleName);
-        // console.log("✅ Created new styles:", preferenceDiv, paragraphStyleNames, buttonContainerStyleName, buttonStyleName, headingStyleName);
-
+        
         const collection = await webflow.getDefaultVariableCollection();
         const webflowBlue = await collection?.createColorVariable("Webflow Blue", "rgba(255, 255, 255, 1)");
         const webflowBlueValue = (webflowBlue as any)?.value || "rgba(255, 255, 255, 1)";
@@ -290,7 +264,7 @@ const createCookieccpaPreferences = async (language: string = "English", color: 
             }
             if (tempHeading.setHeadingLevel) {
                 await tempHeading.setHeadingLevel(4);
-                console.log("✅ Heading level set to H4!");
+              
               } else {
                 console.error("❌ setHeadingLevel method not available on heading element");
               }
@@ -372,31 +346,14 @@ const createCookieccpaPreferences = async (language: string = "English", color: 
                 console.error("❌ setTextContent method not available on paragraph element");
             }
 
-
-
-            // Add Checkbox Field inside the prefrenceContainertoggle DivBlock (Second)
-            // const checkboxField = await prefrenceContainertoggle.append(webflow.elementPresets.FormCheckboxInput);
-            // console.log(checkboxField);
-
-            // if (!checkboxField) {
-            //     throw new Error("Failed to create checkbox field inside div block");
-            // }
-
-            // // Set the label text
-            // checkboxField.label = "Do Not Share My Personal Information";
-
-            // console.log("✅ Successfully added paragraph first, then checkbox inside the form with label!");
-
             const checkboxField = await prefrenceContainertoggle.append(webflow.elementPresets.FormCheckboxInput);
-            console.log(checkboxField);
-
+          
             if (!checkboxField) {
                 throw new Error("Failed to create checkbox field inside div block");
             }
 
             if ((checkboxField as any).setDomId) {
                 await checkboxField.setStyles([checkbosstyle]);
-
                 await (checkboxField as any).setDomId("do-not-share-checkbox"); // Type assertion
             } else {
                 console.error("ccpa banner id setteled");
@@ -405,21 +362,15 @@ const createCookieccpaPreferences = async (language: string = "English", color: 
             // Get all child elements inside the checkbox field
             const children = await checkboxField.getChildren();
             for (const child of children) {
-                console.log("Child type:", child.type); // Debugging
-
                 if (child.type.includes("Label") && child.setTextContent) {
                     await child.setTextContent(".");
                 }
             }
 
             for (const child of children) {
-                console.log("Child type:", child.type);
-                console.log("Child type:", child);
-
-
                 if (child.type.includes("FormCheckboxInput") && child.setCustomAttribute) {
                     await child.setCustomAttribute("data-consent-id", "do-not-share-checkbox");
-                    // await child.setStyles([checkboxContainerStyle]);
+                  
                 }
             }
 
@@ -459,19 +410,12 @@ const createCookieccpaPreferences = async (language: string = "English", color: 
             }
             await declineButtons.setStyles([declinebutton]);
             await declineButtons.setTextContent(ccpaTranslations[language as keyof typeof ccpaTranslations].cancel);
-            console.log("declineButton:", declineButtons);
 
             if ((declineButtons as any).setDomId) {
                 await (declineButtons as any).setDomId("close-consent-banner"); // Type assertion
             } else {
                 console.error("❌ setDomId method not available on accept button element");
             }
-
-
-
-
-            ///////////////////////////////////////////////////////imgae prefrence
-
 
 
 
@@ -500,7 +444,7 @@ const createCookieccpaPreferences = async (language: string = "English", color: 
             } else {
                 console.error("❌ Failed to append elements to the main div.");
             }
-            console.log("🎉 Cookie consent banner successfully created!");
+            console.log("Cookie consent banner successfully created!");
 
             const mainDivBlock = await selectedElement.before(webflow.elementPresets.DivBlock);
             console.log("mainDivBlock:", mainDivBlock);

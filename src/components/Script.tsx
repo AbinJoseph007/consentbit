@@ -383,7 +383,7 @@ const Script: React.FC<{
                                     </div>
                                     <div className="editdiv">
                                         <div className="editname">
-                                            <h4 className="heading-text">{script.category || 'Script'} is implemented correctly.</h4>
+                                            <h4 className="heading-text">{script.category.charAt(0).toUpperCase() + script.category.slice(1) || 'Script'} is implemented correctly.</h4>
                                         </div>
                                         <div className="bottom-row">
                                             <p className="category-text">Categories: <span className="category-highlight">{script.selectedCategories.join(', ')}</span></p>
