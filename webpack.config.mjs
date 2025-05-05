@@ -5,6 +5,8 @@ const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
 
 export default {
+  mode: "production", 
+  devtool: false,     
   entry: "./src/index.tsx",
   output: {
     filename: "bundle.js",

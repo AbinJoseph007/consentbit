@@ -6,21 +6,21 @@ const ccpaTranslations = {
     English: {
         heading: "Opt-out Preference",
         description: "We use third-party cookies that help us analyze how you use this website, store your preferences, and provide the content and advertisements that are relevant to you. We do not sell your information. However, you can opt out of these cookies by checking Do Not Share My Personal Information and clicking the Save My Preferences button. Once you opt out, you can opt in again at any time by unchecking Do Not Share My Personal Information and clicking the Save My Preferences button",
-        doNotShare: "Do Not Share My Personal Information",
+        doNotShare: "Do Not Share My Personal Information.",
         savePreference: "Save My Preference",
         cancel: "Cancel"
     },
     Spanish: {
         heading: "Preferencia de Exclusión",
         description: "Utilizamos cookies de terceros que nos ayudan a analizar cómo utiliza este sitio web, almacenar sus preferencias y proporcionar contenido y anuncios relevantes para usted. No vendemos su información. Sin embargo, puede optar por no recibir estas cookies marcando No Compartir Mi Información Personal y haciendo clic en el botón Guardar Mis Preferencias. Una vez que opte por no participar, puede volver a participar en cualquier momento desmarcando No Compartir Mi Información Personal y haciendo clic en el botón Guardar Mis Preferencias",
-        doNotShare: "No Compartir Mi Información Personal",
+        doNotShare: "No Compartir Mi Información Personal.",
         savePreference: "Guardar Mi Preferencia",
         cancel: "Cancelar"
     },
     French: {
         heading: "Préférence de Désinscription",
         description: "Nous utilisons des cookies tiers qui nous aident à analyser votre utilisation de ce site web, à stocker vos préférences et à fournir du contenu et des publicités pertinents pour vous. Nous ne vendons pas vos informations. Cependant, vous pouvez désactiver ces cookies en cochant Ne Pas Partager Mes Informations Personnelles et en cliquant sur le bouton Enregistrer Mes Préférences. Une fois désactivé, vous pouvez réactiver à tout moment en décochant Ne Pas Partager Mes Informations Personnelles et en cliquant sur le bouton Enregistrer Mes Préférences",
-        doNotShare: "Ne Pas Partager Mes Informations Personnelles",
+        doNotShare: "Ne Pas Partager Mes Informations Personnelles.",
         savePreference: "Enregistrer Mes Préférences",
         cancel: "Annuler"
     }
@@ -31,7 +31,7 @@ type BreakpointAndPseudo = {
     pseudoClass: string;
 };
 
-const createCookieccpaPreferences = async (language: string = "English", color: string = "#ffffff", btnColor: string = "#F1F1F1", headColor: string = "#483999", paraColor: string = "#1F1D40", secondcolor: string = "secondcolor", buttonRadius: number, animation: string) => {
+const createCookieccpaPreferences = async (language: string = "English", color: string = "#ffffff", btnColor: string = "#F1F1F1", headColor: string = "#483999", paraColor: string = "#1F1D40", secondcolor: string = "secondcolor", buttonRadius: number, animation: string ,primaryButtonText :string = "#ffffff", secondbuttontext : string = "#4C4A66",) => {
     try {
 
         const selectedElement = await webflow.getSelectedElement();
@@ -58,8 +58,8 @@ const createCookieccpaPreferences = async (language: string = "English", color: 
 
 
         const styleNames = {
-            preferenceDiv: `consentbit-ccpa-preference-div`,
-            paragraphStyleNames: `consentbit-ccpa-prefrence-text`,
+            preferenceDiv: `consentbit-ccpa_preference`,
+            paragraphStyleNames: `consentbit-ccpa_prefrence_text`,
             formfield: `consentbit-ccpa-formblock`,
             preferenceblock: `consentbit-ccpa-prefrence-block`,
             toggledivs: `consentbit-ccpa-prefrence-toggle`,
@@ -71,7 +71,6 @@ const createCookieccpaPreferences = async (language: string = "English", color: 
             headingStyleName: `consebit-ccpa-prefrence-heading`,
             checkboxContainerStyleName: `consentbit-toggle`,
             changepreference: `consentbit-ccpa-checkbox${timestamp}`
-
         };
 
         const styles = await Promise.all(
@@ -173,18 +172,21 @@ const createCookieccpaPreferences = async (language: string = "English", color: 
             "cursor": "pointer",
             "background-color": secondcolor,
             "margin-left": "5px",
+            "color": primaryButtonText,
             "margin-right": "5px",
             "min-width": "80px",
+            "text-align": "center",
         };
 
         const declineButtonPropertyMap: Record<string, string> = {
             "border-radius": "48px",
             "cursor": "pointer",
             "background-color": btnColor,
-            "color": "rgba(72, 57, 153, 1)",
+            "color": secondbuttontext,
             "margin-left": "5px",
             "margin-right": "5px",
             "min-width": "80px",
+            "text-align": "center",
         };
 
 
@@ -219,7 +221,7 @@ const createCookieccpaPreferences = async (language: string = "English", color: 
             "width": "20px", // Checkbox width
             "height": "20px", // Checkbox height
             "border-radius": "4px", // Rounded corners
-            "background-color": " rgb(255, 255, 255)", // White background
+            "background-color": color,
             "cursor": "pointer",
         };
 
@@ -363,7 +365,7 @@ const createCookieccpaPreferences = async (language: string = "English", color: 
             const children = await checkboxField.getChildren();
             for (const child of children) {
                 if (child.type.includes("Label") && child.setTextContent) {
-                    await child.setTextContent(".");
+                    await child.setTextContent("");
                 }
             }
 

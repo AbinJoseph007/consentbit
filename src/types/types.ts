@@ -203,3 +203,31 @@ export type ScriptType = {
   identifier?: string | null;
   transitionState?: 'fade-in' | 'fade-out' | ''; // 👈 add this line
 };
+
+export type AppData = {
+  cookieExpiration: string;
+  bgColor: string;
+  activeTab: string;
+  activeMode: string;
+  selectedtext: string;
+  fetchScripts: boolean;  
+  btnColor:string,
+  paraColor:string,
+  secondcolor:string,
+  bgColors:string,
+  headColor:string,
+  secondbuttontext:string,
+  primaryButtonText:string,
+  Font:string,
+  style:string,
+  selected:string,
+  weight:string,
+  borderRadius:number,
+  buttonRadius:number,
+  animation:string,
+  easing:string,
+  language:string,
+  buttonText:string,
+  isBannerAdded:boolean,
+  color:string,
+};

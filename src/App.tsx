@@ -7,10 +7,6 @@ const questionmark = new URL("./assets/question.svg", import.meta.url).href;
 const openeye = new URL("./assets/closedeye.svg", import.meta.url).href;
 const eye = new URL("./assets/eye.svg", import.meta.url).href;
 const dots = new URL("./assets/3 dots.svg", import.meta.url).href;
-const book = new URL("./assets/book.png", import.meta.url).href;
-const users = new URL("./assets/user.png", import.meta.url).href;
-const watch = new URL("./assets/fi-rr-play (1).png", import.meta.url).href;
-const doc = new URL("./assets/message.png", import.meta.url).href;
 const checkedcatogry = new URL("./assets/tick-square catogeries.svg", import.meta.url).href;
 const tickmark = new URL("./assets/tickmark.svg", import.meta.url).href;
 const logo = new URL("./assets/icon.svg", import.meta.url).href;
@@ -21,10 +17,11 @@ import webflow, { WebflowAPI } from './types/webflowtypes';
 import { CodeApplication } from "./types/types";
 import createCookiePreferences from "./hooks/gdprPreference";
 import createCookieccpaPreferences from "./hooks/ccpaPreference";
-import usePersistentState from './hooks/usePersistentState'; 
+import usePersistentState from './hooks/usePersistentState';
 import { Script as ScriptType } from "../src/types/types";
 import { useQueryClient } from "@tanstack/react-query";
 import PulseAnimation from "./components/PulseAnimation";
+import NeedHelp from "./components/NeedHelp";
 
 
 
@@ -58,14 +55,14 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
   const [headColor, setHeadColor] = useState("#000000");
   const [secondbuttontext, setsecondbuttontext] = useState("#000000")
   const [primaryButtonText, setPrimaryButtonText] = useState('#FFFFFF');
-  const [activeTab, setActiveTab] = usePersistentState("activeTab", "General Settings");
+  const [activeTab, setActiveTab] = useState("General Settings");
   const [expires, setExpires] = usePersistentState("expires", "");
-  const [size, setSize] = usePersistentState("size", "16");
+  const [size, setSize] = usePersistentState("size", "12");
   const [isActive, setIsActive] = usePersistentState("isActive", false);
   const [Font, SetFont] = usePersistentState("Font", "");
   const [selectedtext, settextSelected] = usePersistentState("selectedtext", "left");
   const [style, setStyle] = usePersistentState<BannerStyle>("style", "align");
-  const [activeMode, setActiveMode] = usePersistentState("activeMode", "Simple");
+  const [activeMode, setActiveMode] = useState("Simple");
   const [selected, setSelected] = usePersistentState<Orientation>("selected", "right");
   const [selectedOption, setSelectedOption] = usePersistentState("selectedOption", "US State laws");
   const [weight, setWeight] = usePersistentState("weight", "semibold");
@@ -75,14 +72,16 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
   const [accessToken, setAccessToken] = usePersistentState<string>("accessToken", '');
   const [pages, setPages] = usePersistentState("pages", []);
   const [fetchScripts, setFetchScripts] = usePersistentState("fetchScripts", false);
-  const [borderRadius, setBorderRadius] = usePersistentState("borderRadius", 16);
+  const [borderRadius, setBorderRadius] = usePersistentState<number>("borderRadius", 16);
   const [buttonRadius, setButtonRadius] = usePersistentState<number>("buttonRadius", 2);
   const [isLoading, setIsLoading] = usePersistentState("isLoading", false);
   const [userlocaldata, setUserlocaldata] = useState<UserData | null>(null);
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
-  const [showAuthPopup, setShowAuthPopup] = useState(false); // New state for the popup
+  const [showAuthPopup, setShowAuthPopup] = useState(false);
   const [buttonText, setButtonText] = useState("Scan Project");
   const [showLoadingPopup, setShowLoadingPopup] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
+  const [cookieExpiration, setCookieExpiration] = useState(String());
 
 
   const base_url = "https://cb-server.web-8fb.workers.dev"
@@ -100,8 +99,8 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
 
   // Your default states
   const defaultState = {
-    animation: "select",
-    easing: "select",
+    animation: "fade",
+    easing: "Ease",
     language: "English",
   };
 
@@ -245,16 +244,16 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
         if (localstoragedata) {
           try {
             const parsed = JSON.parse(localstoragedata);
-         
+
             setUserlocaldata(parsed);
           } catch (error) {
             console.error("Invalid JSON in localStorage:", error);
           }
         }
 
-      
+
         const pagesAndFolders = await webflow.getAllPagesAndFolders();
-       
+
 
         if (Array.isArray(pagesAndFolders) && pagesAndFolders.length > 0) {
           // Filter only "Page" types
@@ -267,9 +266,11 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
               name: await page.getName(),
             }))
           );
+          console.log(pageDetails);
+
 
           setPages(pageDetails);
-         
+
         } else {
           console.warn("No pages found.");
         }
@@ -281,53 +282,92 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
     fetchPages();
   }, [webflow]);
 
+  useEffect(() => {
+    const fetchbannerdetails = async () => {
+      try {
+        const userinfo = localStorage.getItem("wf_hybrid_user");
+        const tokenss = JSON.parse(userinfo);
+        const token = tokenss.sessionToken;
+
+        if(token){
+
+        const response = await customCodeApi.getBannerStyles(token)
+
+        if (response) (
+          setCookieExpiration(response?.cookieExpiration),
+          setBgColor(response?.bgColor),
+          setActiveTab(response?.activeTab),
+          setActiveMode(response?.activeMode),
+          settextSelected(response?.selectedtext),
+          setFetchScripts(response?.fetchScripts),
+          setBtnColor(response?.btnColor),
+          setParaColor(response?.paraColor),
+          setSecondcolor(response?.secondcolor),
+          setBgColors(response?.bgColors),
+          setHeadColor(response?.headColor),
+          setsecondbuttontext(response?.secondbuttontext),
+          setPrimaryButtonText(response?.primaryButtonText),
+          SetFont(response?.Font),
+          setStyle(response?.style),
+          setActiveMode(response?.activeMode),
+          setSelected(response?.selected),
+          setWeight(response?.weight),
+          setBorderRadius(response?.borderRadius),
+          setButtonRadius(response?.buttonRadius),
+          setAnimation(response?.animation),
+          setEasing(response?.easing),
+          setLanguage(response?.language),
+          setButtonText(response?.buttonText),
+          setIsBannerAdded(response?.isBannerAdded),
+          setColor(response?.color)
+        )}
+
+      } catch (error) {
+
+      }
+    }
+    fetchbannerdetails()
+  }, []);
+
   const handlePageChange = async (event) => {
     const pageId = event.target.value;
     const selectedPage = pages.find(page => page.id === pageId);
     if (selectedPage) {
       try {
-   
+
         await webflow.switchPage(selectedPage);
-      
+
       } catch (error) {
         console.error("Failed to switch page:", error);
       }
     }
   };
 
+
   //main function for adding custom code to the head
   const fetchAnalyticsBlockingsScripts = async () => {
     try {
-    
-
       const userinfo = localStorage.getItem("wf_hybrid_user");
-    
-
       if (!userinfo) {
         console.error("No user info found");
         return;
       }
 
       const tokenss = JSON.parse(userinfo);
-     
 
       const tokewern = tokenss.sessionToken;
       const siteIdinfo = await webflow.getSiteInfo();
       setSiteInfo(siteIdinfo);
-    
 
       if (!tokewern) {
         console.error("No session token found");
         return;
       }
-
-    
       const hostingScript = await customCodeApi.registerAnalyticsBlockingScript(tokewern);
-      console.log('Hosting script response:', hostingScript);
 
       if (hostingScript) {
         try {
-         
+
           const scriptId = hostingScript.result.id;
           const version = hostingScript.result.version;
 
@@ -338,11 +378,7 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
             location: 'header',
             version: version
           };
-
-      
-
           const applyScriptResponse = await customCodeApi.applyScript(params, tokewern);
-      
 
         }
         catch (error) {
@@ -409,7 +445,7 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
       const parsed = JSON.parse(stored);
 
       if (parsed?.sessionToken) {
-        exchangeAndVerifyIdToken(); 
+        exchangeAndVerifyIdToken();
       } else {
         // fallback manual restore if no sessionToken (dev/test scenarios)
         queryClient.setQueryData(["auth"], {
@@ -436,6 +472,8 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
     onAuth();
   }, [])
 
+  
+
   //GDPR BANNER-------------------------------------------------------------------
   const handleCreatePreferences = async () => {
     try {
@@ -450,70 +488,33 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
       await createCookiePreferences(selectedPreferences, language, color, btnColor, headColor, paraColor, secondcolor, buttonRadius, animation, toggleStates.customToggle, primaryButtonText, secondbuttontext
       );
 
-     
+
     } catch (error) {
       console.error("❌ Error creating cookie preferences:", error);
     }
   };
 
-
-  //--------------------------------------------------------------------------
   //createCookieccpaPreferences
   const handleCreatePreferencesccpa = async () => {
     try {
-      await createCookieccpaPreferences(language, color, btnColor, headColor, paraColor, secondcolor, buttonRadius, animation,);
+      await createCookieccpaPreferences(language, color, btnColor, headColor, paraColor, secondcolor, buttonRadius, animation, primaryButtonText, secondbuttontext);
     } catch (error) {
       console.error("❌ Error creating cookie preferences:", error);
     }
   };
-
 
   const previewDimensions = React.useMemo(() => {
     switch (style) {
       case "bigstyle":
         return { width: "250px", minHeight: "151px" };
       case "fullwidth":
-        return { width: "443px", dislay: "flex" };
+        return { width: "445px", dislay: "flex" };
       case "centeralign":
         return { width: "303px" };
       default:
         return { width: "318px" }; // Default
     }
   }, [style]);
-
-  //need help dropdown
-  const [isOpen, setIsOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement | null>(null);
-  const buttonRef = useRef<HTMLDivElement | null>(null);
-
-  const helpItems: HelpItem[] = [
-    { label: 'Watch tutorial', href: '#', icon: watch },
-    { label: 'Check docs', href: '#', icon: book },
-    { label: 'Get support', href: '#', icon: users },
-    { label: 'Send feedback', href: '#', icon: doc },
-  ];
-
-  const toggleOpen = () => {
-    setIsOpen(!isOpen);
-  };
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (isOpen && dropdownRef.current && !dropdownRef.current.contains(event.target as Node) && buttonRef.current && !buttonRef.current.contains(event.target as Node)) {
-        setIsOpen(false);
-      }
-    };
-
-    if (isOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
-    } else {
-      document.removeEventListener('mousedown', handleClickOutside);
-    }
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [isOpen]);
 
   const ccpabanner = async () => {
     setShowPopup(false); // close the first popup
@@ -524,8 +525,6 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
 
       const allElements = await webflow.getAllElements();
       const idsToCheck = ["initial-consent-banner", "main-consent-banner", "toggle-consent-btn"];
-
-      console.log("📦 Total elements fetched:", allElements.length);
 
       // Run domId checks in parallel
       const domIdPromises = allElements.map(async (el) => {
@@ -540,7 +539,6 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
         .filter(({ domId }) => domId && idsToCheck.includes(domId))
         .map(({ el, domId }) => el);
 
-      console.log("✅ Matched elements:", matchingElements.length);
 
       // Remove matching elements and children
       await Promise.all(matchingElements.map(async (el) => {
@@ -550,18 +548,15 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
 
           if (children?.length) {
             await Promise.all(children.map(child => child.remove()));
-            console.log(`🧽 Removed ${children.length} children from ${domId}`);
           }
 
           await el.remove();
-          console.log(`🧹 Removed element with ID: ${domId}`);
         } catch (err) {
           console.error("⚠️ Error removing element:", err);
           webflow.notify({ type: "error", message: "Failed to remove a banner." });
         }
       }));
 
-      console.log("🟢 Button clicked!");
 
       const selectedElement = await webflow.getSelectedElement();
       if (!selectedElement) {
@@ -569,7 +564,6 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
         webflow.notify({ type: "error", message: "No element selected in the Designer." });
         return;
       }
-      console.log("✅ Selected element:", selectedElement);
 
       const newDiv = await selectedElement.before(webflow.elementPresets.DivBlock);
       if (!newDiv) {
@@ -577,11 +571,9 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
         webflow.notify({ type: "error", message: "Failed to create div." });
         return;
       }
-      console.log("✅ New div created:", newDiv);
 
       if ((newDiv as any).setDomId) {
         await (newDiv as any).setDomId("initial-consent-banner"); // Type assertion
-        console.log("✅ prefrence button ID set to #simple-accept");
       } else {
         console.error("❌ setDomId method not available on accept button element");
       }
@@ -590,10 +582,10 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
         divStyleName: "consentbit-ccpa-banner-div",
         paragraphStyleName: "consentbit-ccpa-banner-text",
         buttonContainerStyleName: "consentbit-ccpa-button-container",
-
         headingStyleName: "consentbit-ccpa-banner-heading",
-
-        linktextstyle: "consentbit-ccpa-linkblock"
+        linktextstyle: "consentbit-ccpa-linkblock",
+        innerDivStyleName: "consentbit-ccpa-innerdiv",
+        secondBackgroundStyleName: "consentbit-banner-ccpasecond-bg"
       };
 
 
@@ -608,24 +600,11 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
         paragraphStyle,
         buttonContainerStyle,
         headingStyle,
-        Linktext
+        Linktext,
+        innerDivStyle,
+        secondBackgroundStyle
       ] = styles;
 
-
-      // const timestamp = Date.now();
-      // const divStyleName = `consentbit-ccpa-banner-div`;
-      // const paragraphStyleName = `consentbit-ccpa-banner-text`;
-      // const buttonContainerStyleName = `consentbit-ccpa-button-container`;
-      // const buttonStyleName = `consentbit-ccpa--button-accept`;
-      // const headingStyleName = `consentbit-ccpa-banner-heading`;
-      // const linktextstyle = `consentbit-ccpa-linkblock`
-
-      // const divStyle = await webflow.createStyle(divStyleName);
-      // const paragraphStyle = await webflow.createStyle(paragraphStyleName);
-      // const buttonContainerStyle = await webflow.createStyle(buttonContainerStyleName);
-      // const Linktext = await webflow.createStyle(linktextstyle)
-      // const headingStyle = await webflow.createStyle(headingStyleName);
-      // console.log("✅ Created new styles:", divStyleName, paragraphStyleName, buttonContainerStyleName, buttonStyleName, headingStyleName);
 
       const collection = await webflow.getDefaultVariableCollection();
       const webflowBlue = await collection?.createColorVariable("Webflow Blue", "rgba(255, 255, 255, 1)");
@@ -644,16 +623,12 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
 
       const divPropertyMap: Record<string, string> = {
         "background-color": color,
-        // "height": "220px",
-        // "width": "438px",
         "position": "fixed",
         "z-index": "99999",
         "padding-top": "20px",
         "padding-right": "20px",
         "padding-bottom": "20px",
         "padding-left": "20px",
-        // "top": "65%", // Remove static position
-        // "right": "5%", // Remove static position
         "border-radius": `${borderRadius}px`,
         "display": "none",
         "flex-direction": "column",
@@ -781,6 +756,24 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
           headingPropertyMap["text-align"] = "center";
           break;
       }
+      const innerdivPropertyMap: Record<string, string> = {
+        "max-width": "877px",
+        "margin-left": "auto",
+        "margin-right": "auto",
+      };
+
+      const secondbackgroundPropertyMap: Record<string, string> = {
+        "position": "absolute",
+        "background-color": bgColors,
+        "width": "35%",
+        "right": "0px",
+        "height": "100%",
+        "z-index": "-3",
+        "opacity": "30%",
+        "bottom": "0px",
+        "border-bottom-right-radius": `${borderRadius}px`,
+        "border-top-right-radius": `${borderRadius}px`
+      };
 
 
       await divStyle.setProperties(divPropertyMap);
@@ -789,11 +782,12 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
       await buttonContainerStyle.setProperties(buttonContainerPropertyMap);
       await Linktext.setProperties(declineButtonPropertyMap);
       await headingStyle.setProperties(headingPropertyMap);
-      console.log("✅ Style properties set for all elements");
+      await innerDivStyle.setProperties(innerdivPropertyMap);
+      await secondBackgroundStyle.setProperties(secondbackgroundPropertyMap);
+
 
       if (newDiv.setStyles) {
         await newDiv.setStyles([divStyle]);
-        console.log("✅ Div styles applied successfully!");
       }
 
       if (newDiv.setCustomAttribute) {
@@ -803,19 +797,28 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
         console.error("❌ setCustomAttribute method not available on newDiv element");
       }
 
+      const innerdiv = await selectedElement.before(webflow.elementPresets.DivBlock);
+      await innerdiv.setStyles([innerDivStyle]);
+
 
       try {
+        let SecondDiv;
+        if (style === "alignstyle") {
+          SecondDiv = await selectedElement.before(webflow.elementPresets.DivBlock);
+          if (SecondDiv.setStyles) {
+            await SecondDiv.setStyles([secondBackgroundStyle]);
+          }
+        }
+
         const tempHeading = await selectedElement.before(webflow.elementPresets.Heading);
         if (!tempHeading) {
           throw new Error("Failed to create heading");
         }
         if (tempHeading.setStyles) {
           await tempHeading.setStyles([headingStyle]);
-          console.log("✅ Heading styles applied!");
         }
         if (tempHeading.setTextContent) {
           await tempHeading.setTextContent(translations[language as keyof typeof translations].ccpa.heading);
-          console.log("✅ Heading text set via setText!");
         } else {
           console.error("❌ setText method not available on heading element");
         }
@@ -827,7 +830,6 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
 
         if (tempParagraph.setStyles) {
           await tempParagraph.setStyles([paragraphStyle]);
-          console.log("✅ Paragraph styles applied!");
         }
 
         if (tempParagraph.setTextContent) {
@@ -853,23 +855,20 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
 
         if ((prefrenceButton as any).setDomId) {
           await (prefrenceButton as any).setDomId("do-not-share-link"); // Type assertion
-          console.log("✅ Accept button ID set to #simple-accept");
         } else {
           console.error("❌ setDomId method not available on accept button element");
         }
 
-
-
-        if (newDiv.append && tempHeading && tempParagraph && buttonContainer) {
-          await newDiv.append(tempHeading);
-          await newDiv.append(tempParagraph);
-          await newDiv.append(buttonContainer);
-          console.log("✅ Appended heading, paragraph, and button container to div!");
+        if (newDiv.append && innerdiv && tempHeading && tempParagraph && buttonContainer) {
+          await newDiv.append(innerdiv);
+          if (SecondDiv) await innerdiv.append(SecondDiv);
+          await innerdiv.append(tempHeading);
+          await innerdiv.append(tempParagraph);
+          await innerdiv.append(buttonContainer);
 
           if (buttonContainer.append && prefrenceButton) {
 
             await buttonContainer.append(prefrenceButton)
-            console.log("✅ Appended accept and decline buttons to button container!");
           } else {
             console.error("❌ Failed to append buttons to the button container.");
           }
@@ -878,19 +877,19 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
         }
 
         console.log("🎉 Cookie consent banner successfully created!");
+
         handleCreatePreferencesccpa()
         if (!isBannerAlreadyAdded) {
           fetchAnalyticsBlockingsScripts()
           localStorage.setItem("cookieBannerAdded", "true");
         }
         setTimeout(() => {
-          setShowPopup(false); // Hide the current popup
+          setShowPopup(false);
           setIsBannerAdded(true);
           setShowSuccessPopup(true);
           setIsLoading(false);
-
-        }, 20000); // Adjust delay to match your popup close animation
-
+        }, 20000);
+        saveBannerDetails()
       } catch (error) {
         console.error("❌ Error creating cookie banner:", error);
         webflow.notify({ type: "error", message: "An error occurred while creating the cookie banner." });
@@ -905,13 +904,12 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
     setShowPopup(false); // close the first popup
     setShowLoadingPopup(true); // show loading popup
     setIsLoading(true);
-    // const isBannerAlreadyAdded = localStorage.getItem("cookieBannerAdded") === "true";
+    const isBannerAlreadyAdded = localStorage.getItem("cookieBannerAdded") === "true";
     try {
 
       const allElements = await webflow.getAllElements();
       const idsToCheck = ["consent-banner", "main-banner", "toggle-consent-btn"];
 
-      console.log("📦 Total elements fetched:", allElements.length);
 
       // Run domId checks in parallel
       const domIdPromises = allElements.map(async (el) => {
@@ -926,7 +924,6 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
         .filter(({ domId }) => domId && idsToCheck.includes(domId))
         .map(({ el, domId }) => el);
 
-      console.log("✅ Matched elements:", matchingElements.length);
 
       // Remove matching elements and children
       await Promise.all(matchingElements.map(async (el) => {
@@ -940,15 +937,11 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
           }
 
           await el.remove();
-          console.log(`🧹 Removed element with ID: ${domId}`);
         } catch (err) {
           console.error("⚠️ Error removing element:", err);
           webflow.notify({ type: "error", message: "Failed to remove a banner." });
         }
       }));
-
-
-
 
       const selectedElement = await webflow.getSelectedElement();
       if (!selectedElement) {
@@ -960,7 +953,6 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
 
 
       const newDiv = await selectedElement.before(webflow.elementPresets.DivBlock);
-      console.log("the main div", newDiv);
 
       if (!newDiv) {
         webflow.notify({ type: "error", message: "Failed to create div." });
@@ -1128,14 +1120,19 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
         "margin-left": "5px",
         "margin-right": "5px",
         "min-width": "80px",
-        "color": primaryButtonText
+        "color": primaryButtonText,
+        "text-align": "center",
+
       };
 
       const responsivebuttonPropertyMap: Record<string, string> = {
         "margin-bottom": "10px",
         "flex-direction": "column",
         "justify-content": "center",
-        "text-align": "center"
+        "text-align": "center",
+        "display": "flex",
+        "row-gap": "12px"
+
       };
       const responsivebuttonOptions = { breakpoint: "small" } as BreakpointAndPseudo;
 
@@ -1147,6 +1144,8 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
         "margin-left": "5px",
         "margin-right": "5px",
         "min-width": "80px",
+        "text-align": "center",
+
       };
 
       const secondbackgroundPropertyMap: Record<string, string> = {
@@ -1192,7 +1191,7 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
       await buttonContainerStyle.setProperties(responsivebuttonPropertyMap, responsivebuttonOptions);
       await buttonStyle.setProperties(buttonPropertyMap);
       await declineButtonStyle.setProperties(declineButtonPropertyMap);
-      await prefrenceButtonStyle.setProperties(declineButtonPropertyMap); // ✅ now using the renamed var
+      await prefrenceButtonStyle.setProperties(declineButtonPropertyMap);
       await headingStyle.setProperties(headingPropertyMap);
       await secondBackgroundStyle.setProperties(secondbackgroundPropertyMap);
       await innerDivStyle.setProperties(innerdivPropertyMap);
@@ -1258,7 +1257,6 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
         }
         await prefrenceButton.setStyles([prefrenceButtonStyle]);
         await prefrenceButton.setTextContent(translations[language as keyof typeof translations].preferences);
-        console.log("declineButton:", prefrenceButton);
 
 
         if ((prefrenceButton as any).setDomId) {
@@ -1319,33 +1317,23 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
         } else {
           console.error("❌ Failed to append elements to the main div.");
         }
-        // handleCreatePreferences();
-        // // if (!isBannerAlreadyAdded) {
-        // // fetchAnalyticsBlockingsScripts()
-        // //   localStorage.setItem("cookieBannerAdded", "true");
-        // // }
 
-        // setTimeout(() => {
-        //   setShowPopup(false);
-        // }, 30000);
-        // setIsBannerAdded(true);
-        // setShowSuccessPopup(true); 
+
         handleCreatePreferences();
         console.log("🎉 Cookie consent banner successfully created!");
-        fetchAnalyticsBlockingsScripts();
-        localStorage.setItem("cookieBannerAdded", "true");
+        if (!isBannerAlreadyAdded) {
+          fetchAnalyticsBlockingsScripts()
+          localStorage.setItem("cookieBannerAdded", "true");
+        }
 
-        // setShowPopup(false); // Hide the current popup
-
-        // Delay success popup until after popup has closed
         setTimeout(() => {
-          setShowPopup(false); // Hide the current popup
+          setShowPopup(false);
           setIsBannerAdded(true);
           setShowSuccessPopup(true);
           setIsLoading(false);
+        }, 30000);
 
-        }, 30000); // Adjust delay to match your popup close animation
-
+        saveBannerDetails()
 
       } catch (error) {
 
@@ -1364,6 +1352,118 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
     await ccpabanner();
   };
 
+  const handleExpirationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setCookieExpiration(e.target.value);
+  };
+
+  const saveBannerDetails = async () => {
+    try {
+      const userinfo = localStorage.getItem("wf_hybrid_user");
+      if (!userinfo) {
+        return;
+      }
+      const tokenss = JSON.parse(userinfo);
+      const tokewern = tokenss.sessionToken;
+      const siteIdinfo = await webflow.getSiteInfo();
+      setSiteInfo(siteIdinfo);
+      if (!tokewern) {
+        return;
+      }
+      const bannerData = {
+        cookieExpiration: cookieExpiration,
+        bgColor: bgColor,
+        activeTab: activeTab,
+        activeMode: activeMode,
+        selectedtext: selectedtext,
+        fetchScripts: fetchScripts,
+        btnColor: btnColor,
+        paraColor: paraColor,
+        secondcolor: secondcolor,
+        bgColors: bgColors,
+        headColor: headColor,
+        secondbuttontext: secondbuttontext,
+        primaryButtonText: primaryButtonText,
+        Font: Font,
+        style: style,
+        selected: selected,
+        weight: weight,
+        borderRadius: borderRadius,
+        buttonRadius: buttonRadius,
+        animation: animation,
+        easing: easing,
+        language: language,
+        buttonText: buttonText,
+        isBannerAdded: isBannerAdded,
+        color: color
+
+      }
+      const response = await customCodeApi.saveBannerStyles(tokewern, bannerData);
+      if (response.ok) {
+        console.log("data saved successfully");
+      }
+    }
+    catch (error) {
+      throw error; // or handle it differently based on your needs
+    }
+  }
+
+  const handleExportCSV = async () => {
+    setIsExporting(true); // Start loading feedback
+    try {
+      const userinfo = localStorage.getItem("wf_hybrid_user"); // Or your actual token storage
+      if (!userinfo) {
+        console.error("No user info found in localStorage");
+        alert("Authentication error: User info not found.");
+        setIsExporting(false);
+        return;
+      }
+      const tokenss = JSON.parse(userinfo);
+      const token = tokenss.sessionToken; // Get the token
+      if (!token) {
+        console.error("No session token found in user info");
+        alert("Authentication error: Session token missing.");
+        setIsExporting(false);
+        return;
+      }
+      console.log('Calling CSV export API...');
+      // Call the API function - it now returns { csvData, response }
+      const { csvData, response } = await customCodeApi.exportCSV(token);
+      // --- CSV Download Logic ---
+      // 1. Create a Blob from the CSV string
+      const blob = new Blob([csvData], { type: 'text/csv;charset=utf-8;' });
+      // 2. Determine filename
+      let filename = 'consent_report.csv'; // Default filename
+      const contentDisposition = response.headers.get('Content-Disposition');
+      if (contentDisposition) {
+        const filenameMatch = contentDisposition.match(/filename="?(.+?)"?(;|$)/);
+        if (filenameMatch && filenameMatch[1]) {
+          filename = filenameMatch[1];
+        }
+      }
+      console.log(`Attempting to download as "${filename}"`);
+      // 3. Create a link element
+      const link = document.createElement("a");
+      // 4. Create an object URL for the blob
+      const url = URL.createObjectURL(blob);
+      link.setAttribute("href", url);
+      link.setAttribute("download", filename);
+      // 5. Append link to body, click, and remove/revoke
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url); // Clean up the object URL
+      console.log('CSV download initiated.');
+    } catch (error) {
+      console.error('Failed to export CSV:', error);
+      // Provide user-friendly error message
+      alert(`Failed to export CSV report: ${error instanceof Error ? error.message : String(error)}`);
+    } finally {
+      setIsExporting(false); // Stop loading feedback regardless of success/failure
+    }
+  };
+
+
   return (
     <div className="app">
       {/* Top Navigation */}
@@ -1378,28 +1478,7 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
           )}
         </div>
 
-        <div className="help-dropdown-container">
-          <div className="need-help" onClick={toggleOpen} ref={buttonRef}>
-            <img src={questionmark} alt="Need help?" />
-            <h5>Need help?</h5>
-          </div>
-
-          {isOpen && (
-            <div className="help-dropdown" ref={dropdownRef}>
-              <p className="helptext">Help</p>
-              <ul>
-                {helpItems.map((item, index) => (
-                  <li key={index}>
-                    <a href={item.href} target="_blank" rel="noopener noreferrer">
-                      <img src={item.icon} alt={item.label} style={{ marginRight: '8px', verticalAlign: 'middle' }} width="16" height="16" />
-                      {item.label}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-        </div>
+        <NeedHelp />
       </div>
 
       {/* Configuration Section */}
@@ -1419,7 +1498,7 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
             className={`mode-btn ${activeMode === "Advanced" ? "active" : ""}`}
             onClick={() => {
               setActiveMode("Advanced");
-              setTimeout(() => setIsActive(true), 50); // Force re-render
+              setTimeout(() => setIsActive(true), 50);
             }}
           >
             Advanced
@@ -1429,28 +1508,58 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
         <div className="component-width">
           <div className="subscribe">
             <a className="link" href="#">
-              You need a subscription to publish the production <i><img src={rightarrow} alt="" /></i>
+              You need a subscription to publish the production <i><img src={rightarrow} alt="rightarrow" /></i>
             </a>
           </div>
 
           {activeTab !== "Script" && (
+            // <div>
+            //   <div>
+            //     <button
+            //       className="publish-button"
+            //       onClick={() => {
+            //         if (user?.firstName) {
+            //           setShowPopup(true);
+            //         } else {
+            //           setShowAuthPopup(true);
+            //         }
+            //       }}
+            //     >
+            //       {isBannerAdded ? "Publish your changes" : "Create Component"}
+            //     </button>
+            //   </div>
+
+            // </div>
             <div>
               <div>
                 <button
                   className="publish-button"
-                  onClick={() => {
-                    if (user?.firstName) {
-                      setShowPopup(true);
-                    } else {
-                      setShowAuthPopup(true);
+                  onClick={async () => {
+                    const isUserValid = user?.firstName;
+
+                    try {
+                      const selectedElement = await webflow.getSelectedElement();
+
+                      if (isUserValid && selectedElement) {
+                        setShowPopup(true);
+                      } else {
+                        if (!isUserValid) {
+                          setShowAuthPopup(true);
+                        } else if (!selectedElement) {
+                          webflow.notify({ type: "error", message: "No element selected in the Designer." });
+                        }
+                      }
+                    } catch (error) {
+                      console.error("Error checking selected element:", error);
+                      webflow.notify({ type: "error", message: "Something went wrong while checking selection." });
                     }
                   }}
                 >
-                  {isBannerAdded ? "Publish your changes" : "Add your Banner"}
+                  {isBannerAdded ? "Publish your changes" : "Create Component"}
                 </button>
               </div>
-
             </div>
+
           )}
 
           {activeTab === "Script" && (
@@ -1494,8 +1603,8 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
             <div className="flex down">
               {isBannerAdded ? (
                 <>
-                  <span className="spanbox">Hang tight! We’re updating your banner with the latest changes...</span>
-                  <span className="spanbox">Applying your fresh updates to the project now!</span>
+                  <span className="spanbox">Hang tight! We’re updating your banner with the latest changes.</span>
+                  <span className="spanbox">Applying your updates to the project now!</span>
                 </>
               ) : (
                 <>
@@ -1507,364 +1616,7 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
 
             <div className="gap">
 
-              {/* {activeMode === "Simple" && (
-                <button
-                  className="confirm-button"
-                  onClick={async () => {
-                    setShowPopup(false); // close the first popup
-                    setShowLoadingPopup(true); // show loading popup
-                    setIsLoading(true);
-
-                    // 👇 INSERT THIS SNIPPET HERE
-                    try {
-                      // 🧹 Step 1: Check for existing banner and remove it if found
-                      const allElements = await webflow.getAllElements();
-
-                      const existingBanner = await (async () => {
-                        for (const el of allElements) {
-                          const domId = await el.getDomId?.();
-                          if (domId === "simple-banner") {
-                            return el; // Found the element with the DOM ID
-                          }
-                        }
-                        return null; // No element found
-                      })();
-
-                      // If an existing banner is found, remove it
-                      if (existingBanner) {
-                        try {
-                          // Remove all child elements first
-                          const children = await existingBanner.getChildren?.();
-                          if (children) {
-                            await Promise.all(children.map(child => child.remove())); // Remove all children
-                          }
-                          // Then remove the banner itself
-                          await existingBanner.remove();
-                          console.log("🧹 Existing GDPR banner removed.");
-                        } catch (err) {
-                          console.error("⚠️ Error during banner cleanup:", err);
-                          webflow.notify({ type: "error", message: "Failed to clean up old banner." });
-                        }
-                      }
-
-
-                      const selectedElement = await webflow.getSelectedElement();
-                      if (!selectedElement) {
-                        webflow.notify({ type: "error", message: "No element selected in the Designer." });
-                        return;
-                      }
-
-                      const newDiv = await selectedElement.before(webflow.elementPresets.DivBlock);
-                      if (!newDiv) {
-                        webflow.notify({ type: "error", message: "Failed to create div." });
-                        return;
-                      }
-
-                      const styleNames = {
-                        divStyleName: "consentbit-banner-div",
-                        paragraphStyleName: "consentbit-banner-text",
-                        buttonContainerStyleName: "consentbit-button-container",
-                        buttonStyleName: "consentbit-button-accept",
-                        declineButtonStyleName: "consentbit-button-decline",
-                        headingStyleName: "consentbit-banner-heading",
-                        secondBackgroundStyleName: "consentbit-second-background",
-                        innerDivStyleName: "consentbit-innerdiv",
-                        privacypolicyName: "more-privacy"
-                      };
-
-                      const styles = await Promise.all(
-                        Object.values(styleNames).map(async (name) => {
-                          return (await webflow.getStyleByName(name)) || (await webflow.createStyle(name));
-                        })
-                      );
-
-                      const [divStyle, paragraphStyle, buttonContainerStyle, buttonStyle, declineButtonStyle, headingStyle, secondBackgroundStyle, innerDivStyle, privacypolicy] = styles;
-
-
-                      const animationAttributeMap = {
-                        "fade": "fade",
-                        "slide-up": "slide-up",
-                        "slide-down": "slide-down",
-                        "slide-left": "slide-left",
-                        "slide-right": "slide-right",
-                        "select": "select", // No attribute if "select"
-                      };
-
-                      const animationAttribute = animationAttributeMap[animation] || "";
-
-                      const divPropertyMap: Record<string, string> = {
-                        "background-color": color,
-                        "position": "fixed",
-                        "z-index": "99999",
-                        "padding-top": "20px",
-                        "padding-right": "20px",
-                        "padding-bottom": "20px",
-                        "padding-left": "20px",
-                        "border-radius": `${borderRadius}px`,
-                        "display": "none",
-                        "flex-direction": "column",
-                        "align-items": "center",
-                        "justify-content": "center",
-                        "box-shadow": "2px 2px 20px rgba(0, 0, 0, 0.51)",
-                      };
-
-                      if (window.innerWidth <= 768) {
-                        divPropertyMap["width"] = "100%";
-                        divPropertyMap["height"] = "40%";
-                      }
-                      divPropertyMap["bottom"] = "3%";
-
-                      switch (selected) {
-                        case "left":
-                          divPropertyMap["left"] = "3%";
-
-                          delete divPropertyMap["right"];
-                          break;
-
-                        case "center":
-                          divPropertyMap["left"] = "50%";
-
-                          delete divPropertyMap["right"];
-
-                          divPropertyMap["transform"] = "translateX(-50%)";
-                          break;
-                        case "right":
-                        default:
-                          divPropertyMap["right"] = "5%";
-
-                          delete divPropertyMap["left"];
-                          break;
-                      }
-                      switch (style) {
-                        case "bigstyle":
-                          divPropertyMap["width"] = "370px";
-                          divPropertyMap["min-height"] = "284px";
-                          break;
-                        case "fullwidth":
-                          divPropertyMap["width"] = "100%";
-                          divPropertyMap["min-height"] = "167px";
-                          delete divPropertyMap["left"];
-                          delete divPropertyMap["right"];
-                          divPropertyMap["bottom"] = "0px"
-                          break;
-                        case "centeralign":
-                          divPropertyMap["width"] = "566px";
-                          divPropertyMap["min-height"] = "167px";
-
-                          break;
-                        case "align":
-                        case "alignstyle":
-                        default:
-                          divPropertyMap["width"] = "438px";
-                          divPropertyMap["min-height"] = "220px";
-                          break;
-                      }
-
-                      const responsivePropertyMap: Record<string, string> = {
-                        "max-width": "100%",
-                        "width": "100%",
-                        "bottom": "0",
-                        "left": "0",
-                        "right": "0",
-                        "top": "auto",
-                        "transform": "none"
-                      };
-                      const responsiveOptions = { breakpoint: "small" } as BreakpointAndPseudo;
-
-                      const paragraphPropertyMap: Record<string, string> = {
-                        "color": paraColor,
-                        "font-size": "16px",
-                        "font-weight": `${weight}`,
-                        "line-height": "1.5",
-                        "text-align": `${selectedtext}`,
-                        "margin-top": "0",
-                        "margin-right": "0",
-                        "margin-bottom": "10px",
-                        "margin-left": "0",
-                        // "max-width": "400px",
-                        "display": "block",
-                        "width": "100%",
-                      };
-                      switch (style) {
-                        case "centeralign":
-                          paragraphPropertyMap["text-align"] = "center";
-                          break;
-                      }
-
-                      const privacypolicyPropertyMap: Record<string, string> = {
-                        "text-decoration": "none"
-                      }
-
-                      const buttonContainerPropertyMap: Record<string, string> = {
-                        "display": "flex",
-                        "justify-content": "right",
-                        "margin-top": "10px",
-                        "width": "100%",
-                      };
-                      switch (style) {
-                        case "centeralign":
-                          buttonContainerPropertyMap["justify-content"] = "center";
-                          break;
-                      }
-
-                      const buttonPropertyMap: Record<string, string> = {
-                        "border-radius": `${buttonRadius}px`,
-                        "cursor": "pointer",
-                        "background-color": secondcolor,
-                        "margin-left": "5px",
-                        "margin-right": "5px",
-                        "min-width": "80px",
-                      };
-
-                      const responsivebuttonPropertyMap: Record<string, string> = {
-                        "margin-bottom": "10px",
-                        "flex-direction": "column",
-                        "justify-content": "center",
-                        "text-align": "center"
-                      };
-                      const responsivebuttonOptions = { breakpoint: "small" } as BreakpointAndPseudo;
-
-                      const declineButtonPropertyMap: Record<string, string> = {
-                        "border-radius": `${buttonRadius}px`,
-                        "cursor": "pointer",
-                        "background-color": btnColor,
-                        "color": "rgba(72, 57, 153, 1)",
-                        "margin-left": "5px",
-                        "margin-right": "5px",
-                        "min-width": "80px",
-                      };
-
-                      const secondbackgroundPropertyMap: Record<string, string> = {
-                        "position": "absolute",
-                        "background-color": bgColors,
-                        "width": "35%",
-                        "right": "0px",
-                        "height": "100%",
-                        "z-index": "-3",
-                        "opacity": "30%",
-                        "bottom": "0px",
-                        "border-bottom-right-radius": `${borderRadius}px`,
-                        "border-top-right-radius": `${borderRadius}px`
-                      };
-
-
-                      const headingPropertyMap: Record<string, string> = {
-                        "color": headColor,
-                        "font-size": "20px",
-                        "font-weight": `${weight}`,
-                        "text-align": `${selectedtext}`,
-                        "margin-top": "0",
-                        "margin-bottom": "10px",
-                        "width": "100%",
-                      };
-                      switch (style) {
-                        case "centeralign":
-                          headingPropertyMap["text-align"] = "center";
-                          break;
-                      }
-
-                      const innerdivPropertyMap: Record<string, string> = {
-                        "max-width": "877px",
-                        "margin-left": "auto",
-                        "margin-right": "auto",
-                      };
-
-
-
-                      await divStyle.setProperties(divPropertyMap);
-                      await divStyle.setProperties(responsivePropertyMap, responsiveOptions);
-                      await paragraphStyle.setProperties(paragraphPropertyMap);
-                      await privacypolicy.setProperties(privacypolicyPropertyMap);
-                      await buttonContainerStyle.setProperties(buttonContainerPropertyMap);
-                      await buttonStyle.setProperties(buttonPropertyMap);
-                      await declineButtonStyle.setProperties(declineButtonPropertyMap);
-                      await headingStyle.setProperties(headingPropertyMap);
-                      await secondBackgroundStyle.setProperties(secondbackgroundPropertyMap);
-                      await innerDivStyle.setProperties(innerdivPropertyMap);
-
-                      if (newDiv.setStyles) await newDiv.setStyles([divStyle]);
-                      if (newDiv.setCustomAttribute) {
-                        await newDiv.setCustomAttribute("data-animation", animationAttribute);
-                        await newDiv.setCustomAttribute("scrollcontrol", toggleStates.disableScroll ? "true" : "false");
-                      }
-
-                      const SecondDiv = style === "alignstyle" ? await selectedElement.before(webflow.elementPresets.DivBlock) : null;
-                      if (SecondDiv?.setStyles) await SecondDiv.setStyles([secondBackgroundStyle]);
-
-                      const innerdiv = await selectedElement.before(webflow.elementPresets.DivBlock);
-                      await innerdiv.setStyles([innerDivStyle]);
-
-                      const tempHeading = await selectedElement.before(webflow.elementPresets.Heading);
-                      await tempHeading?.setStyles?.([headingStyle]);
-                      await tempHeading?.setTextContent?.(translations[language].heading);
-
-                      const tempParagraph = await selectedElement.before(webflow.elementPresets.Paragraph);
-                      await tempParagraph?.setStyles?.([paragraphStyle]);
-                      await tempParagraph?.setTextContent?.(translations[language].description);
-
-                      const privacy = await selectedElement.before(webflow.elementPresets.LinkBlock);
-                      console.log(privacy);
-                      await privacy?.setStyles?.([privacypolicy]);
-                      await privacy?.setTextContent?.("privacy policy");
-                      if (expires) {
-                        await privacy?.setSettings?.("url", expires, {
-                          openInNewTab: true
-                        });
-                      }
-
-                      const buttonContainer = await selectedElement.before(webflow.elementPresets.DivBlock);
-                      await buttonContainer?.setStyles?.([buttonContainerStyle]);
-
-                      const acceptButton = await selectedElement.before(webflow.elementPresets.Button);
-                      await acceptButton?.setStyles?.([buttonStyle]);
-                      await acceptButton?.setTextContent?.(translations[language].accept);
-                      await (acceptButton as any)?.setDomId?.("simple-accept");
-
-                      const declineButton = await selectedElement.before(webflow.elementPresets.Button);
-                      await declineButton?.setStyles?.([declineButtonStyle]);
-                      await declineButton?.setTextContent?.(translations[language].reject);
-                      await (declineButton as any)?.setDomId?.("simple-reject");
-
-                      if (newDiv.append && innerdiv && tempHeading && tempParagraph && buttonContainer) {
-                        await newDiv.append(innerdiv);
-                        if (SecondDiv) await innerdiv.append(SecondDiv);
-                        await innerdiv.append(tempHeading);
-                        await innerdiv.append(tempParagraph);
-                        await innerdiv.append(buttonContainer);
-
-                        if (tempParagraph.append && privacy) {
-                          await tempParagraph.append(privacy)
-                        }
-
-                        if (buttonContainer.append && acceptButton && declineButton) {
-                          await buttonContainer.append(acceptButton);
-                          await buttonContainer.append(declineButton);
-                        }
-                        setIsLoading(false);
-
-                        console.log("🎉 Cookie consent banner successfully created!");
-                        fetchAnalyticsBlockingsScripts();
-                        localStorage.setItem("cookieBannerAdded", "true");
-
-                        setShowPopup(false); // Hide the current popup
-
-                        // Delay success popup until after popup has closed
-                        setTimeout(() => {
-                          setIsBannerAdded(true);
-                          setShowSuccessPopup(true);
-                        }, 300); // Adjust delay to match your popup close animation
-
-                      }
-                    } catch (error) {
-                      console.error("❌ Unexpected error:", error);
-                      webflow.notify({ type: "error", message: "Unexpected error occurred." });
-                    }
-                  }}
-                >
-                  Simple Confirm
-                </button>)} */}
-
-              { selectedOptions.includes("GDPR") && selectedOptions.includes("US State laws") ?
+              {selectedOptions.includes("GDPR") && selectedOptions.includes("US State laws") ?
                 (<button
                   className="confirm-button"
                   onClick={handleBothBanners}
@@ -1880,21 +1632,17 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                     ) : (
                       "Confirm"
                     )}
-                  </button>) :selectedOptions.includes("US State laws") ?
+                  </button>) : selectedOptions.includes("US State laws") ?
                     (<button
                       className="confirm-button"
                       onClick={ccpabanner}
                     >
                       Confirm
-                    </button>) : <div> Nothing Selected</div>
-
+                    </button>) : <div className="confirm-button1"> Nothing Selected</div>
               }
 
               <button className="cancel-btn" onClick={() => setShowPopup(false)}>Cancel</button>
-
-
             </div>
-
           </div>
         </div>
       )}
@@ -1909,8 +1657,6 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
           </div>
         </div>
       )}
-
-
 
       {showSuccessPopup && (
         <div className="popup-overlay">
@@ -1939,7 +1685,7 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
               </button>
               {/* Tooltip only shows if in Simple mode and this is Script */}
               {isDisabled && (
-                <span className="tab-tooltip">Available only in Advanced mode</span>
+                <span className="tab-tooltip">Available only in Advanced mode.</span>
               )}
             </div>
           );
@@ -1960,15 +1706,15 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                     <label htmlFor="expires">Expires</label>
                     <div className="tooltip-container">
                       <img src={questionmark} alt="info" className="tooltip-icon" />
-                      <span className="tooltip-text">The Amount of days to remember user's consent preferences</span>
+                      <span className="tooltip-text1">The Amount of days to remember user's consent preferences.</span>
                     </div>
                   </div>
                   <input
                     type="text"
                     id="expires"
                     placeholder="120s"
-                    value={expires || ""}
-                    onChange={(e) => setExpires(e.target.value)}
+                    value={cookieExpiration}
+                    onChange={handleExpirationChange}
                   />
                 </div>
 
@@ -2066,7 +1812,7 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
 
                   {/* Essentials - Always active */}
                   <div className="cookie-category">
-                    <img src={checkedcatogry} alt="" />
+                    <img src={checkedcatogry} alt="checkedcatogry" />
                     <span className="category-name">Essentials</span>
                     <span className="category-status">Always active</span>
                   </div>
@@ -2096,15 +1842,23 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                   })}
                 </div>
 
-                <div className="export-csv">
-                  <div className="flex">
-                    <button className="exportbutton">Export CSV</button>
-                    <div className="tooltip-containers">
-                      <img src={questionmark} alt="info" className="tooltip-icon" />
-                      <span className="tooltip-text">Download consents in CSV format for easy analysis and sharing.</span>
+
+                {activeMode === "Advanced" && (
+                  <div className="export-csv">
+                    <div className="flex">
+                      <button
+                        className="exportbutton"
+                        onClick={handleExportCSV}
+                        disabled={isExporting}
+                      >
+                        {isExporting ? 'Exporting...' : 'Export CSV'}
+                      </button>
+                      <div className="tooltip-containers">
+                        <img src={questionmark} alt="info" className="tooltip-icon" />
+                        <span className="tooltip-text">Download consents in CSV format for easy analysis and sharing.</span>
+                      </div>
                     </div>
-                  </div>
-                </div>
+                  </div>)}
 
 
                 {/* Use Custom Toggle Button - Advanced Mode Only */}
@@ -2116,7 +1870,7 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
 
                         <div className="tooltip-containers">
                           <img src={questionmark} alt="info" className="tooltip-icon" />
-                          <span className="tooltip-text">For the better user experience use this feature</span>
+                          <span className="tooltip-text"> Enables a toggle switch. Off = standard checkbox.</span>
                         </div>
                       </div>
 
@@ -2141,7 +1895,7 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
 
                       <div className="tooltip-containers">
                         <img src={questionmark} alt="info" className="tooltip-icons" />
-                        <span className="tooltip-text">this will reset the interactions that you have added</span>
+                        <span className="tooltip-text">this will reset the interactions that you have added.</span>
                       </div>
                     </div>
 
@@ -2164,7 +1918,7 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
 
                         <div className="tooltip-containers">
                           <img src={questionmark} alt="info" className="tooltip-icon" />
-                          <span className="tooltip-text">This option disables the scroll of the page when banner is shown</span>
+                          <span className="tooltip-text">This option disables the scroll of the page when banner is shown.</span>
                         </div>
                       </div>
 
@@ -2190,10 +1944,10 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                 <h3>Preview</h3>
                 <div className="preview-area">
                   <div className="topbar">
-                    <img src={dots} alt="" className="threedots" />
+                    <img src={dots} alt="dots" className="threedots" />
                   </div>
                   <div className="consentbit-logo">
-                    <img src={logo} alt="" />
+                    <img src={logo} alt="dots" />
                   </div>
                   <div
                     className={`cookie-banner ${animation} ${isActive ? "active" : ""}`}
@@ -2204,23 +1958,31 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                         bottom: "16px",
                         left: selected === "left" ? "16px" : selected === "center" ? "17%" : "auto",
                         right: selected === "right" ? "16px" : "auto",
-                        transform: selected === "center" ? "translateX(-50%)" : "none",
+                        // transform: selected === "center" ? "translateX(-50%)" : "none",
                       }),
-                      transform: selected === "center" ? "translateX(-50%)" : "none",
+                      // transform: selected === "center" ? "translateX(-50%)" : "none",
                       fontFamily: Font,
                       textAlign: selectedtext as "left" | "center" | "right",
-                      alignItems: style === "centeralign" ? "center" : undefined, // Change dynamically
+                      alignItems: style === "centeralign" ? "center" : undefined,
                       fontWeight: weight,
                       width: previewDimensions.width,
                       height: previewDimensions.minHeight,
                       borderRadius: `${borderRadius}px`,
                       backgroundColor: color,
+                      fontSize: `${size}px`,
                     }}
                   >
 
                     {style === "alignstyle" && <div className="secondclass" style={{ backgroundColor: bgColors, borderBottomRightRadius: `${borderRadius}px`, borderTopRightRadius: `${borderRadius}px` }}></div>}
-                    <div className="space" style={{ color: headColor, fontWeight: weight, }}><h4>Cookie Setting</h4></div>
-
+                    <div className="space" style={{ color: headColor, fontWeight: weight }}>
+                      <h4>
+                        {language === "English"
+                          ? "Cookie Settings"
+                          : language === "Spanish"
+                            ? "Configuración de Cookies"
+                            : "Paramètres des Cookies"}
+                      </h4>
+                    </div>
                     <div className="padding" style={{ color: paraColor }}>
                       <span>
                         {language === "English"
@@ -2234,13 +1996,9 @@ const App: React.FC = ({ onAuth }: { onAuth: () => void }) => {
                       <button className="btn-preferences" style={{ borderRadius: `${buttonRadius}px`, backgroundColor: btnColor, color: secondbuttontext }} >Preferences</button>
                       <button className="btn-reject" style={{ borderRadius: `${buttonRadius}px`, backgroundColor: btnColor, color: secondbuttontext }} >Reject</button>
                       <button className="btn-accept" style={{ borderRadius: `${buttonRadius}px`, backgroundColor: secondcolor, color: primaryButtonText }} >Accept</button>
-
-
                     </div>
                   </div>
-
                   <div>
-
                   </div>
                 </div>
               </div>

@@ -2,8 +2,14 @@ import { useState, useEffect } from 'react';
 
 function usePersistentState<T>(key: string, defaultValue: T): [T, React.Dispatch<React.SetStateAction<T>>] {
   const [state, setState] = useState<T>(() => {
-    const savedState = localStorage.getItem(key);
-    return savedState !== null ? JSON.parse(savedState) : defaultValue;
+    try {
+      const savedState = localStorage.getItem(key);
+      if (!savedState || savedState === "undefined") return defaultValue;
+      return JSON.parse(savedState);
+    } catch (e) {
+      console.warn(`Failed to parse localStorage key "${key}":`, e);
+      return defaultValue;
+    }
   });
 
   useEffect(() => {

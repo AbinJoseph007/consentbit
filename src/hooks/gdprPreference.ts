@@ -5,26 +5,26 @@ import webflow, { WebflowAPI } from '../types/webflowtypes';
 const translations = {
   English: {
     heading: "Cookie Preferences",
-    description: "By clicking you agree to the storing of cookies on your device to enhance site navigation, analyze site usage and assist in our marketing efforts as outlined in our.",
+    description: "By clicking, you agree to store cookies on your device to enhance navigation, analyze usage, and support marketing",
     acceptAll: "Save Preference",
     reject: "Reject",
     changePreference: "Change Preference",
     sections: {
       essential: {
         label: "Essential",
-        description: 'By clicking "Accept All", you agree to the storing of cookies on your device to enhance site navigation.'
+        description: 'Essential cookies enable core site functions like security and accessibility. They don’t store personal data and cant be disabled.'
       },
       analytics: {
         label: "Analytics",
-        description: 'By clicking "Accept All", you agree to the storing of cookies on your device to enhance site navigation, analyze site usage and assist in.'
+        description: 'These cookies collect anonymous data to help us improve website functionality and enhance user experience.'
       },
       marketing: {
         label: "Marketing",
-        description: 'By clicking "Accept All", you agree to the storing of cookies on your device to enhance site navigation, analyze site usage and assist in our marketing efforts as outlined in our'
+        description: 'These cookies track users across websites to deliver relevant ads and may process personal data, requiring explicit consent.'
       },
       preferences: {
         label: "Preferences",
-        description: 'Customize your experience based on your preferences and behavior on the website.'
+        description: 'These cookies remember settings like language or region and store display preferences to offer a more personalized, seamless experience.'
       }
     }
   },
@@ -37,44 +37,44 @@ const translations = {
     sections: {
       essential: {
         label: "Esenciales",
-        description: 'Al hacer clic en "Aceptar Todo", acepta el almacenamiento de cookies en su dispositivo para mejorar la navegación del sitio.'
+        description: 'Las cookies esenciales permiten funciones básicas del sitio como la seguridad y la accesibilidad. No almacenan datos personales y no se pueden desactivar.'
       },
       analytics: {
         label: "Analíticas",
-        description: 'Al hacer clic en "Aceptar Todo", acepta el almacenamiento de cookies en su dispositivo para mejorar la navegación del sitio, analizar el uso del sitio y ayudar en.'
+        description: 'Estas cookies recopilan datos anónimos para ayudarnos a mejorar la funcionalidad del sitio web y optimizar la experiencia del usuario.'
       },
       marketing: {
         label: "Marketing",
-        description: 'Al hacer clic en "Aceptar Todo", acepta el almacenamiento de cookies en su dispositivo para mejorar la navegación del sitio, analizar el uso del sitio y ayudar en nuestros esfuerzos de marketing como se describe en nuestro.'
+        description: 'Estas cookies rastrean a los usuarios en diferentes sitios web para ofrecer anuncios relevantes y pueden procesar datos personales, por lo que requieren el consentimiento explícito.'
       },
       preferences: {
         label: "Preferencias",
-        description: 'Personalice su experiencia según sus preferencias y comportamiento en el sitio web.'
+        description: 'Estas cookies recuerdan configuraciones como el idioma o la región y almacenan preferencias de visualización para ofrecer una experiencia más personalizada y fluida.'
       }
     }
   },
   French: {
     heading: "Préférences des Cookies",
-    description: "En cliquant, vous acceptez le stockage de cookies sur votre appareil pour améliorer la navigation du site, analyser l'utilisation du site et aider nos efforts de marketing comme décrit dans notre.",
-    acceptAll: "Tout Accepter",
+    description: "Ces cookies sont nécessaires au bon fonctionnement du site web. Ils ne stockent aucune information personnelle.",
     reject: "Refuser",
+    acceptAll: "Aceptar Todo",
     changePreference: "Modifier les Préférences",
     sections: {
       essential: {
         label: "Essentiels",
-        description: 'En cliquant sur "Tout Accepter", vous acceptez le stockage de cookies sur votre appareil pour améliorer la navigation du site.'
+        description: 'Les cookies essentiels permettent les fonctions de base du site, comme la sécurité et l’accessibilité. Ils ne stockent pas de données personnelles et ne peuvent pas être désactivés.'
       },
       analytics: {
         label: "Analytiques",
-        description: 'En cliquant sur "Tout Accepter", vous acceptez le stockage de cookies sur votre appareil pour améliorer la navigation du site, analyser l\'utilisation du site et aider dans.'
+        description: 'Ces cookies collectent des données anonymes pour nous aider à améliorer les fonctionnalités du site web et à enrichir l’expérience utilisateur.'
       },
       marketing: {
         label: "Marketing",
-        description: 'En cliquant sur "Tout Accepter", vous acceptez le stockage de cookies sur votre appareil pour améliorer la navigation du site, analyser l\'utilisation du site et aider nos efforts de marketing comme décrit dans notre.'
+        description: 'Ces cookies suivent les utilisateurs sur différents sites web pour diffuser des publicités pertinentes et peuvent traiter des données personnelles, nécessitant ainsi un consentement explicite.'
       },
       preferences: {
         label: "Préférences",
-        description: 'Personnalisez votre expérience en fonction de vos préférences et de votre comportement sur le site Web.'
+        description: 'Ces cookies mémorisent des paramètres tels que la langue ou la région et enregistrent les préférences d’affichage afin d’offrir une expérience plus personnalisée et fluide.'
       }
     }
   }
@@ -172,11 +172,11 @@ const createCookiePreferences = async (selectedPreferences: string[], language: 
     };
 
       const responsivePropertyMap: Record<string, string> = {
-        "max-width": "100%", 
+        "max-width": "23.5rem",
         "width":"100%"
 
       };
-      const responsiveOptions = { breakpoint: "small" } as BreakpointAndPseudo;
+      const responsiveOptions = { breakpoint: "medium" } as BreakpointAndPseudo;
 
     const paragraphPropertyMap: Record<string, string> = {
       "color": paraColor,
@@ -196,7 +196,8 @@ const createCookiePreferences = async (selectedPreferences: string[], language: 
     const checkboxContainerPropertyMap: Record<string, string> = {
       "position": "relative",
       "display": "inline-block",
-      "width": "50px"
+      "width": "50px",
+      "background-color": color,
     };
 
     const prefrencePropertyMap: Record<string, string> = {
@@ -228,7 +229,8 @@ const createCookiePreferences = async (selectedPreferences: string[], language: 
       "margin-left": "5px",
       "margin-right": "5px",
       "min-width": "80px",
-      "color":primaryButtonText
+      "color":primaryButtonText,
+      "text-align": "center",
     };
 
     const declineButtonPropertyMap: Record<string, string> = {
@@ -239,6 +241,7 @@ const createCookiePreferences = async (selectedPreferences: string[], language: 
       "margin-left": "5px",
       "margin-right": "5px",
       "min-width": "80px",
+      "text-align": "center",
     };
 
 
@@ -287,7 +290,6 @@ const createCookiePreferences = async (selectedPreferences: string[], language: 
 
     await divStyle.setProperties(divPropertyMap);
     await divStyle.setProperties(responsivePropertyMap, responsiveOptions);
-
     await paragraphStyle.setProperties(paragraphPropertyMap);
     await prefrenceDiv.setProperties(prefrencePropertyMap)
     await togglediv.setProperties(setTooglePropertyMap)
@@ -299,7 +301,6 @@ const createCookiePreferences = async (selectedPreferences: string[], language: 
     await declinebutton.setProperties(declineButtonPropertyMap)
     await prefrenceButtons.setProperties(declineButtonPropertyMap)
     await changepre.setProperties(changepreferencePropertyMap)
-
     await headingStyle.setProperties(headingPropertyMap);
 
     if (newDiv.setStyles) {
@@ -430,7 +431,6 @@ const createCookiePreferences = async (selectedPreferences: string[], language: 
         }
 
         const checkboxField = await prefrenceContainertoggle.append(webflow.elementPresets.FormCheckboxInput);
-        console.log("the checkboxxxxxxxxxxxxxxxxxxxx", checkboxField);
 
         if (!checkboxField) {
           throw new Error(`Failed to create checkbox field for ${section.label}`);
@@ -441,7 +441,6 @@ const createCookiePreferences = async (selectedPreferences: string[], language: 
         const children = await checkboxField.getChildren();
         //checkboxContainerStyle
         for (const child of children) {
-          console.log("Child type:", child.type); // Debugging
 
           if (child.type.includes("Label") && child.setTextContent) {
             await child.setTextContent("");
@@ -449,9 +448,6 @@ const createCookiePreferences = async (selectedPreferences: string[], language: 
         }
 
         for (const child of children) {
-          console.log("Child type:", child.type);
-          console.log("Child type:", child);
-
 
           if (child.type.includes("FormCheckboxInput") && child.setCustomAttribute) {
             await child.setCustomAttribute("data-consent-id", section.id);

@@ -1,8 +1,8 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query"; // Ensure correct import
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query"; 
 import App from "./App";
-import { ScriptProvider } from "./context/ScriptContext"; // adjust path as needed
+import { ScriptProvider } from "./context/ScriptContext"; 
 
 
 const queryClient = new QueryClient({

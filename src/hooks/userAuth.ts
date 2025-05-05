@@ -164,7 +164,6 @@ const exchangeAndVerifyIdToken = async () => {
     });
 
     const data = await response.json();
-    console.log("token Exchange Response Data:",data)
 
     if (!response.ok) {
       throw new Error(`Token exchange failed: ${data.error}`);
@@ -177,12 +176,10 @@ const exchangeAndVerifyIdToken = async () => {
       email: data.email,
       exp: Date.now() + (24 * 60 * 60 * 1000) // 24 hours from now
     };
-    console.log("userdata",userData)
     localStorage.setItem("wf_hybrid_user", JSON.stringify(userData));
     localStorage.removeItem("explicitly_logged_out");
 
     // Update React Query cache
-    console.log("🔄 Updating React Query cache");
     queryClient.setQueryData<AuthState>(["auth"], {
       user: {
         firstName: data.firstName,
@@ -191,9 +188,8 @@ const exchangeAndVerifyIdToken = async () => {
       sessionToken: data.sessionToken
     });
 
-    console.log("✅ Token exchange completed successfully");
    const saveLocalstorageData= localStorage.getItem("wf_hybrid_user");
-   console.log("Saved local storage data",saveLocalstorageData);
+  //  console.log("Saved local storage data",saveLocalstorageData);
   } catch (error) {
     console.error("❌ Token exchange error:", error);
     localStorage.removeItem("wf_hybrid_user");

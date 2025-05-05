@@ -3,9 +3,9 @@ import iro from "@jaames/iro"; // Import iro.js
 const left = new URL("../assets/left unchecked.svg", import.meta.url).href;
 const center = new URL("../assets/center unchecked.svg", import.meta.url).href;
 const right = new URL("../assets/right checked.svg", import.meta.url).href;
-const justiflyleft = new URL("../assets/content-left.png", import.meta.url).href;
-const justiflycenter = new URL("../assets/content-center.png", import.meta.url).href;
-const justiflyright = new URL("../assets/content-right.png", import.meta.url).href;
+const justiflyleft = new URL("../assets/left align uncheck.svg", import.meta.url).href;
+const justiflycenter = new URL("../assets/center align uncheck.svg", import.meta.url).href;
+const justiflyright = new URL("../assets/right align uncheckd.svg", import.meta.url).href;
 const checkdleft = new URL("../assets/left checked.svg", import.meta.url).href;
 const checkedcenter = new URL("../assets/center checked.svg", import.meta.url).href;
 const unchedcked = new URL("../assets/right unchecked.svg", import.meta.url).href;
@@ -21,9 +21,6 @@ const logo = new URL("../assets/icon.svg", import.meta.url).href;
 const checkedcenteralign = new URL("../assets/center alignemnt checked.svg", import.meta.url).href;
 const checkedleft = new URL("../assets/left checkd alignment.svg", import.meta.url).href;
 const checkedright = new URL("../assets/right checkd alignemnt.svg", import.meta.url).href;
-
-
-
 
 
 type Orientation = "left" | "center" | "right";
@@ -115,16 +112,13 @@ const Customization: React.FC<CustomizationProps> = ({
   primaryButtonText,
   setPrimaryButtonText,
 }) => {
-  // const [selected, setSelected] = useState("right");
   const [isActive, setIsActive] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-  const [showDiv, setShowDiv] = useState(false); // State to toggle visibility
+  const [showDiv, setShowDiv] = useState(false); 
   const colorPickerRef = useRef<HTMLDivElement | null>(null);
   const pickerInstance = useRef<any>(null);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
 
-  // const [secondbuttontext, setsecondbuttontext] = useState("#4C4A66")
-  // const [primaryButtonText, setPrimaryButtonText] = useState('#FFFFFF'); // Initial color (black)
 
   const [btnOpen, setBtnOpen] = useState(false);
   const [headOpen, setHeadOpen] = useState(false);
@@ -227,11 +221,11 @@ const Customization: React.FC<CustomizationProps> = ({
       case "bigstyle":
         return { width: "250px", minHeight: "151px" };
       case "fullwidth":
-        return { width: "443px", dislay: "flex" };
+        return { width: "445px", dislay: "flex" };
       case "centeralign":
         return { width: "303px" };
       default:
-        return { width: "318px" }; // Default
+        return { width: "318px" }; 
     }
   }, [style]);
   // ---
@@ -310,35 +304,31 @@ const Customization: React.FC<CustomizationProps> = ({
       <div className="general">
         <div className="width-cust">
           <div className="cust">
-            {/* <div>
-              <span className="font-blue">Orientation</span>
-            </div> */}
             <div className="flex">
-              <span className="font-blue">Cookie Banner Alignment</span>
+              <span className="font-blue1">Cookie Banner Alignment</span>
 
-              <div className="tooltip-containers">
+              <div className="tooltip-container">
                 <img src={questionmark} alt="info" className="tooltip-icon" />
-                <span className="tooltip-text">Adjust the cookie banner's alignment for optimal placement on your site.</span>
+                <span className="tooltip-text2">Adjust the cookie banner's alignment for optimal placement on your site.</span>
               </div>
             </div>
 
             <div className="category-2 flex gap-4">
-              {/* Left Image */}
               <img
                 src={selected === "left" ? checkdleft : left}
-                alt=""
+                alt="leftalignment"
                 onClick={() => setSelected("left")}
                 className="cursor-pointer"
               />
               <img
                 src={selected === "center" ? checkedcenter : center}
-                alt=""
+                alt="centertalignment"
                 onClick={() => setSelected("center")}
                 className="cursor-pointer"
               />
               <img
                 src={selected === "right" ? right : unchedcked}
-                alt=""
+                alt="righttalignment"
                 onClick={() => setSelected("right")}
                 className="cursor-pointer"
               />
@@ -354,32 +344,30 @@ const Customization: React.FC<CustomizationProps> = ({
               </div>
             </div>
             <div className="category-2">
-              <img className="img-width cursor-pointer" src={normalchecked} alt="Align icon" style={{ opacity: style === "align" ? 1 : 0.4 ,border: style === "align" ? "2px solid #8C79FF" : "2px solid #ffffff00", borderRadius: "6px"}} onClick={() => setStyle(style === "align" ? "" : "align")} />
-              <img className="img-width cursor-pointer" src={normalstyle} alt="Align icon" style={{ opacity: style === "alignstyle" ? 1 : 0.4,  border: style === "alignstyle" ? "2px solid #8C79FF" : "2px solid #ffffff00",borderRadius: "6px" }} onClick={() => setStyle(style === "alignstyle" ? "" : "alignstyle")} />
-              <img src={bigstyle} alt="Align icon" style={{ opacity: style === "bigstyle" ? 1 : 0.4,border: style === "bigstyle" ? "2px solid #8C79FF" : "2px solid #ffffff00",borderRadius: "6px" }} onClick={() => setStyle(style === "bigstyle" ? "" : "bigstyle")} />
+              <img className="img-width cursor-pointer" src={normalchecked} alt="Align icon" style={{ opacity: style === "align" ? 1 : 0.4, border: style === "align" ? "2px solid #8C79FF" : "2px solid #ffffff00", borderRadius: "6px" }} onClick={() => setStyle(style === "align" ? "" : "align")} />
+              <img className="img-width cursor-pointer" src={normalstyle} alt="Align icon" style={{ opacity: style === "alignstyle" ? 1 : 0.4, border: style === "alignstyle" ? "2px solid #8C79FF" : "2px solid #ffffff00", borderRadius: "6px" }} onClick={() => setStyle(style === "alignstyle" ? "" : "alignstyle")} />
+              <img src={bigstyle} alt="Align icon" style={{ opacity: style === "bigstyle" ? 1 : 0.4, border: style === "bigstyle" ? "2px solid #8C79FF" : "2px solid #ffffff00", borderRadius: "6px" }} onClick={() => setStyle(style === "bigstyle" ? "" : "bigstyle")} />
             </div>
             <div className="category-2">
               <img
                 className="img-width cursor-pointer"
                 src={centeralign}
                 alt="Align icon"
-                style={{ opacity: style === "centeralign" ? 1 : 0.4 ,border: style === "centeralign" ? "2px solid #8C79FF" : "2px solid #ffffff00", borderRadius: "4px"}}
+                style={{ opacity: style === "centeralign" ? 1 : 0.4, border: style === "centeralign" ? "2px solid #8C79FF" : "2px solid #ffffff00", borderRadius: "4px" }}
                 onClick={() => setStyle(style === "centeralign" ? "" : "centeralign")}
               />
               <img
                 className="img-width cursor-pointer"
                 src={fullwidth}
                 alt="Full Width icon"
-                style={{ opacity: style === "fullwidth" ? 1 : 0.4 ,border: style === "fullwidth" ? "2px solid #8C79FF" :"2px solid #ffffff00", borderRadius: "4px" }}
+                style={{ opacity: style === "fullwidth" ? 1 : 0.4, border: style === "fullwidth" ? "2px solid #8C79FF" : "2px solid #ffffff00", borderRadius: "4px" }}
                 onClick={() => setStyle(style === "fullwidth" ? "" : "fullwidth")}
               />
             </div>
           </div>
 
           <div className="custs">
-            {/* <div className="font-blues">
-              <span className="font-blue">Body</span>
-            </div> */}
+
             <div className="flexs">
               <span className="font-blues">Typography</span>
               <div className="tooltip-containers">
@@ -414,6 +402,10 @@ const Customization: React.FC<CustomizationProps> = ({
 
               <div className="settings-group width">
                 <select id="font-size" value={size} onChange={(e) => SetSize(e.target.value)}>
+                  <option>12</option>
+                  <option>13</option>
+                  <option>14</option>
+                  <option>15</option>
                   <option>16</option>
                   <option>17</option>
                   <option>18</option>
@@ -423,64 +415,55 @@ const Customization: React.FC<CustomizationProps> = ({
 
             <div>
               <div className="flex">
-                {/* <span>Alignment</span>
-                <div className="category-3">
-                  <img src={justiflyleft} alt="Left Align" style={{ opacity: selectedtext === "left" ? 1 : 0.4 }} onClick={() => settextSelected("left")} />
-                  <img src={justiflycenter} alt="Center Align" style={{ opacity: selectedtext === "center" ? 1 : 0.4 }} onClick={() => settextSelected("center")} />
-                  <img src={justiflyright} alt="Right Align" style={{ opacity: selectedtext === "right" ? 1 : 0.4 }} onClick={() => settextSelected("right")} />
-                </div> */}
+
                 <span>Alignment</span>
-<div className="category-3 flex gap-4">
-  <img
-    src={selectedtext === "left" ? checkedleft : justiflyleft}
-    alt="Left Align"
-    onClick={() => settextSelected("left")}
-    className="cursor-pointer"
-  />
-  <img
-    src={selectedtext === "center" ? checkedcenteralign : justiflycenter}
-    alt="Center Align"
-    onClick={() => settextSelected("center")}
-    className="cursor-pointer"
-  />
-  <img
-    src={selectedtext === "right" ? checkedright : justiflyright}
-    alt="Right Align"
-    onClick={() => settextSelected("right")}
-    className="cursor-pointer"
-  />
-</div>
+                <div className="category-3 flex gap-4">
+                  <img
+                    src={selectedtext === "left" ? checkedleft : justiflyleft}
+                    alt="Left Align"
+                    onClick={() => settextSelected("left")}
+                    className="cursor-pointer"
+                  />
+                  <img
+                    src={selectedtext === "center" ? checkedcenteralign : justiflycenter}
+                    alt="Center Align"
+                    onClick={() => settextSelected("center")}
+                    className="cursor-pointer"
+                  />
+                  <img
+                    src={selectedtext === "right" ? checkedright : justiflyright}
+                    alt="Right Align"
+                    onClick={() => settextSelected("right")}
+                    className="cursor-pointer"
+                  />
+                </div>
 
               </div>
 
             </div>
 
             {/* Color Picker Section */}
-
           </div>
-          <div><img src={line} alt="" /></div>
+          <div><img src={line} alt="line" /></div>
 
           <div className="cust">
             <div className="flex">
               <span className="font-blue">Colours</span>
               <div className="tooltip-containers">
                 <img src={questionmark} alt="info" className="tooltip-icon" />
-                <span className="tooltip-text">"Customize the colors to match your site's branding and design.</span>
+                <span className="tooltip-text">Customize the colors to match your site's branding and design.</span>
               </div>
             </div>
             <div className="custom">
               <div className="customs">
                 <div>
-                  <span>Banner Background </span>
+                  <span>Banner Background</span>
                   <div className="color-picker-dropdown" ref={dropdownRef}>
-                    {/* Button to Open Color Picker */}
                     <button className="color-picker-button" onClick={() => setIsOpen(!isOpen)}>
                       <span className="color-text">{color}</span>
                       <div className="color-preview" style={{ backgroundColor: color }}></div>
-                      {/* <span className="dropdown-arrow">▼</span> */}
                     </button>
 
-                    {/* Color Picker (Hidden/Shown with CSS) */}
                     <div
                       ref={colorPickerRef}
                       className={`color-picker-container ${isOpen ? "visible" : "hidden"}`}
@@ -488,19 +471,18 @@ const Customization: React.FC<CustomizationProps> = ({
                   </div>
                 </div>
 
-               
-                  <div>
-                    <span>Second Backgorund</span>
-                    <div className="color-picker-dropdown" ref={secondbgDropdownRef}>
-                      <button className="color-picker-button" onClick={() => setSecondbgopen(!secondbgOpen)}>
-                        <span className="color-text">{bgColors}</span>
-                        <div className="color-preview" style={{ backgroundColor: bgColors }}></div>
-                        {/* <span className="dropdown-arrow">▼</span> */}
-                      </button>
-                      <div ref={secondbgPickerRef} className={`color-picker-container ${secondbgOpen ? "visible" : "hidden"}`}></div>
-                    </div>
+
+                <div>
+                  <span>Second Backgorund</span>
+                  <div className="color-picker-dropdown" ref={secondbgDropdownRef}>
+                    <button className="color-picker-button" onClick={() => setSecondbgopen(!secondbgOpen)}>
+                      <span className="color-text">{bgColors}</span>
+                      <div className="color-preview" style={{ backgroundColor: bgColors }}></div>
+                    </button>
+                    <div ref={secondbgPickerRef} className={`color-picker-container ${secondbgOpen ? "visible" : "hidden"}`}></div>
                   </div>
-                
+                </div>
+
               </div>
 
               <div className="customs">
@@ -510,7 +492,6 @@ const Customization: React.FC<CustomizationProps> = ({
                     <button className="color-picker-button" onClick={() => setParaOpen(!paraOpen)}>
                       <span className="color-text">{paraColor}</span>
                       <div className="color-preview" style={{ backgroundColor: paraColor }}></div>
-                      {/* <span className="dropdown-arrow">▼</span> */}
                     </button>
                     <div ref={paraPickerRef} className={`color-picker-container ${paraOpen ? "visible" : "hidden"}`}></div>
                   </div>
@@ -521,7 +502,6 @@ const Customization: React.FC<CustomizationProps> = ({
                     <button className="color-picker-button" onClick={() => setHeadOpen(!headOpen)}>
                       <span className="color-text">{headColor}</span>
                       <div className="color-preview" style={{ backgroundColor: headColor }}></div>
-                      {/* <span className="dropdown-arrow">▼</span> */}
                     </button>
                     <div ref={headPickerRef} className={`color-picker-container ${headOpen ? "visible" : "hidden"}`}></div>
                   </div>
@@ -529,10 +509,10 @@ const Customization: React.FC<CustomizationProps> = ({
               </div>
 
               <div className="flex">
-                <span className="font-blue">Primary button </span>
+                <span className="font-blue">Primary Button</span>
                 <div className="tooltip-containers">
                   <img src={questionmark} alt="info" className="tooltip-icon" />
-                  <span className="tooltip-text">"Customize the colors to match your site's branding and design.</span>
+                  <span className="tooltip-text">Style the primary (Accept) button to match your site’s branding.</span>
                 </div>
               </div>
               <div className="customs">
@@ -543,7 +523,6 @@ const Customization: React.FC<CustomizationProps> = ({
                     <button className="color-picker-button" onClick={() => setSecondButtonOpen(!secondbuttonOpen)}>
                       <span className="color-text">{secondcolor}</span>
                       <div className="color-preview" style={{ backgroundColor: secondcolor }}></div>
-                      {/* <span className="dropdown-arrow">▼</span> */}
                     </button>
                     <div ref={secondbtnPickerRef} className={`color-picker-container ${secondbuttonOpen ? "visible" : "hidden"}`}></div>
                   </div>
@@ -555,7 +534,6 @@ const Customization: React.FC<CustomizationProps> = ({
                     <button className="color-picker-button" onClick={() => setPrimaryButtonTextOpen(!primaryButtonTextOpen)}>
                       <span className="color-text">{primaryButtonText}</span>
                       <div className="color-preview" style={{ backgroundColor: primaryButtonText }}></div>
-                      {/* <span className="dropdown-arrow">▼</span> */}
                     </button>
                     <div ref={primaryButtonTextPickerRef} className={`color-picker-container ${primaryButtonTextOpen ? "visible" : "hidden"}`}></div>
                   </div>
@@ -563,10 +541,11 @@ const Customization: React.FC<CustomizationProps> = ({
               </div>
 
               <div className="flex">
-                <span className="font-blue">Secondary button</span>
+                <span className="font-blue">Secondary Button</span>
                 <div className="tooltip-containers">
                   <img src={questionmark} alt="info" className="tooltip-icon" />
-                  <span className="tooltip-text">"Customize the colors to match your site's branding and design.</span>
+                  <span className="tooltip-text">  Customize the Reject/Preferences (secondary) buttons to match your site’s branding.
+                  </span>
                 </div>
               </div>
 
@@ -577,7 +556,6 @@ const Customization: React.FC<CustomizationProps> = ({
                     <button className="color-picker-button" onClick={() => setBtnOpen(!btnOpen)}>
                       <span className="color-text">{btnColor}</span>
                       <div className="color-preview" style={{ backgroundColor: btnColor }}></div>
-                      {/* <span className="dropdown-arrow">▼</span> */}
                     </button>
                     <div ref={btnPickerRef} className={`color-picker-container ${btnOpen ? "visible" : "hidden"}`}></div>
                   </div>
@@ -589,21 +567,15 @@ const Customization: React.FC<CustomizationProps> = ({
                     <button className="color-picker-button" onClick={() => setSecondbuttonTextOpen(!SecondbuttonTextOpen)}>
                       <span className="color-text">{secondbuttontext}</span>
                       <div className="color-preview" style={{ backgroundColor: secondbuttontext }}></div>
-                      {/* <span className="dropdown-arrow">▼</span> */}
                     </button>
-                    {/* Make sure this ref matches the one used in the first useEffect */}
                     <div ref={SecondbuttonTextPickerRef} className={`color-picker-container ${SecondbuttonTextOpen ? "visible" : "hidden"}`}></div>
                   </div>
                 </div>
               </div>
-
-
-
             </div>
-
           </div>
 
-          <div className="cust">
+          <div className="cust2">
             <div className="flexs">
               <span className="font-blue">Corner Radius</span>
               <div className="tooltip-containers">
@@ -612,12 +584,7 @@ const Customization: React.FC<CustomizationProps> = ({
               </div>
             </div>
             <div className="flexy">
-
               <div className="flex-down">
-
-                {/* <div className="bottom">
-                  <span className="font-blue">Corner radius</span>
-                </div> */}
                 <div>
                   <span>Container</span>
                   <div className="settings-groups width">
@@ -633,9 +600,6 @@ const Customization: React.FC<CustomizationProps> = ({
                 </div>
               </div>
               <div className="flex-down">
-                {/* <div className="bottom">
-                  <span className="font-blue">Button</span>
-                </div> */}
                 <div>
                   <span>Button</span>
                   <div className="settings-groups width">
@@ -652,7 +616,6 @@ const Customization: React.FC<CustomizationProps> = ({
               </div>
             </div>
             <div>
-
             </div>
           </div>
         </div>
@@ -661,10 +624,10 @@ const Customization: React.FC<CustomizationProps> = ({
           <h3>Preview</h3>
           <div className="preview-area">
             <div className="topbar">
-              <img src={dots} alt="" className="threedots" />
+              <img src={dots} alt="dots" className="threedots" />
             </div>
             <div className="consentbit-logo">
-              <img src={logo} alt="" />
+              <img src={logo} alt="logo" />
             </div>
             {/* gdpr */}
             <div
@@ -674,15 +637,15 @@ const Customization: React.FC<CustomizationProps> = ({
                 position: "absolute",
                 ...(style !== "fullwidth" && {
                   bottom: "16px",
-                  left: selected === "left" ? "16px" : selected === "center" ? "14%" : "auto",
+                  left: selected === "left" ? "16px" : selected === "center" ? "17%" : "auto",
                   right: selected === "right" ? "16px" : "auto",
-                  transform: selected === "center" ? "translateX(-50%)" : "none",
                 }),
-                transform: selected === "center" ? "translateX(-50%)" : "none",
+                // transform: selected === "center" ? "translateX(-50%)" : "none",
                 fontFamily: Font,
                 textAlign: selectedtext,
-                alignItems: style === "centeralign" ? "center" : undefined, // Change dynamically
+                alignItems: style === "centeralign" ? "center" : undefined, 
                 fontWeight: weight,
+                fontSize: `${size}px`,
                 width: previewDimensions.width,
                 height: previewDimensions.minHeight,
                 borderRadius: `${borderRadius}px`,
@@ -690,7 +653,15 @@ const Customization: React.FC<CustomizationProps> = ({
               }}
             >
               {style === "alignstyle" && <div className="secondclass" style={{ backgroundColor: bgColors, borderBottomRightRadius: `${borderRadius}px`, borderTopRightRadius: `${borderRadius}px` }}></div>}
-              <div className="space" style={{ color: headColor, fontWeight: weight, }}><h4>Cookie Setting</h4></div>
+              <div className="space" style={{ color: headColor, fontWeight: weight }}>
+                <h4>
+                  {language === "English"
+                    ? "Cookie Settings"
+                    : language === "Spanish"
+                      ? "Configuración de Cookies"
+                      : "Paramètres des Cookies"}
+                </h4>
+              </div>
 
               <div className="padding" style={{ color: paraColor, alignItems: style === "centeralign" ? "center" : undefined, }}>
                 <span style={{ alignItems: style === "centeralign" ? "center" : undefined, }}>
@@ -708,49 +679,6 @@ const Customization: React.FC<CustomizationProps> = ({
                 <button className="btn-accept" style={{ borderRadius: `${buttonRadius}px`, backgroundColor: secondcolor, color: primaryButtonText }} >Accept</button>
               </div>
             </div>
-
-            {/* ccpa banner */}
-            {/* <div
-              className={`cookie-banner ${animation} ${isActive ? "active" : ""}`}
-              style={{
-                transition: `transform 0.5s ${easing}, opacity 0.5s ${easing}`,
-                position: "absolute",
-                ...(style !== "fullwidth" && {
-                  bottom: "10px",
-                  left: selected === "left" ? "10px" : selected === "center" ? "50%" : "auto",
-                  right: selected === "right" ? "10px" : "auto",
-                  transform: selected === "center" ? "translateX(-50%)" : "none",
-                }),
-                transform: selected === "center" ? "translateX(-50%)" : "none",
-                fontFamily: Font,
-                textAlign: selectedtext,
-                alignItems: style === "centeralign" ? "center" : undefined, // Change dynamically
-                fontWeight: weight, 
-                width: previewDimensions.width,
-                height: previewDimensions.height,
-                borderRadius: `${borderRadius}px`,
-                backgroundColor: color,
-              }}
-            >
-              {style === "alignstyle" && <div className="secondclass" style={{ backgroundColor: bgColors , borderBottomRightRadius:`${borderRadius}px` , borderTopRightRadius:`${borderRadius}px` }}></div>}
-              <div className="space" style={{ color: headColor, fontWeight: weight, marginBottom:"0px" }}><h4>We value your Privacy</h4></div>
-
-              <div className="padding" style={{ color: paraColor , alignItems: style === "centeralign" ? "center" : undefined, }}>
-                <span  style={{ alignItems: style === "centeralign" ? "center" : undefined, }}>
-                  {language === "English"
-                    ? "We use cookies to provide you with the best possible experience. They also allow us to analyze user behavior in order to constantly improve the website for you."
-                    : language === "Spanish"
-                      ? "Utilizamos cookies para brindarle la mejor experiencia posible. También nos permiten analizar el comportamiento del usuario para mejorar constantemente el sitio web para usted."
-                      : "Nous utilisons des cookies pour vous offrir la meilleure expérience possible. Ils nous permettent également d’analyser le comportement des utilisateurs afin d’améliorer constamment le site Web pour vous."}
-                </span>
-
-              </div>
-              <div className="button-wrapp"  style={{ justifyContent:  style === "centeralign" ? "center" : undefined, }}>
-                
-                <p className="btn-accept" style={{ borderRadius: `${buttonRadius}px`, backgroundColor: secondcolor }} >do not share my Personal informations</p>
-              </div>
-            </div> */}
-
           </div>
           <div>
             <div className="preference-banner">

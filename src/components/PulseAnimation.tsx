@@ -20,7 +20,7 @@ const PulseAnimation: React.FC = () => {
 
       const resetTimeout = setTimeout(() => {
         setStage(0);
-        startSequence(); // Loop
+        startSequence();
       }, 2000 + timings[timings.length - 1]);
       timeouts.push(resetTimeout);
     };

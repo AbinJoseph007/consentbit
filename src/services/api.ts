@@ -1,14 +1,12 @@
 const base_url = "https://cb-server.web-8fb.workers.dev";
-import { ScriptCategory, SaveCategoriesResponse } from '../types/types';
+import { ScriptCategory, SaveCategoriesResponse, AppData } from '../types/types';
 import { scriptCategorizationService } from './script-categorization-service';
 import { ClientEncryption } from '../util/Secure-Data';
 
 import { ScriptRegistrationRequest, CodeApplication } from "../types/types";
 
-
 export const customCodeApi = {
   // Register a new script
-
   registerScript: async (params: ScriptRegistrationRequest, token: string) => {
     const response = await fetch(`${base_url}/api/custom-code/register`, {
       method: "POST",
@@ -25,44 +23,89 @@ export const customCodeApi = {
   //blocking script registration
   registerAnalyticsBlockingScript: async (token: string) => {
     try {
-     
-
       const response = await fetch(`${base_url}/api/custom-code/apply-custom-code`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         },
-       
       });
       if (!response.ok) {
         const errorText = await response.text();
         console.error('Error response:', errorText);
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-
       const data = await response.json();
-      console.log('Response data:', data);
       return data;
     } catch (error) {
       console.error('Error in registerAnalyticsBlockingScript:', error);
       throw error;
     }
   },
-/////////////////////for the custom toggle
-  registerCustomToggle: async (token: string, siteId: string) => {
-    try {
-      console.log('Starting API call for custom toggle with:', { siteId });
 
-      const response = await fetch(
-        `${base_url}/api/custom-code/customtoggle?siteId=${encodeURIComponent(siteId)}`,
-        {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
+
+  exportCSV: async (token: string) => {
+    try {
+      const response = await fetch(`${base_url}/api/export-consent-csv`, {
+        method: 'GET', 
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Accept': 'text/csv',
+        },
+      });
+      const fullResponse = response; 
+      if (!response.ok) {
+        let errorDetails = `HTTP error! Status: ${response.status}`;
+        try {
+          const errorData = await response.json();
+          errorDetails += ` - ${errorData.error || 'Unknown API error'}`;
+        } catch (e) {
+          errorDetails += ` - ${await response.text()}`;
         }
-      );
+        console.error('Error response details:', errorDetails);
+        throw new Error(errorDetails);
+      }
+      const csvData = await response.text();
+      return { csvData, response: fullResponse };
+    } catch (error) {
+      console.error('Error in exportCSV API call:', error);
+      throw error; 
+    }
+  },
+
+  saveBannerStyles: async (token: string, appData: AppData) => {
+    try {
+      const response = await fetch(`${base_url}/api/app-data`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          appData: appData,
+        })
+      });
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Error response:', errorText);
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error('Error in  saving app data', error);
+      throw error;
+    }
+  },
+
+  getBannerStyles: async (token: string) => {
+    try {
+      const response = await fetch(`${base_url}/api/app-details`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        }
+      });
 
       if (!response.ok) {
         const errorText = await response.text();
@@ -71,58 +114,23 @@ export const customCodeApi = {
       }
 
       const data = await response.json();
-      console.log('Response data:', data);
       return data;
     } catch (error) {
-      console.error('Error in registerAnalyticsBlockingScript:', error);
-      throw error;
-    }
-  },
-///////////////for the page scroll
-  registerScrollScript: async (token: string, siteId: string) => {
-    try {
-      console.log('Starting API call for custom toggle with:', { siteId });
-
-      const response = await fetch(
-        `${base_url}/api/custom-code/pagescroll?siteId=${encodeURIComponent(siteId)}`,
-        {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        }
-      );
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error('Error response:', errorText);
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const data = await response.json();
-      console.log('Response data:', data);
-      return data;
-    } catch (error) {
-      console.error('Error in registerAnalyticsBlockingScript:', error);
+      console.error('Error in getting app data', error);
       throw error;
     }
   },
 
 
+  //save categorized script
+  saveScriptCategorizations: async (token: string, categorizations: ScriptCategory[]) => {
+    return scriptCategorizationService.saveScriptCategorizations(token, categorizations);
+  },
 
-//save categorized script
+  updateScriptCategorizations: async (siteId: string, token: string, newCategorizations: ScriptCategory[]) => {
+    return scriptCategorizationService.updateScriptCategorizations(token, newCategorizations);
+  },
 
-saveScriptCategorizations:  async ( token: string, categorizations: ScriptCategory[]) => {
-  return scriptCategorizationService.saveScriptCategorizations( token, categorizations);
-},
-
-
-updateScriptCategorizations: async (siteId: string, token: string, newCategorizations: ScriptCategory[]) => {
-  return scriptCategorizationService.updateScriptCategorizations( token, newCategorizations);
-},
-
-
-  // Get list of registered scripts
   getScripts: async (siteId: string, token: string) => {
     const response = await fetch(
       `${base_url}/api/custom-code/register?siteId=${siteId}`,
@@ -145,61 +153,45 @@ updateScriptCategorizations: async (siteId: string, token: string, newCategoriza
       },
       body: JSON.stringify(params),
     });
-    console.log(params);
+    // console.log(params);
     return response.json();
   },
 
-
-
-
-// src/services/api.ts
-
-
-
-analyticsScript: async (token: string) => {
-  try {
-    // Validate token
-    if (!token) {
-      throw new Error("Token is required");
-    }
-
-    const url = `${base_url}/api/analytics`;
-    console.log("Requesting URL:", url);
-
-    // Call the API endpoint with authentication
-    const response = await fetch(url, {
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
+  // src/services/api.ts
+  analyticsScript: async (token: string) => {
+    try {
+      if (!token) {
+        throw new Error("Token is required");
       }
-    });
-    
-    if (!response.ok) {
-      const errorData = await response.json();
-      console.error("API Error:", errorData);
-      throw new Error(errorData.error || "Failed to fetch analytics");
-    }
+      const url = `${base_url}/api/analytics`;
 
-    const data = await response.json();
-    console.log("Analytics Response:", data);
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
 
-   
-    return {
-      success: true,
-       ...data
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error("API Error:", errorData);
+        throw new Error(errorData.error || "Failed to fetch analytics");
       }
-    
-  
-    
-    
-  } catch (error) {
-    console.error("Error in analyticsScript:", error);
-    return { 
-      success: false, 
-      error: error instanceof Error ? error.message : "Unknown error occurred",
-      data: null
-    };
+
+      const data = await response.json();
+      return {
+        success: true,
+        ...data
+      }
+
+    } catch (error) {
+      console.error("Error in analyticsScript:", error);
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : "Unknown error occurred",
+        data: null
+      };
+    }
   }
-}
 };

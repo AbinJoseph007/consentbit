@@ -5,10 +5,8 @@ import { customCodeApi } from "../services/api";
 import { useScriptContext } from "../context/ScriptContext";
 import PulseAnimation from './PulseAnimation';
 
-const copyimg = new URL("../assets/fi-rr-copy.png", import.meta.url).href;
 const questionmark = new URL("../assets/blue question.svg", import.meta.url).href;
 const settings = new URL("../assets/setting-2.svg", import.meta.url).href;
-const ignored = new URL("../assets/fi-rr-shield-exclamation.png", import.meta.url).href;
 const tickmark = new URL("../assets/implement correctly.svg", import.meta.url).href;
 const edit = new URL("../assets/edit.svg", import.meta.url).href;
 const explain = new URL("../assets/catogery.svg", import.meta.url).href;
@@ -19,7 +17,6 @@ const Active = new URL("../assets/active.svg", import.meta.url).href;
 const search = new URL("../assets/search.svg", import.meta.url).href;
 const uparrow = new URL("../assets/blue up arrow.svg", import.meta.url).href;
 const line2 = new URL("../assets/line.svg", import.meta.url).href;
-
 
 
 const Script: React.FC<{
@@ -33,7 +30,7 @@ const Script: React.FC<{
     const userinfo = localStorage.getItem("wf_hybrid_user");
     const [showPopup, setShowPopup] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
-    const [showAuthPopup, setShowAuthPopup] = useState(false); // New state for the popup
+    const [showAuthPopup, setShowAuthPopup] = useState(false); 
 
 
     const getScriptIdentifier = useCallback((script: { src?: string | null; fullTag?: string | null }) => {
@@ -80,7 +77,7 @@ const Script: React.FC<{
                         return newScript;
                     });
                     setIsLoading(false);
-                    return mergedScripts.filter(script => script.identifier !== null); // Filter out scripts without a stable identifier
+                    return mergedScripts.filter(script => script.identifier !== null);
                 });
             } else {
                 console.error("Failed to fetch scripts or no scripts found.");
@@ -94,6 +91,8 @@ const Script: React.FC<{
             setIsLoading(false);
         }
     }, [setScripts, userinfo, getScriptIdentifier]);
+
+  
 
     useEffect(() => {
         if (fetchScripts) {
@@ -140,13 +139,13 @@ const Script: React.FC<{
                 setScripts(prevScripts =>
                     prevScripts.map(script => {
                         if (!script.identifier) {
-                            return script; // Don't process if no identifier
+                            return script; 
                         }
                         const wasJustSaved = scriptsToSave.some(savedScript =>
                             savedScript.content === (script.fullTag || script.script) &&
                             savedScript.src === (script.src || script.url)
                         );
-                        return { ...script, isSaved: script.isSaved || wasJustSaved }; // Keep existing 'isSaved' or set to true if just saved
+                        return { ...script, isSaved: script.isSaved || wasJustSaved };
                     })
                 );
             } else {
@@ -171,45 +170,11 @@ const Script: React.FC<{
         );
     }, [setScripts]);
 
-    // const handleToggle = useCallback((category: string, scriptIndex: number) => {
-    //     setScripts(prevScripts =>
-    //         prevScripts.map((script, index) => {
-    //             if (index === scriptIndex && script.identifier) {
-    //                 const updatedCategories = script.selectedCategories.includes(category)
-    //                     ? script.selectedCategories.filter(c => c !== category)
-    //                     : [...script.selectedCategories, category];
-
-    //                 let updatedTag = script.fullTag || '';
-    //                 const tagRegex = /<script\b([^>]*)>/i;
-    //                 const match = updatedTag.match(tagRegex);
-
-    //                 if (match) {
-    //                     let attrs = match[1];
-    //                     attrs = attrs.replace(/\s*data-category\s*=\s*"[^"]*"/i, '');
-    //                     const categoryAttr = updatedCategories.length > 0
-    //                         ? ` data-category="${updatedCategories.join(',')}"`
-    //                         : '';
-    //                     const newTag = `<script${attrs}${categoryAttr}>`;
-    //                     updatedTag = updatedTag.replace(tagRegex, newTag);
-    //                 }
-
-    //                 return {
-    //                     ...script,
-    //                     selectedCategories: updatedCategories,
-    //                     fullTag: updatedTag,
-    //                     script: updatedTag,
-    //                 };
-    //             }
-    //             return script;
-    //         })
-    //     );
-    // }, [setScripts]);
-
     // ... existing code ...
 
     const handleToggle = useCallback((category: string, scriptIndex: number) => {
         if (category === "Essential") {
-            return; // Do nothing if the category is "Essential"
+            return; 
         }
 
         setScripts(prevScripts =>
@@ -250,22 +215,6 @@ const Script: React.FC<{
         );
     }, [setScripts]);
 
-    // ... existing code ...
-    // const handleDismiss = useCallback((scriptIndex: number) => {
-    //     setScripts(prevScripts =>
-    //         prevScripts.map((script, index) =>
-    //             index === scriptIndex ? { ...script, isDismissed: true } : script
-    //         )
-    //     );
-    // }, [setScripts]);
-
-    // const handleActivate = useCallback((scriptIndex: number) => {
-    //     setScripts(prevScripts =>
-    //         prevScripts.map((script, index) =>
-    //             index === scriptIndex ? { ...script, isDismissed: false } : script
-    //         )
-    //     );
-    // }, [setScripts]);
 
     const handleDismiss = useCallback((scriptIndex: number) => {
         // Start fade-out animation
@@ -328,11 +277,6 @@ const Script: React.FC<{
                             <div>
                                 <span>Update the scripts in your project that handle cookie creation</span>
                             </div>
-                            {/* {scripts.length > 0 && (
-                                <button className="save-all-btn" onClick={handleSaveAll} disabled={isSaving}>
-                                    {isSaving ? "Saving..." : "Save Categories"}
-                                </button>
-                            )} */}
                         </div>
                         {saveStatus && (
                             <div className={`popup-overlays ${showPopup ? 'fade-in' : 'fade-out'}`}>
@@ -342,23 +286,23 @@ const Script: React.FC<{
                             </div>
                         )}
                         <p>Check your project scripts for any that create cookies. Organize them, replace with our snippet, and follow our tutorial to streamline your workflow.</p>
-                        <a href="#">Need help? See the docs <i><img src={uparrow} alt="" /></i></a>
+                        <a href="https://www.consentbit.com/help-document" target="_blank">Need help? See the docs <i><img src={uparrow} alt="uparrow" /></i></a>
                     </div>
                 </div>
             </div>
 
             {scripts.length > 0 && (
                 <div className="line">
-                    <img src={line2} alt="" />
+                    <img src={line2} alt="line2" />
                 </div>)}
 
-            <div className="save-btn-container">
-                {scripts.length > 0 && (
+            {scripts.length > 0 && (
+                <div className="save-btn-container">
                     <button className="save-all-btn" onClick={handleSaveAll} disabled={isSaving}>
                         {isSaving ? "Saving..." : "Save Categories"}
                     </button>
-                )}
-            </div>
+                </div>
+            )}
 
             {isLoading ? (
                 <div className="pulse-overlays">
@@ -366,13 +310,13 @@ const Script: React.FC<{
                 </div>
             ) : scripts.length === 0 ? (
                 <div className="sections">
-                    <img src={search} alt="" />
-                    <p>Click 'Scan' to analyze your project.</p>
+                    <img src={search} alt="search" />
+                    <p>Click 'Scan Project' to analyze your project.</p>
                 </div>
             ) : (
 
                 scripts
-                    .filter(script => script.identifier !== null) // Only render scripts with a stable identifier
+                    .filter(script => script.identifier !== null) 
                     .map((script, index) => (
                         <div key={script.identifier || index} className={`section-script script-container ${script.transitionState || ''}`}>
                             {script.isSaved && !script.isDismissed ? (
@@ -415,7 +359,7 @@ const Script: React.FC<{
                                         <>
                                             <div className="flexings">
                                                 <div>
-                                                    <img src={explain} style={{ marginTop: '5px' }} alt="catogery image" />
+                                                    <img src={explain} alt="catogery image" />
                                                 </div>
                                                 <div className="width-100">
                                                     <div className="header">
@@ -427,13 +371,13 @@ const Script: React.FC<{
                                                             </span>
                                                         </div>
                                                         <div className="flex">
-                                                            <img src={settings} alt="" />
+                                                            <img src={settings} alt="settingsimage" />
                                                             <span className="font-14 light">Site Settings &gt; Custom Code</span>
                                                         </div>
                                                         <button className="dismiss-btn" onClick={() => handleDismiss(index)}>  <img src={dismiss} alt="Dismiss icon" style={{ marginRight: '8px' }} />Dismiss</button>
                                                     </div>
                                                     <p>Select a category:</p>
-                                                    <div><img src={line} alt="" /></div>
+                                                    <div><img src={line} alt="lineimage" /></div>
                                                     <div className="category-code-block">
                                                         <div className="category">
                                                             <span>Category:</span>
@@ -444,7 +388,7 @@ const Script: React.FC<{
                                                                         value={category}
                                                                         checked={category === "Essential" || script.selectedCategories.includes(category)}
                                                                         onChange={() => handleToggle(category, index)}
-                                                                        disabled={category === "Essential"} // Disable the checkbox if the category is "Essential"
+                                                                        disabled={category === "Essential"} 
                                                                     />
                                                                     <span className="slider"></span>
                                                                     <span className="category-label">{category}</span>
